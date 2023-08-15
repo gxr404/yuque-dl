@@ -1,3 +1,4 @@
 export default {
-  tests: false
+  tests: false,
+  '2fa': false
 }
