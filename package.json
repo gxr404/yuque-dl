@@ -12,7 +12,7 @@
     "build:bundle": "rollup -c rollup.config.ts --configPlugin typescript",
     "build:types": "tsc --emitDeclarationOnly --outDir types -p tsconfig.base.json",
     "clean": "rm -rf dist types",
-    "publish": "np"
+    "release": "np"
   },
   "repository": {
     "type": "git",
