@@ -1,0 +1,5 @@
+dist
+types
+node_modules
+bin
+test
