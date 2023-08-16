@@ -58,7 +58,7 @@
     "cac": "^6.7.14",
     "log4js": "^6.9.1",
     "progress": "^2.0.3",
-    "pull-md-img": "^0.0.20",
+    "pull-md-img": "^0.0.22",
     "rand-user-agent": "1.0.109"
   },
   "engines": {

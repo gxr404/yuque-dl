@@ -40,15 +40,15 @@ export default class ProgressBar {
       logger.info('断点下载')
     }
 
-    this.bar = new progress('[:bar] :rate/bps :percent :etas', {
-      // width: 20,
+    this.bar = new progress('downloading [:bar] :rate/bps :percent :etas', {
+      width: 100,
       total: this.total,
-      curr: this.curr,
+      curr: 0,
       callback() {
         completeResolve()
       }
     })
-
+    if (this.curr > 0) this.bar.tick(this.curr)
   }
 
   async getProgress(): Promise<IProgress> {
@@ -68,13 +68,16 @@ export default class ProgressBar {
     return progressInfo
   }
 
-  async updateProgress(progressItem: IProgressItem) {
-    this.progressInfo.push(progressItem)
-    await fs.writeFile(
-      this.progressFilePath,
-      JSON.stringify(this.progressInfo),
-      {encoding: 'utf8'}
-    )
+  async updateProgress(progressItem: IProgressItem, isSuccess: boolean) {
+    // 成功才写入 progress.json 以便重新执行时重新下载
+    if (isSuccess) {
+      this.progressInfo.push(progressItem)
+      await fs.writeFile(
+        this.progressFilePath,
+        JSON.stringify(this.progressInfo),
+        {encoding: 'utf8'}
+      )
+    }
     this.curr = this.curr + 1
     if (this.bar) {
       this.bar?.tick()
