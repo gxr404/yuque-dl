@@ -246,7 +246,7 @@ async function main(url: string, options: IOptions) {
     for (let i = 0; i < errArticleInfo.length; i++) {
       logger.error(`✕ ${errArticleInfo[i].path}`)
     }
-    logger.info(`o(╥﹏╥)o 由于网络波动以上下载失败，请重新执行命令`)
+    logger.info(`o(╥﹏╥)o 由于网络波动或链接失效以上下载失败，可重新执行命令重试(不会影响已下载成功的数据)~~`)
   }
 
   // 生成目录
