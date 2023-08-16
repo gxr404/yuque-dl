@@ -41,7 +41,7 @@ export default class ProgressBar {
     }
 
     this.bar = new progress('downloading [:bar] :rate/bps :percent :etas', {
-      width: 100,
+      width: 80,
       total: this.total,
       curr: 0,
       callback() {

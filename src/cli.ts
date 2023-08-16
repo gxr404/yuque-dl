@@ -7,7 +7,8 @@ import logger from './log'
 const cli = cac('yuque-dl')
 
 export interface IOptions {
-  distDir: string
+  distDir: string,
+  ignoreImg: boolean
 }
 
 // 不能直接使用 import {version} from '../package.json'
@@ -20,6 +21,9 @@ cli
   .command('<url>', 'request url')
   .option('-d, --distDir <dir>', '下载的目录 eg: -d download', {
     default: 'download',
+  })
+  .option('-i, --ignoreImg', '忽略图片不下载', {
+    default: false
   })
   .action(async (url, options: IOptions) => {
     try {

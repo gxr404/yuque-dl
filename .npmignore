@@ -2,6 +2,7 @@ src
 node_modules
 test
 temp
+assets
 .vscode
 .np-config.js
 .eslintrc.js

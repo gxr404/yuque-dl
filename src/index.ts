@@ -26,7 +26,8 @@ interface IDownloadArticleParams {
   saveFilePath: string,
   uuid: string,
   articleTitle: string,
-  articleUrl: string
+  articleUrl: string,
+  ignoreImg: boolean
 }
 
 /** 获取知识库数据信息 */
@@ -57,7 +58,16 @@ function getKnowledgeBaseInfo(url: string): Promise<IKnowledgeBaseInfo> {
 
 /** 下载单篇文章 */
 async function downloadArticle(params: IDownloadArticleParams): Promise<boolean> {
-  const {bookId, itemUrl, savePath, saveFilePath, uuid, articleUrl, articleTitle} = params
+  const {
+    bookId,
+    itemUrl,
+    savePath,
+    saveFilePath,
+    uuid,
+    articleUrl,
+    articleTitle,
+    ignoreImg
+  } = params
 
   let apiUrl = `https://www.yuque.com/api/docs/${itemUrl}`
   const apiParams = {
@@ -84,21 +94,24 @@ async function downloadArticle(params: IDownloadArticleParams): Promise<boolean>
   })
 
   let mdData = response.data.sourcecode
-  try {
-    mdData = await mdImg.run(mdData, {
-      dist: savePath,
-      imgDir: `img/${uuid}`,
-      isIgnoreConsole: true
-    })
-  } catch(e) {
-    let errMessage = `download article image Error: ${e.message}`
-    if (e.error && e.url) {
-      errMessage = `download article image Error ${e.url}: ${e.error?.message}`
+  if (!ignoreImg) {
+    try {
+      mdData = await mdImg.run(mdData, {
+        dist: savePath,
+        imgDir: `img/${uuid}`,
+        isIgnoreConsole: true
+      })
+    } catch(e) {
+      let errMessage = `download article image Error: ${e.message}`
+      if (e.error && e.url) {
+        errMessage = `download article image Error ${e.url}: ${e.error?.message}`
+      }
+      throw new Error(errMessage)
     }
-    throw new Error(errMessage)
   }
 
   mdData = mdData.replace(/<br(\s?)\/>/gm, '\n')
+
   if (articleTitle) {
     mdData = `# ${articleTitle}\n<!--page header-->\n\n${mdData}\n\n`
   }
@@ -203,7 +216,8 @@ async function main(url: string, options: IOptions) {
           saveFilePath: `${bookPath}/${progressItem.path}`,
           uuid: item.uuid,
           articleUrl: `${articleUrlPrefix}/${item.url}`,
-          articleTitle: item.title
+          articleTitle: item.title,
+          ignoreImg: options.ignoreImg
         })
       } catch(e) {
         isSuccess = false
