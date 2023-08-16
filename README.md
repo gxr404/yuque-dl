@@ -28,3 +28,12 @@ $ yuque-dl --help
     -h, --help           Display this message
     -v, --version        Display version number
 ```
+
+## Example
+
+![demo](./assets/demo.gif)
+
+## Feature
+
+- [x] 支持中断继续
+- [x] 支持图片下载本地
