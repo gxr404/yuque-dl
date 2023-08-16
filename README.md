@@ -19,7 +19,7 @@ $ yuque-dl --help
     $ yuque-dl <url>
 
   Commands:
-    <url>  request url
+    <url> 语雀知识库url
 
   For more info, run any command with the `--help` flag:
     $ yuque-dl --help
@@ -29,6 +29,13 @@ $ yuque-dl --help
     -i, --ignoreImg      忽略图片不下载 (default: false)
     -h, --help           Display this message
     -v, --version        Display version number
+```
+
+### Start
+
+```bash
+# url 为对应需要的知识库地址
+yuque-dl "https://www.yuque.com/yuque/thyzgp"
 ```
 
 ## Example

@@ -1,7 +1,9 @@
 import fs from 'node:fs/promises'
+
 import progress from 'progress'
 
 import logger from './log'
+
 import type { KnowledgeBase } from './types/KnowledgeBaseResponse'
 
 export interface IProgressItem {

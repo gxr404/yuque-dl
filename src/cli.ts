@@ -1,8 +1,9 @@
 
 import { readFileSync } from 'node:fs'
 import { cac } from 'cac'
-import { main } from './index'
+
 import logger from './log'
+import { main } from './index'
 
 const cli = cac('yuque-dl')
 
@@ -18,7 +19,7 @@ const { version } = JSON.parse(
 )
 
 cli
-  .command('<url>', 'request url')
+  .command('<url>', '语雀知识库url')
   .option('-d, --distDir <dir>', '下载的目录 eg: -d download', {
     default: 'download',
   })

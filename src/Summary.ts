@@ -1,7 +1,8 @@
 import fs from 'node:fs/promises'
 
-import type { IProgressItem } from './ProgressBar'
 import logger from './log'
+
+import type { IProgressItem } from './ProgressBar'
 
 interface IGenSummaryFile {
   bookPath: string,

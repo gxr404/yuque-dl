@@ -1,6 +1,5 @@
 import randUserAgentLib from 'rand-user-agent'
 
-
 function randUserAgent({ browser = 'chrome', os = 'mac os', device = 'desktop' }) {
     device = device.toLowerCase()
     browser = browser.toLowerCase()

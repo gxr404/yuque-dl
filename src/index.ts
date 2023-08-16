@@ -1,16 +1,17 @@
-import fs from 'node:fs/promises'
+import { writeFile, mkdir } from 'node:fs/promises'
 
 import axios from 'axios'
-
-import logger from './log'
-import ProgressBar from './ProgressBar'
-import type { IProgressItem } from './ProgressBar'
-import type { IOptions } from './cli'
-import { randUserAgent } from './utils'
 import mdImg from 'pull-md-img'
+
+import ProgressBar from './ProgressBar'
+import Summary from './Summary'
+import logger from './log'
+import { randUserAgent } from './utils'
+
 import type { ArticleResponse } from './types/ArticleResponse'
 import type { KnowledgeBase } from './types/KnowledgeBaseResponse'
-import Summary from './Summary'
+import type { IProgressItem } from './ProgressBar'
+import type { IOptions } from './cli'
 
 interface IKnowledgeBaseInfo {
   bookId?: number
@@ -120,11 +121,17 @@ async function downloadArticle(params: IDownloadArticleParams): Promise<boolean>
   }
 
   try {
-    await fs.writeFile(saveFilePath, mdData)
+    await writeFile(saveFilePath, mdData)
     return true
   } catch(e) {
     throw new Error(`download article Error ${articleUrl}: ${e.message}`)
   }
+}
+
+function fixPath(dirPath: string) {
+  if (!dirPath) return ''
+  const dirNameReg = /[\\\/:\*\?"<>\|\n\r]/g
+  return dirPath.replace(dirNameReg, '_').replace(/\s/, '')
 }
 
 async function main(url: string, options: IOptions) {
@@ -132,15 +139,15 @@ async function main(url: string, options: IOptions) {
   if (!bookId) throw new Error('No found book id')
   if (!tocList || tocList.length === 0) throw new Error('No found toc list')
 
-  const bookPath = `${options.distDir}/${bookId}`
-  await fs.mkdir(bookPath, {recursive: true})
+  const bookPath = `${options.distDir}/${bookName ? fixPath(bookName) : bookId}`
+  await mkdir(bookPath, {recursive: true})
 
   const total = tocList.length
   const progressBar = new ProgressBar(bookPath, total)
   await progressBar.init()
 
   if (progressBar.curr === total) {
-    logger.info('√ 已完成')
+    logger.info(`√ 已完成: ${process.cwd()}/${bookPath}`)
     return
   }
 
@@ -164,14 +171,14 @@ async function main(url: string, options: IOptions) {
     if (typeof item.type !== 'string') continue
     if (uuidMap.get(item.uuid)) continue
     const itemType = item.type.toLocaleLowerCase()
-    const dirNameReg = /[\\\/:\*\?"<>\|\n\r]/g
+
     // 目录
     if (itemType === 'title' || item['child_uuid'] !== '') {
       let tempItem: KnowledgeBase.Toc | undefined = item
       let pathTitleList = []
       let pathIdList = []
       while (tempItem) {
-        pathTitleList.unshift(tempItem.title.replace(dirNameReg, '_').replace(/\s/, ''))
+        pathTitleList.unshift(fixPath(tempItem.title))
         pathIdList.unshift(tempItem.uuid)
         if (uuidMap.get(tempItem['parent_uuid'])) {
           tempItem = uuidMap.get(tempItem['parent_uuid'])!.toc
@@ -185,7 +192,7 @@ async function main(url: string, options: IOptions) {
         pathIdList,
         toc: item
       }
-      await fs.mkdir(`${bookPath}/${pathTitleList.join('/')}`, {recursive: true})
+      await mkdir(`${bookPath}/${pathTitleList.join('/')}`, {recursive: true})
       uuidMap.set(item.uuid, progressItem)
       progressBar.updateProgress(progressItem, true)
     } else if (item.url) {
@@ -198,7 +205,7 @@ async function main(url: string, options: IOptions) {
       if (uuidMap.get(item['parent_uuid'])) {
         preItem = uuidMap.get(item['parent_uuid'])!
       }
-      const fileName = item.title.replace(dirNameReg, '_').replace(/\s/, '')
+      const fileName = fixPath(item.title)
       const pathTitleList = [...preItem!.pathTitleList, `${fileName}.md`]
       const pathIdList = [...preItem!.pathIdList, item.uuid]
       const progressItem = {
@@ -253,7 +260,7 @@ async function main(url: string, options: IOptions) {
   logger.info('√ 生成目录 SUMMARY.md')
 
   if (progressBar.curr === total) {
-    logger.info('√ 已完成')
+    logger.info(`√ 已完成: ${process.cwd()}/${bookPath}`)
     return
   }
 
