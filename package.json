@@ -1,6 +1,6 @@
 {
   "name": "yuque-dl",
-  "version": "1.0.9",
+  "version": "1.0.10",
   "description": "yuque 知识库下载",
   "type": "module",
   "bin": {
@@ -19,7 +19,12 @@
     "type": "git",
     "url": "git+https://github.com/gxr404/yuque-dl.git"
   },
-  "keywords": ["yuque", "nodejs", "download","yuque-dl"],
+  "keywords": [
+    "yuque",
+    "nodejs",
+    "download",
+    "yuque-dl"
+  ],
   "author": "gxr404",
   "license": "ISC",
   "bugs": {
