@@ -5,8 +5,8 @@ import axios from 'axios'
 
 import config from './config'
 import logger from './log'
-import Progress from './Process'
-import type { IProcessItem } from './Process'
+import ProgressBar from './ProgressBar'
+import type { IProgressItem } from './ProgressBar'
 import type { IOptions } from './cli'
 import { randUserAgent } from './utils'
 import mdImg from 'pull-md-img'
@@ -20,7 +20,6 @@ interface IKnowledgeBaseInfo {
   bookDesc?: string
 }
 
-// SUMMARY.md
 function getKnowledgeBaseInfo(url: string): Promise<IKnowledgeBaseInfo> {
   return axios.get<string>(url, {
     headers: {
@@ -52,18 +51,18 @@ async function main(url: string, options: IOptions) {
   await fs.mkdir(bookPath, {recursive: true})
 
   const total = tocList.length
-  const progress = new Progress(bookPath, total)
-  await progress.init()
+  const progressBar = new ProgressBar(bookPath, total)
+  await progressBar.init()
 
-  if (progress.curr === total) {
+  if (progressBar.curr === total) {
     logger.info('√ 已完成')
     return
   }
 
-  const uuidMap = new Map<string, IProcessItem>()
+  const uuidMap = new Map<string, IProgressItem>()
   // 下载中断 重新获取下载进度数据
-  if (progress.isDownloadInterrupted) {
-    progress.processInfo.forEach(item => {
+  if (progressBar.isDownloadInterrupted) {
+    progressBar.progressInfo.forEach(item => {
       uuidMap.set(
         item.toc.uuid,
         item
@@ -103,10 +102,10 @@ async function main(url: string, options: IOptions) {
       }
       await fs.mkdir(`${bookPath}/${pathTitleList.join('/')}`, {recursive: true})
       uuidMap.set(item.uuid, progressItem)
-      progress.updateProgress(progressItem)
+      progressBar.updateProgress(progressItem)
     } else if (item.url) {
       totalArticleCount += 1
-      let preItem: Omit<IProcessItem, 'toc'> = {
+      let preItem: Omit<IProgressItem, 'toc'> = {
         path: '',
         pathTitleList: [],
         pathIdList: []
@@ -134,15 +133,16 @@ async function main(url: string, options: IOptions) {
         })
         if (isSuccess) {
           uuidMap.set(item.uuid, progressItem)
-          progress.updateProgress(progressItem)
+          progressBar.updateProgress(progressItem)
         } else {
           errArticleCount += 1
         }
     }
   }
 
-  await progress.completePromise
-  logger.info(`总数${totalArticleCount}篇，✕ 失败${errArticleCount}篇`)
+  await progressBar.completePromise
+
+  logger.info(`本次执行总数${totalArticleCount}篇，✕ 失败${errArticleCount}篇`)
   logger.info('生成目录 SUMMARY.md')
 
   await genSummaryFile({
@@ -151,7 +151,7 @@ async function main(url: string, options: IOptions) {
     bookDesc,
     uuidMap
   })
-  if (progress.curr === total) {
+  if (progressBar.curr === total) {
     logger.info('√ 已完成')
     return
   }
@@ -217,7 +217,7 @@ interface IGenSummaryFile {
   bookPath: string,
   bookName?: string,
   bookDesc?: string,
-  uuidMap: Map<string, IProcessItem>
+  uuidMap: Map<string, IProgressItem>
 }
 
 async function genSummaryFile(params: IGenSummaryFile) {
@@ -225,8 +225,8 @@ async function genSummaryFile(params: IGenSummaryFile) {
   const header = `# ${bookName}\n\n > ${bookDesc}\n\n`
   let mdContent = header
   const summary: SummaryItem[] = []
-  uuidMap.forEach(processItem => {
-    const toc = processItem.toc
+  uuidMap.forEach(progressItem => {
+    const toc = progressItem.toc
     const parentId = toc['parent_uuid']
     const findRes = findTree(summary, parentId)
     if (toc.type.toLocaleLowerCase() === 'title' || toc['child_uuid'] !=='') {
@@ -253,7 +253,7 @@ async function genSummaryFile(params: IGenSummaryFile) {
           id: toc.uuid,
           type: 'link',
           level: findRes.level + 1,
-          link: processItem.path,
+          link: progressItem.path,
           text: toc.title
         })
       } else {
@@ -261,7 +261,7 @@ async function genSummaryFile(params: IGenSummaryFile) {
           id: toc.uuid,
           type: 'link',
           text: toc.title,
-          link: processItem.path,
+          link: progressItem.path,
           level: 1
         })
       }

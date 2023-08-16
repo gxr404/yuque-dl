@@ -38,12 +38,3 @@ try {
   logger.error(err.message || 'unknown exception')
   process.exit(1)
 }
-
-// try {
-//   cli.parse(process.argv, { run: false })
-//   await cli.runMatchedCommand()
-// } catch (error) {
-//   logger.error(error.message || 'unknown exception')
-//   process.exit(1)
-
-// }

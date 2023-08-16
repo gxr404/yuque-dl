@@ -12,21 +12,21 @@
     "build:bundle": "rollup -c rollup.config.ts --configPlugin typescript",
     "build:types": "tsc --emitDeclarationOnly --outDir types -p tsconfig.base.json",
     "clean": "rm -rf dist types",
-    "release": "np"
+    "release": "run-s clean build np"
   },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/gxr404/yuque-dl.git"
   },
-  "keywords": [],
-  "author": "",
+  "keywords": ["yuque", "nodejs", "download","yuque-dl"],
+  "author": "gxr404",
   "license": "ISC",
   "bugs": {
     "url": "https://github.com/gxr404/yuque-dl/issues"
   },
   "homepage": "https://github.com/gxr404/yuque-dl#readme",
   "devDependencies": {
-    "@rollup/plugin-json": "^6.0.0",
+    "@rollup/plugin-terser": "^0.4.3",
     "@rollup/plugin-typescript": "^11.1.2",
     "@types/node": "^20.5.0",
     "@types/progress": "^2.0.5",

@@ -3,3 +3,7 @@ node_modules
 test
 temp
 .vscode
+.np-config.js
+.eslintrc.js
+.eslintignore
+.editorconfig

@@ -4,18 +4,18 @@ import progress from 'progress'
 import logger from './log'
 import type { KnowledgeBase } from './types/KnowledgeBaseResponse'
 
-export interface IProcessItem {
+export interface IProgressItem {
   path: string,
   toc: KnowledgeBase.Toc,
   pathIdList: string[],
   pathTitleList: string[]
 }
-export type IProcess = IProcessItem[]
+export type IProgress = IProgressItem[]
 
-export default class Progress {
+export default class ProgressBar {
   bookPath: string = ''
-  processFilePath: string = ''
-  processInfo: IProcess = []
+  progressFilePath: string = ''
+  progressInfo: IProgress = []
   curr: number = 0
   total: number = 0
   isDownloadInterrupted: boolean = false
@@ -24,13 +24,13 @@ export default class Progress {
 
   constructor (bookPath: string, total: number) {
     this.bookPath = bookPath
-    this.processFilePath = `${bookPath}/process.json`
+    this.progressFilePath = `${bookPath}/progress.json`
     this.total = total
   }
 
   async init() {
-    this.processInfo = await this.getProgress()
-    this.curr = this.processInfo.length
+    this.progressInfo = await this.getProgress()
+    this.curr = this.progressInfo.length
     let completeResolve: Function
     this.completePromise = new Promise(resolve => {
       completeResolve = resolve
@@ -51,28 +51,28 @@ export default class Progress {
 
   }
 
-  async getProgress(): Promise<IProcess> {
-    let processInfo = []
+  async getProgress(): Promise<IProgress> {
+    let progressInfo = []
     try {
-      const processInfoStr = await fs.readFile(this.processFilePath, {encoding: 'utf8'})
-      processInfo = JSON.parse(processInfoStr)
+      const progressInfoStr = await fs.readFile(this.progressFilePath, {encoding: 'utf8'})
+      progressInfo = JSON.parse(progressInfoStr)
     } catch (err) {
       if (err && err.code === 'ENOENT') {
         await fs.writeFile(
-          this.processFilePath,
-          JSON.stringify(processInfo),
+          this.progressFilePath,
+          JSON.stringify(progressInfo),
           {encoding: 'utf8'}
         )
       }
     }
-    return processInfo
+    return progressInfo
   }
 
-  async updateProgress(progressItem: IProcessItem) {
-    this.processInfo.push(progressItem)
+  async updateProgress(progressItem: IProgressItem) {
+    this.progressInfo.push(progressItem)
     await fs.writeFile(
-      this.processFilePath,
-      JSON.stringify(this.processInfo),
+      this.progressFilePath,
+      JSON.stringify(this.progressInfo),
       {encoding: 'utf8'}
     )
     this.curr = this.curr + 1
