@@ -34,6 +34,7 @@
   "devDependencies": {
     "@rollup/plugin-terser": "^0.4.3",
     "@rollup/plugin-typescript": "^11.1.2",
+    "@types/cli-progress": "^3.11.0",
     "@types/node": "^20.5.0",
     "@types/progress": "^2.0.5",
     "@typescript-eslint/eslint-plugin": "^6.3.0",
@@ -56,8 +57,9 @@
   "dependencies": {
     "axios": "^1.4.0",
     "cac": "^6.7.14",
+    "cli-progress": "^3.12.0",
     "log4js": "^6.9.1",
-    "progress": "^2.0.3",
+    "ora": "^7.0.1",
     "pull-md-img": "^0.0.22",
     "rand-user-agent": "1.0.109"
   },

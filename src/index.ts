@@ -2,6 +2,7 @@ import { writeFile, mkdir } from 'node:fs/promises'
 
 import axios from 'axios'
 import mdImg from 'pull-md-img'
+import ora from 'ora'
 
 import ProgressBar from './ProgressBar'
 import Summary from './Summary'
@@ -58,7 +59,7 @@ function getKnowledgeBaseInfo(url: string): Promise<IKnowledgeBaseInfo> {
 }
 
 /** 下载单篇文章 */
-async function downloadArticle(params: IDownloadArticleParams): Promise<boolean> {
+async function downloadArticle(params: IDownloadArticleParams, progressBar: ProgressBar): Promise<boolean> {
   const {
     bookId,
     itemUrl,
@@ -78,7 +79,6 @@ async function downloadArticle(params: IDownloadArticleParams): Promise<boolean>
   }
   const query = new URLSearchParams(apiParams).toString();
   apiUrl = `${apiUrl}?${query}`
-
   const response = await axios.get<ArticleResponse.RootObject>(apiUrl, {
     headers: {"user-agent": randUserAgent({browser: 'chrome', device: "desktop"})}
   }).then(({data, status}) => {
@@ -96,6 +96,12 @@ async function downloadArticle(params: IDownloadArticleParams): Promise<boolean>
 
   let mdData = response.data.sourcecode
   if (!ignoreImg) {
+    progressBar.pause()
+    console.log('')
+    const spinnerDiscardingStdin = ora({
+      text: `下载 "${articleTitle}" 的图片中...`
+    })
+    spinnerDiscardingStdin.start();
     try {
       mdData = await mdImg.run(mdData, {
         dist: savePath,
@@ -108,6 +114,9 @@ async function downloadArticle(params: IDownloadArticleParams): Promise<boolean>
         errMessage = `download article image Error ${e.url}: ${e.error?.message}`
       }
       throw new Error(errMessage)
+    } finally {
+      spinnerDiscardingStdin.stop()
+      progressBar.continue()
     }
   }
 
@@ -147,10 +156,10 @@ async function main(url: string, options: IOptions) {
   await progressBar.init()
 
   if (progressBar.curr === total) {
+    if (progressBar.bar) progressBar.bar.stop()
     logger.info(`√ 已完成: ${process.cwd()}/${bookPath}`)
     return
   }
-
   const uuidMap = new Map<string, IProgressItem>()
   // 下载中断 重新获取下载进度数据
   if (progressBar.isDownloadInterrupted) {
@@ -165,15 +174,17 @@ async function main(url: string, options: IOptions) {
   const articleUrlPrefix = url.replace(new RegExp(`(.*?/${bookSlug}).*`), '$1')
   let errArticleCount = 0
   let totalArticleCount = 0
+  let warnArticleCount = 0
   let errArticleInfo = []
+  let warnArticleInfo = []
   for (let i = 0; i < total; i++) {
     const item = tocList[i]
     if (typeof item.type !== 'string') continue
     if (uuidMap.get(item.uuid)) continue
-    const itemType = item.type.toLocaleLowerCase()
 
-    // 目录
-    if (itemType === 'title' || item['child_uuid'] !== '') {
+    const itemType = item.type.toLocaleLowerCase()
+    // title目录类型/link外链类型
+    if (itemType === 'title' || item['child_uuid'] !== '' || itemType === 'link') {
       let tempItem: KnowledgeBase.Toc | undefined = item
       let pathTitleList = []
       let pathIdList = []
@@ -192,9 +203,15 @@ async function main(url: string, options: IOptions) {
         pathIdList,
         toc: item
       }
-      await mkdir(`${bookPath}/${pathTitleList.join('/')}`, {recursive: true})
+      // 外链类型不创建目录
+      if (itemType === 'link') {
+        warnArticleCount += 1
+        warnArticleInfo.push(progressItem)
+      } else {
+        await mkdir(`${bookPath}/${pathTitleList.join('/')}`, {recursive: true})
+      }
       uuidMap.set(item.uuid, progressItem)
-      progressBar.updateProgress(progressItem, true)
+      await progressBar.updateProgress(progressItem, itemType !== 'link')
     } else if (item.url) {
       totalArticleCount += 1
       let preItem: Omit<IProgressItem, 'toc'> = {
@@ -225,28 +242,40 @@ async function main(url: string, options: IOptions) {
           articleUrl: `${articleUrlPrefix}/${item.url}`,
           articleTitle: item.title,
           ignoreImg: options.ignoreImg
-        })
+        }, progressBar)
       } catch(e) {
         isSuccess = false
         errArticleCount += 1
-        errArticleInfo.push(progressItem)
-        progressBar.bar?.interrupt(`✕ ${e.message}`)
+        errArticleInfo.push({
+          errItem: progressItem,
+          errMsg: e.message,
+          err: e
+        })
+
       }
       uuidMap.set(item.uuid, progressItem)
-      progressBar.updateProgress(progressItem, isSuccess)
+      await progressBar.updateProgress(progressItem, isSuccess)
     }
   }
 
-  // 等待进度条打印完毕
-  await progressBar.completePromise?.finally(() => console.log(''))
+  // TODO
+  // progressBar.bar?.stop()
+
+  if (warnArticleCount > 0) {
+    logger.warn('该知识库存在以下外链文章')
+    for (let i = 0; i < warnArticleInfo.length; i++) {
+      logger.warn(`———— ✕ ${warnArticleInfo[i].path} ${warnArticleInfo[i].toc.url}`)
+    }
+  }
 
   // 文章下载中失败打印
   if (errArticleCount > 0) {
-    logger.info(`本次执行总数${totalArticleCount}篇，✕ 失败${errArticleCount}篇`)
+    logger.error(`本次执行总数${totalArticleCount}篇，✕ 失败${errArticleCount}篇`)
     for (let i = 0; i < errArticleInfo.length; i++) {
-      logger.error(`✕ ${errArticleInfo[i].path}`)
+      logger.error(`${errArticleInfo[i].errItem.path}`)
+      logger.error(`———— ✕ ${errArticleInfo[i].errMsg}`)
     }
-    logger.info(`o(╥﹏╥)o 由于网络波动或链接失效以上下载失败，可重新执行命令重试(不会影响已下载成功的数据)~~`)
+    logger.error(`o(╥﹏╥)o 由于网络波动或链接失效以上下载失败，可重新执行命令重试(不会影响已下载成功的数据)~~`)
   }
 
   // 生成目录
@@ -257,10 +286,12 @@ async function main(url: string, options: IOptions) {
     uuidMap
   })
   await summary.genFile()
-  logger.info('√ 生成目录 SUMMARY.md')
+
+  const userPath = process.cwd()
+  logger.info(`√ 生成目录 ${userPath}/${bookPath}/SUMMARY.md`)
 
   if (progressBar.curr === total) {
-    logger.info(`√ 已完成: ${process.cwd()}/${bookPath}`)
+    logger.info(`√ 已完成: ${userPath}/${bookPath}`)
     return
   }
 

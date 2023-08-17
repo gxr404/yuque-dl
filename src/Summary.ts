@@ -43,7 +43,8 @@ export default class Summary {
         level: 1,
         type: ''
       }
-      if (toc.type.toLocaleLowerCase() === 'title' || toc['child_uuid'] !=='') {
+      const tocType = toc.type.toLocaleLowerCase()
+      if (tocType === 'title' || toc['child_uuid'] !=='') {
         item.type = 'title'
 
         if (typeof findRes !== 'boolean') {
@@ -56,7 +57,8 @@ export default class Summary {
         }
       } else {
         item.type = 'link'
-        item.link = progressItem.path
+        // 外链类型直接 链接到url
+        item.link = tocType=== 'link' ? progressItem.toc.url : progressItem.path
         if (typeof findRes !== 'boolean') {
           if (!Array.isArray(findRes.children)) findRes.children = []
           item.level = findRes.level + 1,
