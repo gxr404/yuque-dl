@@ -232,6 +232,7 @@ async function main(url: string, options: IOptions) {
         toc: item
       }
       let isSuccess = true
+      const articleUrl = `${articleUrlPrefix}/${item.url}`
       try {
         await downloadArticle({
           bookId,
@@ -239,7 +240,7 @@ async function main(url: string, options: IOptions) {
           savePath: `${bookPath}/${preItem!.path}`,
           saveFilePath: `${bookPath}/${progressItem.path}`,
           uuid: item.uuid,
-          articleUrl: `${articleUrlPrefix}/${item.url}`,
+          articleUrl,
           articleTitle: item.title,
           ignoreImg: options.ignoreImg
         }, progressBar)
@@ -247,6 +248,7 @@ async function main(url: string, options: IOptions) {
         isSuccess = false
         errArticleCount += 1
         errArticleInfo.push({
+          articleUrl,
           errItem: progressItem,
           errMsg: e.message,
           err: e
@@ -272,8 +274,9 @@ async function main(url: string, options: IOptions) {
   if (errArticleCount > 0) {
     logger.error(`本次执行总数${totalArticleCount}篇，✕ 失败${errArticleCount}篇`)
     for (let i = 0; i < errArticleInfo.length; i++) {
-      logger.error(`${errArticleInfo[i].errItem.path}`)
-      logger.error(`———— ✕ ${errArticleInfo[i].errMsg}`)
+      const errInfo = errArticleInfo[i]
+      logger.error(`${errInfo.errItem.path} ———— ${errInfo.articleUrl}`)
+      logger.error(`———— ✕ ${errInfo.errMsg}`)
     }
     logger.error(`o(╥﹏╥)o 由于网络波动或链接失效以上下载失败，可重新执行命令重试(不会影响已下载成功的数据)~~`)
   }
