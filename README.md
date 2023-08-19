@@ -19,7 +19,7 @@ $ yuque-dl --help
     $ yuque-dl <url>
 
   Commands:
-    <url> 语雀知识库url
+    <url>  语雀知识库url
 
   For more info, run any command with the `--help` flag:
     $ yuque-dl --help
@@ -27,6 +27,7 @@ $ yuque-dl --help
   Options:
     -d, --distDir <dir>  下载的目录 eg: -d download (default: download)
     -i, --ignoreImg      忽略图片不下载 (default: false)
+    -t, --token <token>  语雀的cookie "_yuque_session (default: )
     -h, --help           Display this message
     -v, --version        Display version number
 ```
@@ -42,10 +43,21 @@ yuque-dl "https://www.yuque.com/yuque/thyzgp"
 
 ![demo](./assets/demo.gif)
 
+## 私有知识库
+
+通过别人私有知识库 分享的链接，需使用`-t`添加token才能下载
+
+```bash
+yuque-dl "https://www.yuque.com/yuque/thyzgp" -t "abcd..."
+```
+
+[token的获取请看](./GET_TOEKN.md)
+
 ## Feature
 
 - [x] 支持下载中断继续
 - [x] 支持图片下载本地
+- [x] 支持下载分享私有的知识库
 
 ## Tips
 

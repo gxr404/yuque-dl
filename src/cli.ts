@@ -9,7 +9,8 @@ const cli = cac('yuque-dl')
 
 export interface IOptions {
   distDir: string,
-  ignoreImg: boolean
+  ignoreImg: boolean,
+  token: string
 }
 
 // 不能直接使用 import {version} from '../package.json'
@@ -26,6 +27,7 @@ cli
   .option('-i, --ignoreImg', '忽略图片不下载', {
     default: false
   })
+  .option('-t, --token <token>', '语雀的cookie "_yuque_session"')
   .action(async (url, options: IOptions) => {
     try {
       await main(url, options)

@@ -31,14 +31,23 @@ interface IDownloadArticleParams {
   articleUrl: string,
   ignoreImg: boolean
 }
+interface IReqHeader {
+  [key: string]: string
+}
+
+function getHeaders(token?: string) :IReqHeader {
+  const headers: IReqHeader = {
+    "user-agent": randUserAgent({browser: 'chrome', device: "desktop"})
+  }
+  if (token) headers.cookie = `_yuque_session=${token}`
+  return headers
+}
 
 /** 获取知识库数据信息 */
-function getKnowledgeBaseInfo(url: string): Promise<IKnowledgeBaseInfo> {
+function getKnowledgeBaseInfo(url: string, token?: string): Promise<IKnowledgeBaseInfo> {
   const knowledgeBaseReg = /decodeURIComponent\(\"(.+)\"\)\);/m
   return axios.get<string>(url, {
-    headers: {
-      "user-agent": randUserAgent({browser: 'chrome', device: "desktop"})
-    }
+    headers: getHeaders(token)
   }).then(({data = '', status}) => {
     if (status === 200) return data
     return ''
@@ -59,7 +68,7 @@ function getKnowledgeBaseInfo(url: string): Promise<IKnowledgeBaseInfo> {
 }
 
 /** 下载单篇文章 */
-async function downloadArticle(params: IDownloadArticleParams, progressBar: ProgressBar): Promise<boolean> {
+async function downloadArticle(params: IDownloadArticleParams, progressBar: ProgressBar, token?: string): Promise<boolean> {
   const {
     bookId,
     itemUrl,
@@ -80,7 +89,7 @@ async function downloadArticle(params: IDownloadArticleParams, progressBar: Prog
   const query = new URLSearchParams(apiParams).toString();
   apiUrl = `${apiUrl}?${query}`
   const response = await axios.get<ArticleResponse.RootObject>(apiUrl, {
-    headers: {"user-agent": randUserAgent({browser: 'chrome', device: "desktop"})}
+    headers: getHeaders(token),
   }).then(({data, status}) => {
     if (status === 200) {
       const apiRes = data
@@ -144,7 +153,7 @@ function fixPath(dirPath: string) {
 }
 
 async function main(url: string, options: IOptions) {
-  const {bookId, tocList, bookName, bookDesc, bookSlug} = await getKnowledgeBaseInfo(url)
+  const {bookId, tocList, bookName, bookDesc, bookSlug} = await getKnowledgeBaseInfo(url, options.token)
   if (!bookId) throw new Error('No found book id')
   if (!tocList || tocList.length === 0) throw new Error('No found toc list')
 
@@ -243,7 +252,7 @@ async function main(url: string, options: IOptions) {
           articleUrl,
           articleTitle: item.title,
           ignoreImg: options.ignoreImg
-        }, progressBar)
+        }, progressBar, options.token)
       } catch(e) {
         isSuccess = false
         errArticleCount += 1
