@@ -304,9 +304,8 @@ async function main(url: string, options: IOptions) {
 
   if (progressBar.curr === total) {
     logger.info(`√ 已完成: ${userPath}/${bookPath}`)
-    return
   }
-
+  process.exit(0)
 }
 
 export {
