@@ -35,6 +35,35 @@ interface IReqHeader {
   [key: string]: string
 }
 
+/** 语雀档类型 */
+enum ARTICLE_CONTENT_TYPE {
+  /** 画板 */
+  BOARD = 'board',
+  /** 数据表 */
+  TABLE = 'table',
+  /** 表格 */
+  SHEET = 'sheet',
+  /** 文档 */
+  DOC = 'doc'
+}
+
+const articleContentMap = new Map<ARTICLE_CONTENT_TYPE, string>([
+  [ARTICLE_CONTENT_TYPE.BOARD, '画板类型'],
+  [ARTICLE_CONTENT_TYPE.TABLE, '数据表类型'],
+  [ARTICLE_CONTENT_TYPE.SHEET, '表格类型'],
+  [ARTICLE_CONTENT_TYPE.DOC, '文档类型'],
+])
+
+/** 语雀toc菜单类型 */
+enum ARTICLE_TOC_TYPE {
+  // title目录类型
+  TITLE = 'title',
+  // link外链类型
+  LINK = 'link',
+  // 内部文档
+  DOC = 'doc'
+}
+
 function getHeaders(token?: string) :IReqHeader {
   const headers: IReqHeader = {
     "user-agent": randUserAgent({browser: 'chrome', device: "desktop"})
@@ -45,14 +74,14 @@ function getHeaders(token?: string) :IReqHeader {
 
 /** 获取知识库数据信息 */
 function getKnowledgeBaseInfo(url: string, token?: string): Promise<IKnowledgeBaseInfo> {
-  const knowledgeBaseReg = /decodeURIComponent\(\"(.+)\"\)\);/m
+  const knowledgeBaseReg = /decodeURIComponent\("(.+)"\)\);/m
   return axios.get<string>(url, {
     headers: getHeaders(token)
   }).then(({data = '', status}) => {
     if (status === 200) return data
     return ''
   }).then(html => {
-    const data = html.match(knowledgeBaseReg) || ''
+    const data = knowledgeBaseReg.exec(html) ?? ''
     if (!data[1]) return {}
     const jsonData: KnowledgeBase.Response = JSON.parse(decodeURIComponent(data[1]))
     if (!jsonData.book) return {}
@@ -93,14 +122,21 @@ async function downloadArticle(params: IDownloadArticleParams, progressBar: Prog
   }).then(({data, status}) => {
     if (status === 200) {
       const apiRes = data
-      if (!apiRes || !apiRes.data || !apiRes.data.sourcecode) {
+      const contentType = apiRes?.data?.type?.toLocaleLowerCase() as ARTICLE_CONTENT_TYPE
+      // 暂时不支持的文档类型
+      if ([
+        ARTICLE_CONTENT_TYPE.BOARD,
+        ARTICLE_CONTENT_TYPE.SHEET,
+        ARTICLE_CONTENT_TYPE.TABLE
+      ].includes(contentType)) {
+        const notSupportType = articleContentMap.get(contentType)
+        throw new Error(`download article Error: 暂不支持“${notSupportType}”的文档`)
+      } else if (!(apiRes?.data?.sourcecode)) {
         throw new Error(`download article Error: ${apiUrl}`)
       }
       return apiRes
     }
     throw new Error(`download article Error: ${apiUrl} http status ${status}`)
-  }).catch(e => {
-    throw new Error(`download article Error: ${apiUrl} ${e.message}`)
   })
 
   let mdData = response.data.sourcecode
@@ -148,7 +184,7 @@ async function downloadArticle(params: IDownloadArticleParams, progressBar: Prog
 
 function fixPath(dirPath: string) {
   if (!dirPath) return ''
-  const dirNameReg = /[\\\/:\*\?"<>\|\n\r]/g
+  const dirNameReg = /[\\/:*?"<>|\n\r]/g
   return dirPath.replace(dirNameReg, '_').replace(/\s/, '')
 }
 
@@ -193,7 +229,7 @@ async function main(url: string, options: IOptions) {
 
     const itemType = item.type.toLocaleLowerCase()
     // title目录类型/link外链类型
-    if (itemType === 'title' || item['child_uuid'] !== '' || itemType === 'link') {
+    if (itemType === ARTICLE_TOC_TYPE.TITLE || item['child_uuid'] !== '' || itemType === ARTICLE_TOC_TYPE.LINK) {
       let tempItem: KnowledgeBase.Toc | undefined = item
       let pathTitleList = []
       let pathIdList = []
@@ -213,14 +249,14 @@ async function main(url: string, options: IOptions) {
         toc: item
       }
       // 外链类型不创建目录
-      if (itemType === 'link') {
+      if (itemType === ARTICLE_TOC_TYPE.LINK) {
         warnArticleCount += 1
         warnArticleInfo.push(progressItem)
       } else {
         await mkdir(`${bookPath}/${pathTitleList.join('/')}`, {recursive: true})
       }
       uuidMap.set(item.uuid, progressItem)
-      await progressBar.updateProgress(progressItem, itemType !== 'link')
+      await progressBar.updateProgress(progressItem, itemType !== ARTICLE_TOC_TYPE.LINK)
     } else if (item.url) {
       totalArticleCount += 1
       let preItem: Omit<IProgressItem, 'toc'> = {
@@ -232,8 +268,8 @@ async function main(url: string, options: IOptions) {
         preItem = uuidMap.get(item['parent_uuid'])!
       }
       const fileName = fixPath(item.title)
-      const pathTitleList = [...preItem!.pathTitleList, `${fileName}.md`]
-      const pathIdList = [...preItem!.pathIdList, item.uuid]
+      const pathTitleList = [...preItem.pathTitleList, `${fileName}.md`]
+      const pathIdList = [...preItem.pathIdList, item.uuid]
       const progressItem = {
         path: pathTitleList.join('/'),
         pathTitleList,
@@ -246,7 +282,7 @@ async function main(url: string, options: IOptions) {
         await downloadArticle({
           bookId,
           itemUrl: item.url,
-          savePath: `${bookPath}/${preItem!.path}`,
+          savePath: `${bookPath}/${preItem.path}`,
           saveFilePath: `${bookPath}/${progressItem.path}`,
           uuid: item.uuid,
           articleUrl,
@@ -274,16 +310,15 @@ async function main(url: string, options: IOptions) {
 
   if (warnArticleCount > 0) {
     logger.warn('该知识库存在以下外链文章')
-    for (let i = 0; i < warnArticleInfo.length; i++) {
-      logger.warn(`———— ✕ ${warnArticleInfo[i].path} ${warnArticleInfo[i].toc.url}`)
+    for (const warnInfo of warnArticleInfo) {
+      logger.warn(`———— ✕ ${warnInfo.path} ${warnInfo.toc.url}`)
     }
   }
 
   // 文章下载中失败打印
   if (errArticleCount > 0) {
     logger.error(`本次执行总数${totalArticleCount}篇，✕ 失败${errArticleCount}篇`)
-    for (let i = 0; i < errArticleInfo.length; i++) {
-      const errInfo = errArticleInfo[i]
+    for (const errInfo of errArticleInfo) {
       logger.error(`${errInfo.errItem.path} ———— ${errInfo.articleUrl}`)
       logger.error(`———— ✕ ${errInfo.errMsg}`)
     }
