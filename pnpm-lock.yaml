@@ -21,8 +21,8 @@ dependencies:
     specifier: ^7.0.1
     version: 7.0.1
   pull-md-img:
-    specifier: ^0.0.22
-    version: 0.0.22
+    specifier: ^0.0.24
+    version: 0.0.24
   rand-user-agent:
     specifier: 1.0.109
     version: 1.0.109
@@ -4719,8 +4719,8 @@ packages:
     resolution: {integrity: sha512-D+zkORCbA9f1tdWRK0RaCR3GPv50cMxcrz4X8k5LTSUD1Dkw47mKJEZQNunItRTkWwgtaUSo1RVFRIG9ZXiFYg==}
     dev: false
 
-  /pull-md-img@0.0.22:
-    resolution: {integrity: sha512-XFGjlJLH4z9a2jYIYcZCV4Ef84JMF0bg+fhelr+OIZ4Il/nhUU/MIaLl0cSFptw10fa3rMD7yCJeb67xFWbhDQ==}
+  /pull-md-img@0.0.24:
+    resolution: {integrity: sha512-otmA7knc9xEP0nlHjMfIK6rSaTwVGrTSIjCyDjHz2CLRL4LFcleNpOi8QXslkPXsd86aBcGvDxFD8u9K46MAeg==}
     hasBin: true
     dependencies:
       commander: 8.3.0

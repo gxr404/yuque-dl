@@ -150,7 +150,7 @@ async function downloadArticle(params: IDownloadArticleParams, progressBar: Prog
     try {
       mdData = await mdImg.run(mdData, {
         dist: savePath,
-        imgDir: `img/${uuid}`,
+        imgDir: `./img/${uuid}`,
         isIgnoreConsole: true
       })
     } catch(e) {
