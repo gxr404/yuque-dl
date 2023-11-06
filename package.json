@@ -60,7 +60,7 @@
     "cli-progress": "^3.12.0",
     "log4js": "^6.9.1",
     "ora": "^7.0.1",
-    "pull-md-img": "^0.0.24",
+    "pull-md-img": "^0.0.25",
     "rand-user-agent": "1.0.109"
   },
   "engines": {

@@ -99,7 +99,7 @@ async function downloadArticle(params: IDownloadArticleParams, progressBar: Prog
 function fixPath(dirPath: string) {
   if (!dirPath) return ''
   const dirNameReg = /[\\/:*?"<>|\n\r]/g
-  return dirPath.replace(dirNameReg, '_').replace(/\s/, '')
+  return dirPath.replace(dirNameReg, '_').replace(/\s/g, '')
 }
 
 interface IDownloadArticleListParams {
