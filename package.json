@@ -13,7 +13,8 @@
     "build:types": "tsc --emitDeclarationOnly --outDir types -p tsconfig.base.json",
     "clean": "rm -rf dist types",
     "np": "np",
-    "release": "run-s clean build np"
+    "release": "run-s clean build np",
+    "eslintLog": "eslint . > eslint.log"
   },
   "repository": {
     "type": "git",

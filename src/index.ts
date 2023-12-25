@@ -60,7 +60,7 @@ async function downloadArticle(params: IDownloadArticleParams, progressBar: Prog
     const spinnerDiscardingStdin = ora({
       text: `下载 "${articleTitle}" 的图片中...`
     })
-    spinnerDiscardingStdin.start();
+    spinnerDiscardingStdin.start()
     try {
       mdData = await mdImg.run(mdData, {
         dist: savePath,
@@ -126,8 +126,8 @@ async function downloadArticleList(params: IDownloadArticleListParams) {
   let errArticleCount = 0
   let totalArticleCount = 0
   let warnArticleCount = 0
-  let errArticleInfo = []
-  let warnArticleInfo = []
+  const errArticleInfo = []
+  const warnArticleInfo = []
   for (let i = 0; i < total; i++) {
     const item = tocList[i]
     if (typeof item.type !== 'string') continue
@@ -140,8 +140,8 @@ async function downloadArticleList(params: IDownloadArticleListParams) {
       || itemType === ARTICLE_TOC_TYPE.LINK
     ) {
       let tempItem: KnowledgeBase.Toc | undefined = item
-      let pathTitleList = []
-      let pathIdList = []
+      const pathTitleList = []
+      const pathIdList = []
       while (tempItem) {
         pathTitleList.unshift(fixPath(tempItem.title))
         pathIdList.unshift(tempItem.uuid)

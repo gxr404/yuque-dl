@@ -35,7 +35,7 @@ export default class Summary {
       const toc = progressItem.toc
       const parentId = toc['parent_uuid']
       const findRes = this.findTree(summary, parentId)
-      const dirNameReg = /[\\\/:\*\?"<>\|\n\r]/g
+      const dirNameReg = /[\\/:*?"<>|\n\r]/g
       const tocText = toc.title.replace(dirNameReg, '_').replace(/\s/, '')
       const item: SummaryItem = {
         text: tocText,
@@ -49,8 +49,8 @@ export default class Summary {
 
         if (typeof findRes !== 'boolean') {
           if (!Array.isArray(findRes.children)) findRes.children = []
-          item.level = findRes.level + 1,
-          findRes.children!.push(item)
+          item.level = findRes.level + 1
+          findRes.children.push(item)
         } else {
           item.level = 1
           summary.push(item)
@@ -61,8 +61,8 @@ export default class Summary {
         item.link = tocType=== 'link' ? progressItem.toc.url : progressItem.path
         if (typeof findRes !== 'boolean') {
           if (!Array.isArray(findRes.children)) findRes.children = []
-          item.level = findRes.level + 1,
-          findRes.children!.push(item)
+          item.level = findRes.level + 1
+          findRes.children.push(item)
         } else {
           item.level = 1
           summary.push(item)
@@ -70,7 +70,7 @@ export default class Summary {
       }
     })
 
-    let summaryContent = this.genSummaryContent(summary, '')
+    const summaryContent = this.genSummaryContent(summary, '')
     mdContent += summaryContent
     try {
       await fs.writeFile(`${bookPath}/SUMMARY.md`, mdContent)
@@ -81,8 +81,7 @@ export default class Summary {
   }
 
   genSummaryContent(summary: SummaryItem[], summaryContent: string): string {
-    for (let i = 0; i < summary.length; i++) {
-      const item = summary[i]
+    for (const item of summary) {
       if (item.type === 'title')  {
         summaryContent += `\n${''.padStart(item.level + 1, '#')} ${item.text}\n\n`
       } else if (item.type === 'link') {
@@ -108,9 +107,9 @@ export default class Summary {
   }
   findTree(tree: SummaryItem[], id: string): SummaryItem | boolean {
     if (!id) return false
-    for (let i = 0; i< tree.length; i++) {
-        const findRes = this.findIdItem(tree[i], id)
-        if (findRes) return findRes
+    for (const item of tree) {
+      const findRes = this.findIdItem(item, id)
+      if (findRes) return findRes
     }
     return false
   }

@@ -43,7 +43,7 @@ export default class ProgressBar {
     this.bar = new cliProgress.SingleBar({
       format: 'Download [{bar}] {percentage}% | {value}/{total}',
       // hideCursor: true
-    }, cliProgress.Presets.legacy);
+    }, cliProgress.Presets.legacy)
     this.bar.start(this.total, this.curr)
   }
 
@@ -97,7 +97,7 @@ export default class ProgressBar {
     if (line <= 0) return
     process.stderr.cursorTo(0)
     for (let i = 0; i< line;i++){
-      process.stderr.moveCursor(0, -1);
+      process.stderr.moveCursor(0, -1)
       process.stderr.clearLine(1)
     }
   }

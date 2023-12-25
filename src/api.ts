@@ -72,7 +72,7 @@ export const getDocsMdData: TGetMdData = (params) => {
     'merge_dynamic_data': String(false),
     mode: 'markdown'
   }
-  const query = new URLSearchParams(queryParams).toString();
+  const query = new URLSearchParams(queryParams).toString()
   apiUrl = `${apiUrl}?${query}`
   return axios.get<ArticleResponse.RootObject>(apiUrl, {
     headers: getHeaders(token),
