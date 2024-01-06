@@ -95,6 +95,7 @@ export default class ProgressBar {
   // 清理n行终端显示
   clearLine(line: number) {
     if (line <= 0) return
+    if (typeof process?.stderr?.cursorTo !== 'function') return
     process.stderr.cursorTo(0)
     for (let i = 0; i< line;i++){
       process.stderr.moveCursor(0, -1)
