@@ -11,29 +11,30 @@ interface IKnowledgeBaseInfo {
   tocList?: KnowledgeBase.Toc[],
   bookName?: string,
   bookDesc?: string
+  host?: string,
 }
 
 interface IReqHeader {
   [key: string]: string
 }
 
-function getHeaders(token?: string) :IReqHeader {
+function getHeaders({key, token}: {key?:string, token?: string}) :IReqHeader {
   const headers: IReqHeader = {
     "user-agent": randUserAgent({
       browser: 'chrome',
       device: "desktop"
     })
   }
-  if (token) headers.cookie = `_yuque_session=${token}`
+  if (token) headers.cookie = `${key}=${token};`
   return headers
 }
 
-type TGetKnowledgeBaseInfo = (url: string, token?: string) => Promise<IKnowledgeBaseInfo>
+type TGetKnowledgeBaseInfo = (url: string, {key, token}:{key?:string, token?: string}) => Promise<IKnowledgeBaseInfo>
 /** 获取知识库数据信息 */
-export const getKnowledgeBaseInfo: TGetKnowledgeBaseInfo = (url, token) => {
+export const getKnowledgeBaseInfo: TGetKnowledgeBaseInfo = (url, {key, token}) => {
   const knowledgeBaseReg = /decodeURIComponent\("(.+)"\)\);/m
   return axios.get<string>(url, {
-    headers: getHeaders(token)
+    headers: getHeaders({key, token})
   }).then(({data = '', status}) => {
     if (status === 200) return data
     return ''
@@ -48,6 +49,7 @@ export const getKnowledgeBaseInfo: TGetKnowledgeBaseInfo = (url, token) => {
       tocList: jsonData.book.toc || [],
       bookName: jsonData.book.name || '',
       bookDesc: jsonData.book.description || '',
+      host: jsonData.space?.host || 'https://www.yuque.com',
     }
     return info
   })
@@ -56,7 +58,9 @@ export const getKnowledgeBaseInfo: TGetKnowledgeBaseInfo = (url, token) => {
 interface GetMdDataParams {
   articleUrl: string,
   bookId: number,
-  token?: string
+  token?: string,
+  host?: string
+  key?: string
 }
 interface IGetDocsMdDataRes {
   apiUrl: string,
@@ -65,8 +69,8 @@ interface IGetDocsMdDataRes {
 }
 type TGetMdData = (params: GetMdDataParams) => Promise<IGetDocsMdDataRes>
 export const getDocsMdData: TGetMdData = (params) => {
-  const { articleUrl, bookId, token } = params
-  let apiUrl = `https://www.yuque.com/api/docs/${articleUrl}`
+  const { articleUrl, bookId, token, key = "_yuque_session", host = 'www.yuque.com' } = params
+  let apiUrl = `${host}/api/docs/${articleUrl}`
   const queryParams = {
     'book_id': String(bookId),
     'merge_dynamic_data': String(false),
@@ -75,7 +79,7 @@ export const getDocsMdData: TGetMdData = (params) => {
   const query = new URLSearchParams(queryParams).toString()
   apiUrl = `${apiUrl}?${query}`
   return axios.get<ArticleResponse.RootObject>(apiUrl, {
-    headers: getHeaders(token),
+    headers: getHeaders({token, key}),
   }).then(({data, status}) => {
     const res = {
       apiUrl,

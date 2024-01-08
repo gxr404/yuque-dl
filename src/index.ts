@@ -20,10 +20,11 @@ interface IDownloadArticleParams {
   articleTitle: string,
   articleUrl: string,
   ignoreImg: boolean
+  host?: string
 }
 
 /** 下载单篇文章 */
-async function downloadArticle(params: IDownloadArticleParams, progressBar: ProgressBar, token?: string): Promise<boolean> {
+async function downloadArticle(params: IDownloadArticleParams, progressBar: ProgressBar, token: string, key?: string): Promise<boolean> {
   const {
     bookId,
     itemUrl,
@@ -32,14 +33,17 @@ async function downloadArticle(params: IDownloadArticleParams, progressBar: Prog
     uuid,
     articleUrl,
     articleTitle,
-    ignoreImg
+    ignoreImg,
+    host,
   } = params
-
   const { httpStatus, apiUrl, response} = await getDocsMdData({
     articleUrl: itemUrl,
     bookId,
-    token
+    token,
+    host,
+    key,
   })
+
   const contentType = response?.data?.type?.toLocaleLowerCase() as ARTICLE_CONTENT_TYPE
   // 暂时不支持的文档类型
   if ([
@@ -110,6 +114,7 @@ interface IDownloadArticleListParams {
   bookPath: string,
   bookId: number,
   progressBar: ProgressBar,
+  host?: string
   options: IOptions
 }
 async function downloadArticleList(params: IDownloadArticleListParams) {
@@ -121,6 +126,7 @@ async function downloadArticleList(params: IDownloadArticleListParams) {
     bookPath,
     bookId,
     progressBar,
+    host,
     options
   } = params
   let errArticleCount = 0
@@ -196,8 +202,9 @@ async function downloadArticleList(params: IDownloadArticleListParams) {
           uuid: item.uuid,
           articleUrl,
           articleTitle: item.title,
-          ignoreImg: options.ignoreImg
-        }, progressBar, options.token)
+          ignoreImg: options.ignoreImg,
+          host,
+        }, progressBar, options.token, options.key)
       } catch(e) {
         isSuccess = false
         errArticleCount += 1
@@ -239,8 +246,9 @@ async function main(url: string, options: IOptions) {
     tocList,
     bookName,
     bookDesc,
-    bookSlug
-  } = await getKnowledgeBaseInfo(url, options.token)
+    bookSlug,
+    host,
+  } = await getKnowledgeBaseInfo(url, {token: options.token, key: options.key})
   if (!bookId) throw new Error('No found book id')
   if (!tocList || tocList.length === 0) throw new Error('No found toc list')
 
@@ -276,6 +284,7 @@ async function main(url: string, options: IOptions) {
     bookPath,
     bookId,
     progressBar,
+    host,
     options
   })
 
