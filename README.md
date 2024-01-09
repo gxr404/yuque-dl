@@ -2,7 +2,7 @@
 
 语雀知识库下载为本地markdown
 
-![header](https://socialify.git.ci/gxr404/yuque-dl/image?description=1&descriptionEditable=%E8%AF%AD%E9%9B%80%E7%9F%A5%E8%AF%86%E5%BA%93%E4%B8%8B%E8%BD%BD&issues=1&logo=https%3A%2F%2Fraw.githubusercontent.com%2Fgxr404%2Fyuque-dl%2Fmain%2Fassets%2Flogo.png&name=1&pattern=Circuit%20Board&pulls=1&stargazers=1&theme=Light)
+![header](https://socialify.git.ci/gxr404/yuque-dl/image?description=1&descriptionEditable=%E8%AF%AD%E9%9B%80%E7%9F%A5%E8%AF%86%E5%BA%93%E4%B8%8B%E8%BD%BD&issues=1&logo=https%3A%2F%2Fraw.githubusercontent.com%2Fgxr404%2Fyuque-dl%2Fmain%2Fdocs%2Fassets%2Flogo.png&name=1&pattern=Circuit%20Board&pulls=1&stargazers=1&theme=Light)
 
 ## Install
 
@@ -42,7 +42,7 @@ yuque-dl "https://www.yuque.com/yuque/thyzgp"
 
 ## Example
 
-![demo](./assets/demo.gif)
+![demo](./docs/assets/demo.gif)
 
 ## 私有知识库
 
@@ -52,7 +52,15 @@ yuque-dl "https://www.yuque.com/yuque/thyzgp"
 yuque-dl "https://www.yuque.com/yuque/thyzgp" -t "abcd..."
 ```
 
-[token的获取请看](./GET_TOEKN.md)
+[token的获取请看](./docs/GET_TOEKN.md)
+
+## 企业私有服务
+
+企业服务有自己的域名(黄色语雀logo)，非`yuque.com`结尾, 如`https://yuque.antfin.com/r/zone`
+
+这种情况 token的key不唯一, 不一定是为`_yuque_session` 需用户使用 `-v` 指定 token的key,`-t` 指定 token的值。
+
+至于`key`具体是什么只能靠用户自己在 `浏览器Devtools-> Application -> Cookies` 里找了🤔
 
 ## Feature
 
