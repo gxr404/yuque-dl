@@ -3,6 +3,7 @@ import { randUserAgent } from './utils'
 
 import type { ArticleResponse } from './types/ArticleResponse'
 import type { KnowledgeBase } from './types/KnowledgeBaseResponse'
+import { DEFAULT_COOKIE_KEY, DEFAULT_DOMAIN } from './constant'
 
 
 interface IKnowledgeBaseInfo {
@@ -10,15 +11,20 @@ interface IKnowledgeBaseInfo {
   bookSlug?: string
   tocList?: KnowledgeBase.Toc[],
   bookName?: string,
-  bookDesc?: string
-  host?: string,
+  bookDesc?: string,
+  host?: string
 }
 
 interface IReqHeader {
   [key: string]: string
 }
 
-function getHeaders({key, token}: {key?:string, token?: string}) :IReqHeader {
+interface GetHeaderParams {
+  key?:string,
+  token?: string
+}
+function getHeaders(params: GetHeaderParams): IReqHeader {
+  const { key = DEFAULT_COOKIE_KEY, token } = params
   const headers: IReqHeader = {
     "user-agent": randUserAgent({
       browser: 'chrome',
@@ -29,7 +35,12 @@ function getHeaders({key, token}: {key?:string, token?: string}) :IReqHeader {
   return headers
 }
 
-type TGetKnowledgeBaseInfo = (url: string, {key, token}:{key?:string, token?: string}) => Promise<IKnowledgeBaseInfo>
+interface CookieInfo {
+  key?:string,
+  token?: string
+}
+
+type TGetKnowledgeBaseInfo = (url: string, {key, token}: CookieInfo) => Promise<IKnowledgeBaseInfo>
 /** 获取知识库数据信息 */
 export const getKnowledgeBaseInfo: TGetKnowledgeBaseInfo = (url, {key, token}) => {
   const knowledgeBaseReg = /decodeURIComponent\("(.+)"\)\);/m
@@ -49,7 +60,7 @@ export const getKnowledgeBaseInfo: TGetKnowledgeBaseInfo = (url, {key, token}) =
       tocList: jsonData.book.toc || [],
       bookName: jsonData.book.name || '',
       bookDesc: jsonData.book.description || '',
-      host: jsonData.space?.host || 'https://www.yuque.com',
+      host: jsonData.space?.host || DEFAULT_DOMAIN,
     }
     return info
   })
@@ -58,8 +69,8 @@ export const getKnowledgeBaseInfo: TGetKnowledgeBaseInfo = (url, {key, token}) =
 interface GetMdDataParams {
   articleUrl: string,
   bookId: number,
-  token?: string,
   host?: string
+  token?: string,
   key?: string
 }
 interface IGetDocsMdDataRes {
@@ -69,7 +80,7 @@ interface IGetDocsMdDataRes {
 }
 type TGetMdData = (params: GetMdDataParams) => Promise<IGetDocsMdDataRes>
 export const getDocsMdData: TGetMdData = (params) => {
-  const { articleUrl, bookId, token, key = "_yuque_session", host = 'www.yuque.com' } = params
+  const { articleUrl, bookId, token, key, host = DEFAULT_DOMAIN } = params
   let apiUrl = `${host}/api/docs/${articleUrl}`
   const queryParams = {
     'book_id': String(bookId),

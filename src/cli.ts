@@ -10,7 +10,7 @@ const cli = cac('yuque-dl')
 export interface IOptions {
   distDir: string,
   ignoreImg: boolean,
-  token: string
+  token?: string
   key?: string
 }
 

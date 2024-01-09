@@ -11,7 +11,7 @@ import type { IProgressItem } from './ProgressBar'
 import type { IOptions } from './cli'
 import type { KnowledgeBase } from './types/KnowledgeBaseResponse'
 
-interface IDownloadArticleParams {
+interface ArticleInfo {
   bookId: number,
   itemUrl: string,
   savePath: string,
@@ -22,9 +22,20 @@ interface IDownloadArticleParams {
   ignoreImg: boolean
   host?: string
 }
+interface DownloadArticleParams {
+  /** 文章信息 */
+  articleInfo: ArticleInfo,
+  /** 进度条实例 */
+  progressBar: ProgressBar,
+  /** 语雀cookie token的值 */
+  token?: string,
+  /** 语雀cookie token的key */
+  key?: string
+}
 
 /** 下载单篇文章 */
-async function downloadArticle(params: IDownloadArticleParams, progressBar: ProgressBar, token: string, key?: string): Promise<boolean> {
+async function downloadArticle(params: DownloadArticleParams): Promise<boolean> {
+  const {articleInfo, progressBar, token, key} = params
   const {
     bookId,
     itemUrl,
@@ -35,7 +46,7 @@ async function downloadArticle(params: IDownloadArticleParams, progressBar: Prog
     articleTitle,
     ignoreImg,
     host,
-  } = params
+  } = articleInfo
   const { httpStatus, apiUrl, response} = await getDocsMdData({
     articleUrl: itemUrl,
     bookId,
@@ -194,7 +205,7 @@ async function downloadArticleList(params: IDownloadArticleListParams) {
       let isSuccess = true
       const articleUrl = `${articleUrlPrefix}/${item.url}`
       try {
-        await downloadArticle({
+        const articleInfo = {
           bookId,
           itemUrl: item.url,
           savePath: `${bookPath}/${preItem.path}`,
@@ -204,7 +215,13 @@ async function downloadArticleList(params: IDownloadArticleListParams) {
           articleTitle: item.title,
           ignoreImg: options.ignoreImg,
           host,
-        }, progressBar, options.token, options.key)
+        }
+        await downloadArticle({
+          articleInfo,
+          progressBar,
+          token: options.token,
+          key: options.key
+        })
       } catch(e) {
         isSuccess = false
         errArticleCount += 1
@@ -248,7 +265,10 @@ async function main(url: string, options: IOptions) {
     bookDesc,
     bookSlug,
     host,
-  } = await getKnowledgeBaseInfo(url, {token: options.token, key: options.key})
+  } = await getKnowledgeBaseInfo(url, {
+    token: options.token,
+    key: options.key
+  })
   if (!bookId) throw new Error('No found book id')
   if (!tocList || tocList.length === 0) throw new Error('No found toc list')
 
