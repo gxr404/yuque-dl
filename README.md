@@ -27,7 +27,8 @@ $ yuque-dl --help
   Options:
     -d, --distDir <dir>  下载的目录 eg: -d download (default: download)
     -i, --ignoreImg      忽略图片不下载 (default: false)
-    -t, --token <token>  语雀的cookie "_yuque_session (default: )
+    -v, --key <key>      指定语雀的 cookie key，默认是 "_yuque_session"
+    -t, --token <token>  语雀的cookie key 对应的值
     -h, --help           Display this message
     -v, --version        Display version number
 ```
