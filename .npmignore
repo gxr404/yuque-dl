@@ -12,3 +12,4 @@ rollup.config.ts
 *.log
 .prettierrc.js
 .eslintrc.cjs
+download
