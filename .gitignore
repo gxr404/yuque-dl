@@ -132,7 +132,7 @@ dist
 .DS_Store
 dist
 temp
-types
+/types
 
 
 /download

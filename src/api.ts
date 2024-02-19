@@ -87,15 +87,15 @@ interface IGetDocsMdDataRes {
   httpStatus: number,
   response?: ArticleResponse.RootObject
 }
-type TGetMdData = (params: GetMdDataParams) => Promise<IGetDocsMdDataRes>
-export const getDocsMdData: TGetMdData = (params) => {
+type TGetMdData = (params: GetMdDataParams, isMd?: boolean) => Promise<IGetDocsMdDataRes>
+export const getDocsMdData: TGetMdData = (params, isMd = true) => {
   const { articleUrl, bookId, token, key, host = DEFAULT_DOMAIN } = params
   let apiUrl = `${host}/api/docs/${articleUrl}`
-  const queryParams = {
+  const queryParams: any = {
     'book_id': String(bookId),
-    'merge_dynamic_data': String(false),
-    mode: 'markdown'
+    'merge_dynamic_data': String(false)
   }
+  if (isMd) queryParams.mode = 'markdown'
   const query = new URLSearchParams(queryParams).toString()
   apiUrl = `${apiUrl}?${query}`
   return axios.get<ArticleResponse.RootObject>(apiUrl, genCommonOptions({token, key}))

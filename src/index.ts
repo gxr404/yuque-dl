@@ -10,6 +10,7 @@ import { getDocsMdData, getKnowledgeBaseInfo } from './api'
 import type { IProgressItem } from './ProgressBar'
 import type { IOptions } from './cli'
 import type { KnowledgeBase } from './types/KnowledgeBaseResponse'
+import { parseSheet } from './parseSheet'
 
 interface ArticleInfo {
   bookId: number,
@@ -56,19 +57,41 @@ async function downloadArticle(params: DownloadArticleParams): Promise<boolean> 
   })
 
   const contentType = response?.data?.type?.toLocaleLowerCase() as ARTICLE_CONTENT_TYPE
-  // 暂时不支持的文档类型
-  if ([
-    ARTICLE_CONTENT_TYPE.BOARD,
-    ARTICLE_CONTENT_TYPE.SHEET,
-    ARTICLE_CONTENT_TYPE.TABLE
-  ].includes(contentType)) {
+  let mdData = ''
+
+  /** 表格类型 */
+  if (contentType === ARTICLE_CONTENT_TYPE.SHEET) {
+    const {response} = await getDocsMdData({
+      articleUrl: itemUrl,
+      bookId,
+      token,
+      host,
+      key,
+    }, false)
+    try {
+      const content = JSON.parse(response?.data?.content ?? '')
+      const sheetData = content?.sheet || ''
+      mdData = parseSheet(sheetData)
+      // 表格类型默认忽略图片
+      // ignoreImg = true
+      // TODO 表格类型中插入图表 vessels字段
+    } catch(e) {
+      const notSupportType = articleContentMap.get(contentType)
+      throw new Error(`download article Error: “${notSupportType}”解析错误 ${e}`)
+    }
+  } else if ([
+      ARTICLE_CONTENT_TYPE.BOARD,
+      ARTICLE_CONTENT_TYPE.TABLE
+    ].includes(contentType)) {
+    // 暂时不支持的文档类型
     const notSupportType = articleContentMap.get(contentType)
     throw new Error(`download article Error: 暂不支持“${notSupportType}”的文档`)
   } else if (typeof response?.data?.sourcecode !== 'string') {
     throw new Error(`download article Error: ${apiUrl}, http status ${httpStatus}`)
+  } else {
+    mdData = response.data.sourcecode
   }
 
-  let mdData = response.data.sourcecode
   if (!ignoreImg) {
     progressBar.pause()
     console.log('')

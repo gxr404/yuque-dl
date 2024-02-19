@@ -22,6 +22,7 @@ export declare namespace ArticleResponse {
     sourcecode: string;
     last_editor?: any;
     _serializer: string;
+    content?: string
   }
 
   interface Meta {

@@ -61,6 +61,7 @@
     "cli-progress": "^3.12.0",
     "log4js": "^6.9.1",
     "ora": "^7.0.1",
+    "pako": "1.0.11",
     "pull-md-img": "^0.0.26",
     "rand-user-agent": "1.0.109"
   },
