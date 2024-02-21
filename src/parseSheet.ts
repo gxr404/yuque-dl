@@ -60,6 +60,7 @@ function genMdTable(data: SheetItemData) {
 
   const rowMax = Math.max(...rowList.map(row => Number(row)))
   const colMax = Math.max(...colList.map(col => Number(col)))
+  if (rowMax < 0 || colMax < 0) return ''
   let tableMd = ''
   const TITLE = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'
   let rowTitle = Array(colMax + 1).fill(' ').map((v, i) => {
