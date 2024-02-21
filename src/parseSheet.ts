@@ -32,6 +32,7 @@ interface SheetItem {
 
 // 表格类型解析
 export const parseSheet = (sheetStr: string) => {
+  if (!sheetStr) return ''
   const sheetList: SheetItem[] = JSON.parse(pako.inflate(sheetStr, {
     to: "string"
   }))

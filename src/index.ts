@@ -69,9 +69,10 @@ async function downloadArticle(params: DownloadArticleParams): Promise<boolean> 
       key,
     }, false)
     try {
-      const content = JSON.parse(response?.data?.content ?? '')
-      const sheetData = content?.sheet || ''
-      mdData = parseSheet(sheetData)
+      const rawContent = response?.data?.content
+      const content = rawContent ? JSON.parse(rawContent) : {}
+      const sheetData = content?.sheet
+      mdData = sheetData ? parseSheet(sheetData) : ''
       // 表格类型默认忽略图片
       // ignoreImg = true
       // TODO 表格类型中插入图表 vessels字段
