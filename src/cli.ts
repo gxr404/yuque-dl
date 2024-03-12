@@ -1,6 +1,7 @@
 
 import { readFileSync } from 'node:fs'
 import { cac } from 'cac'
+import semver from 'semver'
 
 import logger from './log'
 import { main } from './index'
@@ -16,9 +17,20 @@ export interface IOptions {
 
 // 不能直接使用 import {version} from '../package.json'
 // 否则declaration 生成的d.ts 会多一层src目录
-const { version } = JSON.parse(
+const { version, engines } = JSON.parse(
   readFileSync(new URL('../../package.json', import.meta.url)).toString(),
 )
+
+function checkVersion() {
+  const version = engines.node
+  if (!semver.satisfies(process.version, version)) {
+    logger.error(`✕ nodejs 版本需 ${version}, 当前版本为 ${process.version}`)
+    process.exit(1)
+  }
+}
+
+// 检查node版本
+checkVersion()
 
 cli
   .command('<url>', '语雀知识库url')
