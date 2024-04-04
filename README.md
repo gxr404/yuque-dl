@@ -75,6 +75,21 @@ yuque-dl "https://www.yuque.com/yuque/thyzgp" -t "abcd..."
 - [ ] 支持其他文档类型？🤔
 - [ ] 添加测试 🤔
 
+## 常见错误
+
+1. 由于token可能含有 特殊字符导致参数识别错误
+
+```bash
+yuque-dl "https://www.yuque.com/yuque/thyzgp" -t "-a123"
+yuque-dl [ERROR]: Unknown option `-1`
+```
+
+解决方案
+
+```bash
+yuque-dl "https://www.yuque.com/yuque/thyzgp" -t="-a123"
+```
+
 ## Tips
 
 由于网络波动下载失败的，重新运行即可，已下载的进度不会受到影响
