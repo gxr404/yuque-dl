@@ -48,7 +48,9 @@ yuque-dl "https://www.yuque.com/yuque/thyzgp"
 
 ![demo](./docs/assets/demo.gif)
 
-## 私有知识库
+## 其他场景
+
+### 私有知识库
 
 通过别人私有知识库 分享的链接，需使用`-t`添加token才能下载
 
@@ -58,13 +60,23 @@ yuque-dl "https://www.yuque.com/yuque/thyzgp" -t "abcd..."
 
 [token的获取请看](./docs/GET_TOEKN.md)
 
-## 企业私有服务
+### 企业私有服务
 
 企业服务有自己的域名(黄色语雀logo)，非`yuque.com`结尾, 如`https://yuque.antfin.com/r/zone`
 
-这种情况 token的key不唯一, 不一定是为`_yuque_session` 需用户使用 `-v` 指定 token的key,`-t` 指定 token的值。
+这种情况 token的key不唯一, 不一定是为`_yuque_session` 需用户使用 `-k` 指定 token的key,`-t` 指定 token的值。
 
 至于`key`具体是什么只能靠用户自己在 `浏览器Devtools-> Application -> Cookies` 里找了🤔
+
+### 公开密码访问的知识库
+
+![public_pwd](./docs/assets/public_pwd.png)
+
+公开密码访问的知识库或文档需要使用`verified_books`/`verified_docs`这个cookie
+
+```bash
+yuque-dl "url" -k "verified_books" -t "verified_books的值"
+```
 
 ## Feature
 
