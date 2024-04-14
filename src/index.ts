@@ -135,10 +135,14 @@ async function downloadArticle(params: DownloadArticleParams): Promise<boolean> 
   }
 }
 
+function removeEmojis(dirName:string){
+  return dirName.replace(/[\ud800-\udbff][\udc00-\udfff]/g, '')
+}
+
 function fixPath(dirPath: string) {
   if (!dirPath) return ''
   const dirNameReg = /[\\/:*?"<>|\n\r]/g
-  return dirPath.replace(dirNameReg, '_').replace(/\s/g, '')
+  return removeEmojis(dirPath.replace(dirNameReg, '_').replace(/\s/g, ''))
 }
 
 interface IDownloadArticleListParams {
