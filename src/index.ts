@@ -1,6 +1,7 @@
 import { writeFile, mkdir } from 'node:fs/promises'
 import mdImg from 'pull-md-img'
 import ora from 'ora'
+import mdToc from 'markdown-toc'
 import ProgressBar from './ProgressBar'
 import Summary from './Summary'
 import logger from './log'
@@ -28,15 +29,14 @@ interface DownloadArticleParams {
   articleInfo: ArticleInfo,
   /** 进度条实例 */
   progressBar: ProgressBar,
-  /** 语雀cookie token的值 */
-  token?: string,
-  /** 语雀cookie token的key */
-  key?: string
+  /** cli options */
+  options: IOptions
 }
 
 /** 下载单篇文章 */
 async function downloadArticle(params: DownloadArticleParams): Promise<boolean> {
-  const {articleInfo, progressBar, token, key} = params
+  const { articleInfo, progressBar, options } = params
+  const { token, key } = options
   const {
     bookId,
     itemUrl,
@@ -121,12 +121,14 @@ async function downloadArticle(params: DownloadArticleParams): Promise<boolean> 
   mdData = mdData.replace(/<br(\s?)\/>/gm, '\n')
   mdData = mdData.replace(/<a.*?>(\s*?)<\/a>/gm, '')
 
-  if (articleTitle) {
-    mdData = `# ${articleTitle}\n\n${mdData}\n\n`
-  }
-  if (articleUrl){
-    mdData += `> 原文: <${articleUrl}>`
-  }
+  const  header = articleTitle ? `# ${articleTitle}\n\n` : ''
+  // toc 目录添加
+  let toc = !options.ignoreToc ? mdToc(mdData).content : ''
+  if (toc) toc = `${toc}\n\n---\n\n`
+
+  const footer = articleUrl ? `\n\n> 原文: <${articleUrl}>` : ''
+
+  mdData = `${header}${toc}${mdData}${footer}`
 
   try {
     await writeFile(saveFilePath, mdData)
@@ -248,8 +250,7 @@ async function downloadArticleList(params: IDownloadArticleListParams) {
         await downloadArticle({
           articleInfo,
           progressBar,
-          token: options.token,
-          key: options.key
+          options
         })
       } catch(e) {
         isSuccess = false

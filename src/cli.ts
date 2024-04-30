@@ -9,10 +9,11 @@ import { main } from './index'
 const cli = cac('yuque-dl')
 
 export interface IOptions {
-  distDir: string,
-  ignoreImg: boolean,
+  distDir: string
+  ignoreImg: boolean
   token?: string
   key?: string
+  ignoreToc: boolean
 }
 
 // 不能直接使用 import {version} from '../package.json'
@@ -34,14 +35,17 @@ checkVersion()
 
 cli
   .command('<url>', '语雀知识库url')
-  .option('-d, --distDir <dir>', '下载的目录 eg: -d download', {
+  .option('-d, --dist-dir <dir>', '下载的目录 eg: -d download', {
     default: 'download',
   })
-  .option('-i, --ignoreImg', '忽略图片不下载', {
+  .option('-i, --ignore-img', '忽略图片不下载', {
     default: false
   })
   .option('-k, --key <key>', '语雀的cookie key， 默认是 "_yuque_session"， 在某些企业版本中 key 不一样')
   .option('-t, --token <token>', '语雀的cookie key 对应的值')
+  .option('--ignore-toc', '默认输出toc目录,添加此参数则不输出toc目录', {
+    default: false
+  })
   .action(async (url: string, options: IOptions) => {
     try {
       await main(url, options)
