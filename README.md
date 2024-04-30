@@ -23,18 +23,21 @@ $ yuque-dl --help
     $ yuque-dl <url>
 
   Commands:
-    <url>  语雀知识库url
+    <url>       语雀知识库url
+    -h, --help  显示帮助
 
   For more info, run any command with the `--help` flag:
     $ yuque-dl --help
+    $ yuque-dl -h, --help --help
 
   Options:
-    -d, --distDir <dir>  下载的目录 eg: -d download (default: download)
-    -i, --ignoreImg      忽略图片不下载 (default: false)
-    -k, --key <key>      指定语雀的 cookie key，默认是 "_yuque_session"
-    -t, --token <token>  语雀的cookie key 对应的值
-    -h, --help           Display this message
-    -v, --version        Display version number
+    -d, --dist-dir <dir>  下载的目录 eg: -d download (default: download)
+    -i, --ignore-img      忽略图片不下载 (default: false)
+    -k, --key <key>       语雀的cookie key， 默认是 "_yuque_session"， 在某些企业版本中 key 不一样
+    -t, --token <token>   语雀的cookie key 对应的值
+    --ignore-toc          默认输出toc目录,添加此参数则不输出toc目录 (default: false)
+    -h, --help            Display this message
+    -v, --version         Display version number
 ```
 
 ### Start
