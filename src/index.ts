@@ -119,12 +119,13 @@ async function downloadArticle(params: DownloadArticleParams): Promise<boolean> 
   }
 
   mdData = mdData.replace(/<br(\s?)\/>/gm, '\n')
+  mdData = mdData.replace(/<a.*?>(\s*?)<\/a>/gm, '')
 
   if (articleTitle) {
-    mdData = `# ${articleTitle}\n<!--page header-->\n\n${mdData}\n\n`
+    mdData = `# ${articleTitle}\n\n${mdData}\n\n`
   }
   if (articleUrl){
-    mdData += `<!--page footer-->\n- 原文: <${articleUrl}>`
+    mdData += `> 原文: <${articleUrl}>`
   }
 
   try {
