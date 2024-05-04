@@ -75,7 +75,10 @@ yuque-dl "https://www.yuque.com/yuque/thyzgp" -t "abcd..."
 
 ![public_pwd](./docs/assets/public_pwd.png)
 
-公开密码访问的知识库或文档需要使用`verified_books`/`verified_docs`这个cookie
+公开密码访问的知识库两种情况:
+
+- 已经登录语雀，访问需要密码的知识库 输入密码后 使用`_yuque_session`这个cookie
+- 未登录语雀，访问需要密码的知识库 输入密码后需要使用`verified_books`/`verified_docs`这个cookie
 
 ```bash
 yuque-dl "url" -k "verified_books" -t "verified_books的值"
