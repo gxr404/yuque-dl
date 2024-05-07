@@ -104,7 +104,8 @@ async function downloadArticle(params: DownloadArticleParams): Promise<boolean> 
       mdData = await mdImg.run(mdData, {
         dist: savePath,
         imgDir: `./img/${uuid}`,
-        isIgnoreConsole: true
+        isIgnoreConsole: true,
+        referer: itemUrl || ''
       })
     } catch(e) {
       let errMessage = `download article image Error: ${e.message}`
