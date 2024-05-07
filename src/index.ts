@@ -105,7 +105,7 @@ async function downloadArticle(params: DownloadArticleParams): Promise<boolean> 
         dist: savePath,
         imgDir: `./img/${uuid}`,
         isIgnoreConsole: true,
-        referer: itemUrl || ''
+        referer: articleUrl || ''
       })
     } catch(e) {
       let errMessage = `download article image Error: ${e.message}`
