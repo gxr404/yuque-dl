@@ -217,7 +217,7 @@ async function downloadArticleList(params: IDownloadArticleListParams) {
         }
       }
       const progressItem = {
-        path: pathTitleList.join('/'),
+        path: pathTitleList.map(fixPath).join('/'),
         pathTitleList,
         pathIdList,
         toc: item
@@ -227,7 +227,7 @@ async function downloadArticleList(params: IDownloadArticleListParams) {
         warnArticleCount += 1
         warnArticleInfo.push(progressItem)
       } else {
-        await mkdir(`${bookPath}/${pathTitleList.join('/')}`, {recursive: true})
+        await mkdir(`${bookPath}/${pathTitleList.map(fixPath).join('/')}`, {recursive: true})
       }
       uuidMap.set(item.uuid, progressItem)
       await progressBar.updateProgress(progressItem, itemType !== ARTICLE_TOC_TYPE.LINK)
@@ -245,7 +245,7 @@ async function downloadArticleList(params: IDownloadArticleListParams) {
       const pathTitleList = [...preItem.pathTitleList, `${fileName}.md`]
       const pathIdList = [...preItem.pathIdList, item.uuid]
       const progressItem = {
-        path: pathTitleList.join('/'),
+        path: pathTitleList.map(fixPath).join('/'),
         pathTitleList,
         pathIdList,
         toc: item
@@ -256,8 +256,8 @@ async function downloadArticleList(params: IDownloadArticleListParams) {
         const articleInfo = {
           bookId,
           itemUrl: item.url,
-          savePath: `${bookPath}/${preItem.path}`,
-          saveFilePath: `${bookPath}/${progressItem.path}`,
+          savePath: path.resolve(bookPath, preItem.path),
+          saveFilePath: path.resolve(bookPath, progressItem.path),
           uuid: item.uuid,
           articleUrl,
           articleTitle: item.title,
@@ -366,7 +366,7 @@ async function main(url: string, options: IOptions) {
     uuidMap
   })
   await summary.genFile()
-  logger.info(`√ 生成目录 ${bookPath}/SUMMARY.md`)
+  logger.info(`√ 生成目录 ${path.resolve(bookPath, 'SUMMARY.md')}`)
 
   if (progressBar.curr === total) {
     logger.info(`√ 已完成: ${bookPath}`)
