@@ -32,10 +32,13 @@ const DEFAULT_COOKIE_KEY = '_yuque_session'
 /** 默认语雀域名 */
 const DEFAULT_DOMAIN = 'https://www.yuque.com'
 
+const IMAGE_SING_KEY = 'UXO91eVnUveQn8suOJaYMvBcWs9KptS8N5HoP8ezSeU4vqApZpy1CkPaTpkpQEx2W2mlhxL8zwS8UePwBgksUM0CTtAODbTTTDFD'
+
 export {
   ARTICLE_TOC_TYPE,
   ARTICLE_CONTENT_TYPE,
   articleContentMap,
   DEFAULT_COOKIE_KEY,
-  DEFAULT_DOMAIN
+  DEFAULT_DOMAIN,
+  IMAGE_SING_KEY
 }

@@ -12,7 +12,8 @@ interface IKnowledgeBaseInfo {
   tocList?: KnowledgeBase.Toc[],
   bookName?: string,
   bookDesc?: string,
-  host?: string
+  host?: string,
+  imageServiceDomains?: string[]
 }
 
 interface IReqHeader {
@@ -70,6 +71,7 @@ export const getKnowledgeBaseInfo: TGetKnowledgeBaseInfo = (url, headerParams) =
         bookName: jsonData.book.name || '',
         bookDesc: jsonData.book.description || '',
         host: jsonData.space?.host || DEFAULT_DOMAIN,
+        imageServiceDomains: jsonData.imageServiceDomains || []
       }
       return info
     })

@@ -1,4 +1,5 @@
 import { writeFile, mkdir } from 'node:fs/promises'
+import path from 'node:path'
 import mdImg from 'pull-md-img'
 import ora from 'ora'
 import mdToc from 'markdown-toc'
@@ -12,6 +13,7 @@ import type { IProgressItem } from './ProgressBar'
 import type { IOptions } from './cli'
 import type { KnowledgeBase } from './types/KnowledgeBaseResponse'
 import { parseSheet } from './parseSheet'
+import { captureImageURL } from './crypto'
 
 interface ArticleInfo {
   bookId: number,
@@ -21,8 +23,9 @@ interface ArticleInfo {
   uuid: string,
   articleTitle: string,
   articleUrl: string,
-  ignoreImg: boolean
-  host?: string
+  ignoreImg: boolean,
+  host?: string,
+  imageServiceDomains: string[]
 }
 interface DownloadArticleParams {
   /** 文章信息 */
@@ -47,6 +50,7 @@ async function downloadArticle(params: DownloadArticleParams): Promise<boolean> 
     articleTitle,
     ignoreImg,
     host,
+    imageServiceDomains
   } = articleInfo
   const { httpStatus, apiUrl, response} = await getDocsMdData({
     articleUrl: itemUrl,
@@ -105,13 +109,19 @@ async function downloadArticle(params: DownloadArticleParams): Promise<boolean> 
         dist: savePath,
         imgDir: `./img/${uuid}`,
         isIgnoreConsole: true,
-        referer: articleUrl || ''
+        referer: articleUrl || '',
+        transform(url) {
+          return captureImageURL(url, imageServiceDomains)
+        }
       })
     } catch(e) {
-      let errMessage = `download article image Error: ${e.message}`
+      let errMessage = `图片下载失败(md的图片按远程url保存): ${e.message}`
       if (e.error && e.url) {
-        errMessage = `download article image Error ${e.url}: ${e.error?.message}`
+        errMessage = `图片下载失败(md的图片按远程url保存) ${e.url}: ${e.error?.message}`
       }
+      // 图片下载 md文档按远程图片保存
+      await writeFile(saveFilePath, handleMdData(mdData))
+
       throw new Error(errMessage)
     } finally {
       spinnerDiscardingStdin.stop()
@@ -119,20 +129,24 @@ async function downloadArticle(params: DownloadArticleParams): Promise<boolean> 
     }
   }
 
-  mdData = mdData.replace(/<br(\s?)\/>/gm, '\n')
-  mdData = mdData.replace(/<a.*?>(\s*?)<\/a>/gm, '')
+  function handleMdData (rawMdData: string): string {
+    let mdData = rawMdData
+    mdData = mdData.replace(/<br(\s?)\/>/gm, '\n')
+    mdData = mdData.replace(/<a.*?>(\s*?)<\/a>/gm, '')
 
-  const  header = articleTitle ? `# ${articleTitle}\n\n` : ''
-  // toc 目录添加
-  let toc = !options.ignoreToc ? mdToc(mdData).content : ''
-  if (toc) toc = `${toc}\n\n---\n\n`
+    const  header = articleTitle ? `# ${articleTitle}\n\n` : ''
+    // toc 目录添加
+    let toc = !options.ignoreToc ? mdToc(mdData).content : ''
+    if (toc) toc = `${toc}\n\n---\n\n`
 
-  const footer = articleUrl ? `\n\n> 原文: <${articleUrl}>` : ''
+    const footer = articleUrl ? `\n\n> 原文: <${articleUrl}>` : ''
 
-  mdData = `${header}${toc}${mdData}${footer}`
+    mdData = `${header}${toc}${mdData}${footer}`
+    return mdData
+  }
 
   try {
-    await writeFile(saveFilePath, mdData)
+    await writeFile(saveFilePath, handleMdData(mdData))
     return true
   } catch(e) {
     throw new Error(`download article Error ${articleUrl}: ${e.message}`)
@@ -158,7 +172,8 @@ interface IDownloadArticleListParams {
   bookId: number,
   progressBar: ProgressBar,
   host?: string
-  options: IOptions
+  options: IOptions,
+  imageServiceDomains?: string[]
 }
 async function downloadArticleList(params: IDownloadArticleListParams) {
   const {
@@ -170,7 +185,8 @@ async function downloadArticleList(params: IDownloadArticleListParams) {
     bookId,
     progressBar,
     host,
-    options
+    options,
+    imageServiceDomains = []
   } = params
   let errArticleCount = 0
   let totalArticleCount = 0
@@ -247,6 +263,7 @@ async function downloadArticleList(params: IDownloadArticleListParams) {
           articleTitle: item.title,
           ignoreImg: options.ignoreImg,
           host,
+          imageServiceDomains
         }
         await downloadArticle({
           articleInfo,
@@ -296,14 +313,15 @@ async function main(url: string, options: IOptions) {
     bookDesc,
     bookSlug,
     host,
+    imageServiceDomains
   } = await getKnowledgeBaseInfo(url, {
     token: options.token,
     key: options.key
   })
   if (!bookId) throw new Error('No found book id')
   if (!tocList || tocList.length === 0) throw new Error('No found toc list')
+  const bookPath = path.resolve(options.distDir, bookName ? fixPath(bookName) : String(bookId))
 
-  const bookPath = `${options.distDir}/${bookName ? fixPath(bookName) : bookId}`
   await mkdir(bookPath, {recursive: true})
 
   const total = tocList.length
@@ -312,7 +330,7 @@ async function main(url: string, options: IOptions) {
 
   if (progressBar.curr === total) {
     if (progressBar.bar) progressBar.bar.stop()
-    logger.info(`√ 已完成: ${process.cwd()}/${bookPath}`)
+    logger.info(`√ 已完成: ${bookPath}`)
     return
   }
   const uuidMap = new Map<string, IProgressItem>()
@@ -336,7 +354,8 @@ async function main(url: string, options: IOptions) {
     bookId,
     progressBar,
     host,
-    options
+    options,
+    imageServiceDomains
   })
 
   // 生成目录
@@ -347,11 +366,10 @@ async function main(url: string, options: IOptions) {
     uuidMap
   })
   await summary.genFile()
-  const userPath = process.cwd()
-  logger.info(`√ 生成目录 ${userPath}/${bookPath}/SUMMARY.md`)
+  logger.info(`√ 生成目录 ${bookPath}/SUMMARY.md`)
 
   if (progressBar.curr === total) {
-    logger.info(`√ 已完成: ${userPath}/${bookPath}`)
+    logger.info(`√ 已完成: ${bookPath}`)
   }
   process.exit(0)
 }
