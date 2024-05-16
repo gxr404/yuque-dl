@@ -15,7 +15,7 @@
     "np": "np",
     "eslintLog": "eslint . > eslint.log",
     "changelog:gen": "conventional-changelog -p angular -i CHANGELOG.md -s -r 2",
-    "changelog:commit": "git commit CHANGELOG.md -m 'chore: update changelog' && git push",
+    "changelog:commit": "git add CHANGELOG.md && git commit CHANGELOG.md -m 'chore: update changelog' && git push",
     "release": "run-s clean build np changelog:gen changelog:commit"
   },
   "repository": {
