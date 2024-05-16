@@ -14,9 +14,9 @@
     "clean": "rm -rf dist types",
     "np": "np",
     "eslintLog": "eslint . > eslint.log",
-    "changelog": "conventional-changelog -p angular -i CHANGELOG.md -s",
+    "postversion": "conventional-changelog -p angular -i CHANGELOG.md -s",
     "changelog:commit": "git commit CHANGELOG.md -m 'chore: update changelog' && git push",
-    "release": "run-s clean build np changelog && changelog:commit"
+    "release": "run-s clean build np changelog:commit"
   },
   "repository": {
     "type": "git",
