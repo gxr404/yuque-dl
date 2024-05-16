@@ -13,8 +13,10 @@
     "build:types": "tsc --emitDeclarationOnly --outDir types -p tsconfig.base.json",
     "clean": "rm -rf dist types",
     "np": "np",
-    "release": "run-s clean build np",
-    "eslintLog": "eslint . > eslint.log"
+    "eslintLog": "eslint . > eslint.log",
+    "changelog": "conventional-changelog -p angular -i CHANGELOG.md -s",
+    "changelog:commit": "git commit CHANGELOG.md -m 'chore: update changelog' && git push",
+    "release": "run-s clean build np changelog && changelog:commit"
   },
   "repository": {
     "type": "git",
@@ -41,6 +43,7 @@
     "@types/semver": "^7.5.8",
     "@typescript-eslint/eslint-plugin": "^6.3.0",
     "@typescript-eslint/parser": "^6.3.0",
+    "conventional-changelog-cli": "^5.0.0",
     "jest": "^29.6.2",
     "np": "^8.0.4",
     "npm-run-all": "^4.1.5",
