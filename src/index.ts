@@ -262,12 +262,15 @@ async function downloadArticleList(params: IDownloadArticleListParams) {
     const pathTitleList = [...preItem.pathTitleList, fileName]
     const pathIdList = [...preItem.pathIdList, item.uuid]
     let mdPath = [...preItem.pathTitleList, `${fileName}.md`].map(fixPath).join('/')
+    let savePath = preItem.pathTitleList.map(fixPath).join('/')
     // 是标题也是文档
     if (itemType === ARTICLE_CONTENT_TYPE.DOC && item['child_uuid']) {
       mdPath = [...preItem.pathTitleList, fileName, `index.md`].map(fixPath).join('/')
+      savePath = pathTitleList.map(fixPath).join('/')
     }
     const progressItem = {
       path: mdPath,
+      savePath,
       pathTitleList,
       pathIdList,
       toc: item
@@ -279,7 +282,7 @@ async function downloadArticleList(params: IDownloadArticleListParams) {
         bookId,
         itemUrl: item.url,
         // savePath与saveFilePath区别在于 saveFilePath带有最后的 xx.md
-        savePath: path.resolve(bookPath, preItem.pathTitleList.map(fixPath).join('/')),
+        savePath: path.resolve(bookPath, progressItem.savePath),
         saveFilePath: path.resolve(bookPath, progressItem.path),
         uuid: item.uuid,
         articleUrl,
