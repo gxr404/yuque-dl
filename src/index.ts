@@ -36,6 +36,13 @@ interface DownloadArticleParams {
   options: IOptions
 }
 
+interface IErrArticleInfo {
+  articleUrl: string,
+  errItem: IProgressItem,
+  errMsg: string,
+  err: any
+}
+
 /** 下载单篇文章 */
 async function downloadArticle(params: DownloadArticleParams): Promise<boolean> {
   const { articleInfo, progressBar, options } = params
@@ -191,7 +198,7 @@ async function downloadArticleList(params: IDownloadArticleListParams) {
   let errArticleCount = 0
   let totalArticleCount = 0
   let warnArticleCount = 0
-  const errArticleInfo = []
+  const errArticleInfo: IErrArticleInfo[] = []
   const warnArticleInfo = []
   for (let i = 0; i < total; i++) {
     const item = tocList[i]
@@ -230,60 +237,75 @@ async function downloadArticleList(params: IDownloadArticleListParams) {
         await mkdir(`${bookPath}/${pathTitleList.map(fixPath).join('/')}`, {recursive: true})
       }
       uuidMap.set(item.uuid, progressItem)
-      await progressBar.updateProgress(progressItem, itemType !== ARTICLE_TOC_TYPE.LINK)
+      // 即是文档也是title则创建文件夹后不更新进度直接进行文档处理
+      if (itemType === ARTICLE_CONTENT_TYPE.DOC) {
+        await docHandle(item)
+      } else {
+        await progressBar.updateProgress(progressItem, itemType !== ARTICLE_TOC_TYPE.LINK)
+      }
     } else if (item.url) {
-      totalArticleCount += 1
-      let preItem: Omit<IProgressItem, 'toc'> = {
-        path: '',
-        pathTitleList: [],
-        pathIdList: []
-      }
-      if (uuidMap.get(item['parent_uuid'])) {
-        preItem = uuidMap.get(item['parent_uuid'])!
-      }
-      const fileName = fixPath(item.title)
-      const pathTitleList = [...preItem.pathTitleList, `${fileName}.md`]
-      const pathIdList = [...preItem.pathIdList, item.uuid]
-      const progressItem = {
-        path: pathTitleList.map(fixPath).join('/'),
-        pathTitleList,
-        pathIdList,
-        toc: item
-      }
-      let isSuccess = true
-      const articleUrl = `${articleUrlPrefix}/${item.url}`
-      try {
-        const articleInfo = {
-          bookId,
-          itemUrl: item.url,
-          savePath: path.resolve(bookPath, preItem.path),
-          saveFilePath: path.resolve(bookPath, progressItem.path),
-          uuid: item.uuid,
-          articleUrl,
-          articleTitle: item.title,
-          ignoreImg: options.ignoreImg,
-          host,
-          imageServiceDomains
-        }
-        await downloadArticle({
-          articleInfo,
-          progressBar,
-          options
-        })
-      } catch(e) {
-        isSuccess = false
-        errArticleCount += 1
-        errArticleInfo.push({
-          articleUrl,
-          errItem: progressItem,
-          errMsg: e.message,
-          err: e
-        })
-
-      }
-      uuidMap.set(item.uuid, progressItem)
-      await progressBar.updateProgress(progressItem, isSuccess)
+      await docHandle(item)
     }
+  }
+  async function docHandle(item: KnowledgeBase.Toc) {
+    totalArticleCount += 1
+    let preItem: Omit<IProgressItem, 'toc'> = {
+      path: '',
+      pathTitleList: [],
+      pathIdList: []
+    }
+    const itemType = item.type.toLocaleLowerCase()
+    if (uuidMap.get(item['parent_uuid'])) {
+      preItem = uuidMap.get(item['parent_uuid'])!
+    }
+    const fileName = fixPath(item.title)
+    const pathTitleList = [...preItem.pathTitleList, fileName]
+    const pathIdList = [...preItem.pathIdList, item.uuid]
+    let mdPath = [...preItem.pathTitleList, `${fileName}.md`].map(fixPath).join('/')
+    // 是标题也是文档
+    if (itemType === ARTICLE_CONTENT_TYPE.DOC && item['child_uuid']) {
+      mdPath = [...preItem.pathTitleList, fileName, `index.md`].map(fixPath).join('/')
+    }
+    const progressItem = {
+      path: mdPath,
+      pathTitleList,
+      pathIdList,
+      toc: item
+    }
+    let isSuccess = true
+    const articleUrl = `${articleUrlPrefix}/${item.url}`
+    try {
+      const articleInfo = {
+        bookId,
+        itemUrl: item.url,
+        // savePath与saveFilePath区别在于 saveFilePath带有最后的 xx.md
+        savePath: path.resolve(bookPath, preItem.pathTitleList.map(fixPath).join('/')),
+        saveFilePath: path.resolve(bookPath, progressItem.path),
+        uuid: item.uuid,
+        articleUrl,
+        articleTitle: item.title,
+        ignoreImg: options.ignoreImg,
+        host,
+        imageServiceDomains
+      }
+      await downloadArticle({
+        articleInfo,
+        progressBar,
+        options
+      })
+    } catch(e) {
+      isSuccess = false
+      errArticleCount += 1
+      errArticleInfo.push({
+        articleUrl,
+        errItem: progressItem,
+        errMsg: e.message,
+        err: e
+      })
+
+    }
+    uuidMap.set(item.uuid, progressItem)
+    await progressBar.updateProgress(progressItem, isSuccess)
   }
 
   // 文章下载中警告打印

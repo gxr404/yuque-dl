@@ -1,5 +1,5 @@
 import fs from 'node:fs/promises'
-
+import { ARTICLE_TOC_TYPE } from './constant'
 import logger from './log'
 
 import type { IProgressItem } from './ProgressBar'
@@ -13,7 +13,7 @@ interface IGenSummaryFile {
 interface SummaryItem {
   id: string,
   children?: SummaryItem[],
-  type: string,
+  type: 'link' | 'title',
   text: string,
   level: number,
   link?: string
@@ -41,10 +41,10 @@ export default class Summary {
         text: tocText,
         id: toc.uuid,
         level: 1,
-        type: ''
+        type: 'link'
       }
       const tocType = toc.type.toLocaleLowerCase()
-      if (tocType === 'title' || toc['child_uuid'] !=='') {
+      if (tocType === ARTICLE_TOC_TYPE.TITLE || toc['child_uuid'] !=='') {
         item.type = 'title'
 
         if (typeof findRes !== 'boolean') {
@@ -55,10 +55,25 @@ export default class Summary {
           item.level = 1
           summary.push(item)
         }
+        // 如果是标题同时也是文档,标题加上链接
+        if (tocType === ARTICLE_TOC_TYPE.DOC) {
+          item.link = progressItem.path
+        }
+        // 如果是标题同时也是文档，标题文案下生成新链接
+        // if (tocType === ARTICLE_TOC_TYPE.DOC) {
+        //   if (!Array.isArray(item.children)) item.children = []
+        //   item.children.unshift({
+        //     text: tocText,
+        //     id: toc.uuid,
+        //     level: item.level,
+        //     type: 'link',
+        //     link: progressItem.path
+        //   })
+        // }
       } else {
         item.type = 'link'
         // 外链类型直接 链接到url
-        item.link = tocType=== 'link' ? progressItem.toc.url : progressItem.path
+        item.link = tocType=== ARTICLE_TOC_TYPE.LINK ? progressItem.toc.url : progressItem.path
         if (typeof findRes !== 'boolean') {
           if (!Array.isArray(findRes.children)) findRes.children = []
           item.level = findRes.level + 1
@@ -69,7 +84,6 @@ export default class Summary {
         }
       }
     })
-
     const summaryContent = this.genSummaryContent(summary, '')
     mdContent += summaryContent
     try {
@@ -82,9 +96,15 @@ export default class Summary {
 
   genSummaryContent(summary: SummaryItem[], summaryContent: string): string {
     for (const item of summary) {
-      if (item.type === 'title')  {
-        summaryContent += `\n${''.padStart(item.level + 1, '#')} ${item.text}\n\n`
-      } else if (item.type === 'link') {
+      if (item.type === ARTICLE_TOC_TYPE.TITLE) {
+        // 是标题同时也是文档的情况
+        if (item.link) {
+          const link = item.link ? item.link.replace(/\s/g, '%20') : item.link
+          summaryContent += `\n${''.padStart(item.level + 1, '#')} [${item.text}](${link})\n\n`
+        } else {
+          summaryContent += `\n${''.padStart(item.level + 1, '#')} ${item.text}\n\n`
+        }
+      } else if (item.type === ARTICLE_TOC_TYPE.LINK) {
         const link = item.link ? item.link.replace(/\s/g, '%20') : item.link
         summaryContent += `- [${item.text}](${link})\n`
       }
