@@ -52,13 +52,6 @@
   },
   "main": "dist/es/index.js",
   "types": "types/index.d.ts",
-  "exports": {
-    ".": {
-      "types": "./types/src/index.d.ts",
-      "import": "./es/index.js",
-      "require": "./cjs/index.js"
-    }
-  },
   "dependencies": {
     "axios": "^1.4.0",
     "cac": "^6.7.14",
