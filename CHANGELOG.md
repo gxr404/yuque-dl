@@ -1,3 +1,12 @@
+## [1.0.45](https://github.com/gxr404/yuque-dl/compare/v1.0.44...v1.0.45) (2024-05-21)
+
+
+### Bug Fixes
+
+* 修复图片下载异常，更改解决方案，使用html模式的接口返回的图片重置md的图片url ([8ccfa6c](https://github.com/gxr404/yuque-dl/commit/8ccfa6c5763775ee359c7454c5d4b259d831bdc4))
+
+
+
 ## [1.0.44](https://github.com/gxr404/yuque-dl/compare/v1.0.43...v1.0.44) (2024-05-16)
 
 
