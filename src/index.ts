@@ -14,6 +14,7 @@ import type { IOptions } from './cli'
 import type { KnowledgeBase } from './types/KnowledgeBaseResponse'
 import { parseSheet } from './parseSheet'
 import { captureImageURL } from './crypto'
+import { getMarkdownImageList } from './utils'
 
 interface ArticleInfo {
   bookId: number,
@@ -59,26 +60,21 @@ async function downloadArticle(params: DownloadArticleParams): Promise<boolean> 
     host,
     imageServiceDomains
   } = articleInfo
-  const { httpStatus, apiUrl, response} = await getDocsMdData({
+  const reqParams = {
     articleUrl: itemUrl,
     bookId,
     token,
     host,
     key,
-  })
+  }
+  const { httpStatus, apiUrl, response } = await getDocsMdData(reqParams)
 
   const contentType = response?.data?.type?.toLocaleLowerCase() as ARTICLE_CONTENT_TYPE
   let mdData = ''
 
   /** 表格类型 */
   if (contentType === ARTICLE_CONTENT_TYPE.SHEET) {
-    const {response} = await getDocsMdData({
-      articleUrl: itemUrl,
-      bookId,
-      token,
-      host,
-      key,
-    }, false)
+    const {response} = await getDocsMdData(reqParams, false)
     try {
       const rawContent = response?.data?.content
       const content = rawContent ? JSON.parse(rawContent) : {}
@@ -103,8 +99,21 @@ async function downloadArticle(params: DownloadArticleParams): Promise<boolean> 
   } else {
     mdData = response.data.sourcecode
   }
+  const imgList = getMarkdownImageList(mdData)
+  // fix md image url
+  // TODO: 待定 需不需要区分文档类型呢？
+  if (imgList.length && !ignoreImg) {
+    // 没图片的话不需要修复图片url 且 没有忽略图片下载
+    // 获取浏览器直接访问的源数据，取出对应的html数据 对 md数据中的图片url修复
+    const rawData = await getDocsMdData(reqParams, false)
+    const htmlData = rawData.response?.data?.content ?? ''
+    // console.log('old', mdData)
+    mdData = fixMdImg(imgList, mdData, htmlData)
+    // console.log('new', mdData)
+  }
 
-  if (!ignoreImg) {
+  // 有图片 且 未忽略图片
+  if (imgList.length && !ignoreImg) {
     progressBar.pause()
     console.log('')
     const spinnerDiscardingStdin = ora({
@@ -158,6 +167,40 @@ async function downloadArticle(params: DownloadArticleParams): Promise<boolean> 
   } catch(e) {
     throw new Error(`download article Error ${articleUrl}: ${e.message}`)
   }
+}
+
+// 根据html接口返回的图片修复 md接口返回的图片 url
+function fixMdImg(imgList: string[], mdData: string, htmlData: string) {
+  if (!htmlData) return mdData
+  const htmlDataImgReg = /<card.*?name="image".*?value="data:(.*?)">(.*?)<\/card>/gm
+  const htmlImgDataList: string[] = []
+  let regExec
+  let init = true
+  while(init || Boolean(regExec)) {
+    init = false
+    regExec = htmlDataImgReg.exec(htmlData)
+    if (regExec?.[1]) {
+      try {
+        const strData = decodeURIComponent(regExec[1])
+        const cardData = JSON.parse(strData)
+        htmlImgDataList.push(cardData?.src || '')
+      } catch {
+        htmlImgDataList.push('')
+      }
+    }
+  }
+  imgList.forEach((imgUrl) => {
+    const {origin, pathname} = new URL(imgUrl)
+    const matchURL = `${origin}${pathname}`
+    const targetURL = htmlImgDataList.find(item => {
+      const reg = new RegExp(`${matchURL}.*?`)
+      return reg.test(item)
+    })
+    if (targetURL) {
+      mdData = mdData.replace(imgUrl, targetURL)
+    }
+  })
+  return mdData
 }
 
 function removeEmojis(dirName:string){

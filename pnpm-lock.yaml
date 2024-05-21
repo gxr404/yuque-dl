@@ -30,8 +30,8 @@ importers:
         specifier: 1.0.11
         version: 1.0.11
       pull-md-img:
-        specifier: ^0.0.44
-        version: 0.0.44
+        specifier: ^0.0.48
+        version: 0.0.48
       rand-user-agent:
         specifier: 1.0.109
         version: 1.0.109
@@ -2750,8 +2750,8 @@ packages:
   proxy-from-env@1.1.0:
     resolution: {integrity: sha512-D+zkORCbA9f1tdWRK0RaCR3GPv50cMxcrz4X8k5LTSUD1Dkw47mKJEZQNunItRTkWwgtaUSo1RVFRIG9ZXiFYg==}
 
-  pull-md-img@0.0.44:
-    resolution: {integrity: sha512-+O/4SBdS4J18q5ZzY6PVk+AhpsFDELzhUjxk0jgaZBunfZT/xHKJ5uUQ1Utau2QZJiddXfFMs7a0YV2vk5bsPA==}
+  pull-md-img@0.0.48:
+    resolution: {integrity: sha512-xsxdvhnJ7Z/wvlp1E7vc7hIcmxuEUEKwdj+QeTleHd5TzCJdkPSlGxqkY+1mbEQCJTwbsypFjOzn9cu7HZ6Frg==}
     hasBin: true
 
   pump@3.0.0:
@@ -6657,7 +6657,7 @@ snapshots:
 
   proxy-from-env@1.1.0: {}
 
-  pull-md-img@0.0.44:
+  pull-md-img@0.0.48:
     dependencies:
       commander: 8.3.0
       log4js: 5.3.0

@@ -22,6 +22,25 @@ function randUserAgent({ browser = 'chrome', os = 'mac os', device = 'desktop' }
   return UA
 }
 
+/**
+ * 获取md中的img url
+ */
+function getMarkdownImageList(mdStr: string) {
+  if (!mdStr) return []
+  const mdImgReg = /!\[(.*?)\]\((.*?)\)/gm
+  let list = Array.from(mdStr.match(mdImgReg) || [])
+  list = list
+    .map((itemUrl) => {
+      itemUrl = itemUrl.replace(mdImgReg, '$2')
+      // 如果出现非http开头的图片 如 "./xx.png" 则跳过
+      if (!/^http.*/g.test(itemUrl)) return ''
+      return itemUrl
+    })
+    .filter((url) => Boolean(url))
+  return list
+}
+
 export {
-  randUserAgent
+  randUserAgent,
+  getMarkdownImageList
 }

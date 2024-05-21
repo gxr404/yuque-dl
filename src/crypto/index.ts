@@ -20,16 +20,16 @@ function genSign(url: string) {
 
 export function captureImageURL(url: string, imageServiceDomains: string[] = []) {
   if (!isCaptureImageURL(url, imageServiceDomains)) return url
-  let targetURL = url
-  try {
-    const {origin, pathname, hash} = new URL(targetURL)
-    // 存在多个 https://xxx/xxx#id=111&...#id=222&...
-    // 仅取一个则移除最后一个
-    const hastArr = hash.split('#')
-    hastArr.splice(hastArr.length-1, 1)
-    targetURL = `${origin}${pathname}${hastArr.join('#')}`
-  } catch (e) {
-    return url
-  }
-  return `https://www.yuque.com/api/filetransfer/images?url=${encodeURIComponent(targetURL)}&sign=${genSign(targetURL)}`
+  // try {
+  //   const {origin, pathname, hash} = new URL(targetURL)
+  //   // 存在多个 https://xxx/xxx#id=111&...#id=222&...
+  //   // 仅取一个则移除最后一个
+  //   const hastArr = hash.split('#')
+  //   hastArr.splice(hastArr.length-1, 1)
+  //   targetURL = `${origin}${pathname}${hastArr.join('#')}`
+
+  // } catch (e) {
+  //   return url
+  // }
+  return `https://www.yuque.com/api/filetransfer/images?url=${encodeURIComponent(url)}&sign=${genSign(url)}`
 }
