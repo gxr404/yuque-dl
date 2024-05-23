@@ -1,3 +1,12 @@
+## [1.0.48](https://github.com/gxr404/yuque-dl/compare/v1.0.47...v1.0.48) (2024-05-23)
+
+
+### Bug Fixes
+
+* 修复下载错误时图片替换顺序出错 ([87ddf3b](https://github.com/gxr404/yuque-dl/commit/87ddf3b00bf378364202ae25513fa3df4c2486e0))
+
+
+
 ## [1.0.47](https://github.com/gxr404/yuque-dl/compare/v1.0.46...v1.0.47) (2024-05-23)
 
 
