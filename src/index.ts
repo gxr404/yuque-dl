@@ -98,6 +98,8 @@ async function downloadArticle(params: DownloadArticleParams): Promise<boolean> 
     throw new Error(`download article Error: ${apiUrl}, http status ${httpStatus}`)
   } else {
     mdData = response.data.sourcecode
+    // fix latex
+    mdData = fixLatex(mdData)
   }
   const imgList = getMarkdownImageList(mdData)
   // fix md image url
@@ -120,29 +122,35 @@ async function downloadArticle(params: DownloadArticleParams): Promise<boolean> 
       text: `下载 "${articleTitle}" 的图片中...`
     })
     spinnerDiscardingStdin.start()
-    try {
-      mdData = await mdImg.run(mdData, {
-        dist: savePath,
-        imgDir: `./img/${uuid}`,
-        isIgnoreConsole: true,
-        referer: articleUrl || '',
-        transform(url) {
-          return captureImageURL(url, imageServiceDomains)
-        }
-      })
-    } catch(e) {
-      let errMessage = `图片下载失败(md的图片按远程url保存): ${e.message}`
-      if (e.error && e.url) {
-        errMessage = `图片下载失败(md的图片按远程url保存) ${e.url}: ${e.error?.message}`
-      }
-      // 图片下载 md文档按远程图片保存
-      await writeFile(saveFilePath, handleMdData(mdData))
 
-      throw new Error(errMessage)
-    } finally {
+    const { data, errorInfo } = await mdImg.run(mdData, {
+      dist: savePath,
+      imgDir: `./img/${uuid}`,
+      isIgnoreConsole: true,
+      errorStillReturn: true,
+      referer: articleUrl || '',
+      transform(url: string) {
+        return captureImageURL(url, imageServiceDomains)
+      }
+    })
+    mdData = data
+    const stopProgress = () => {
       spinnerDiscardingStdin.stop()
       progressBar.continue()
     }
+    if (errorInfo.length > 0) {
+      // const e = errorInfo[0]
+      const errMessage = `图片下载失败(失败的以远程链接保存): \n`
+      let errMessageList = ''
+      errorInfo.forEach((e, index) => {
+        errMessageList = `${errMessageList} ———————— ${index+1}. ${e.error?.message}: ${e.url} \n`
+      })
+      // 图片下载 md文档按远程图片保存
+      await writeFile(saveFilePath, handleMdData(mdData))
+      stopProgress()
+      throw new Error(`${errMessage}\n${errMessageList}`)
+    }
+    stopProgress()
   }
 
   function handleMdData (rawMdData: string): string {
@@ -167,6 +175,33 @@ async function downloadArticle(params: DownloadArticleParams): Promise<boolean> 
   } catch(e) {
     throw new Error(`download article Error ${articleUrl}: ${e.message}`)
   }
+}
+
+// 现发现 latex svg格式可以正常下载 正常显示，非svg 不能 直接那search的文案替换掉
+// ![](https://cdn.nlark.com/yuque/__latex/a6cc75c5bd5731c6e361bbcaf18766e7.svg#card=math&code=999&id=JGAwA)
+// "https://g.yuque.com/gr/latex?options['where'] 是否是数组，#card=math&code=options['where'] 是否是数组，"
+function fixLatex(mdData: string) {
+  const latexReg =  /!\[(.*?)\]\((http.*?latex.*?)\)/gm
+  const list = mdData.match(latexReg)
+  let fixMaData = mdData
+  const rawMaData = mdData
+  try {
+    list?.forEach(latexMd => {
+      latexReg.lastIndex = 0
+      const url = latexReg.exec(latexMd)?.[2] || ''
+      const {pathname, search} = new URL(url)
+      const isSvg = pathname.endsWith('.svg')
+      // 非svg结尾的 latex链接  直接显示code内容
+      if (!isSvg && search) {
+        const data = decodeURIComponent(search)
+        fixMaData = fixMaData.replace(latexMd, data.slice(1))
+      }
+    })
+  } catch (e) {
+    return rawMaData
+  }
+
+  return fixMaData
 }
 
 // 根据html接口返回的图片修复 md接口返回的图片 url
@@ -366,7 +401,7 @@ async function downloadArticleList(params: IDownloadArticleListParams) {
   if (errArticleCount > 0) {
     logger.error(`本次执行总数${totalArticleCount}篇，✕ 失败${errArticleCount}篇`)
     for (const errInfo of errArticleInfo) {
-      logger.error(`${errInfo.errItem.path} ———— ${errInfo.articleUrl}`)
+      logger.error(`《${errInfo.errItem.path}》: ${errInfo.articleUrl}`)
       logger.error(`———— ✕ ${errInfo.errMsg}`)
     }
     logger.error(`o(╥﹏╥)o 由于网络波动或链接失效以上下载失败，可重新执行命令重试(PS:不会影响已下载成功的数据)`)
