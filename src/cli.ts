@@ -3,18 +3,11 @@ import { readFileSync } from 'node:fs'
 import { cac } from 'cac'
 import semver from 'semver'
 
-import logger from './log'
 import { main } from './index'
+import { logger } from './utils'
+import type { ICliOptions } from './types'
 
 const cli = cac('yuque-dl')
-
-export interface IOptions {
-  distDir: string
-  ignoreImg: boolean
-  token?: string
-  key?: string
-  ignoreToc: boolean
-}
 
 // 不能直接使用 import {version} from '../package.json'
 // 否则declaration 生成的d.ts 会多一层src目录
@@ -46,11 +39,13 @@ cli
   .option('--ignore-toc', '默认输出toc目录,添加此参数则不输出toc目录', {
     default: false
   })
-  .action(async (url: string, options: IOptions) => {
+  .action(async (url: string, options: ICliOptions) => {
     try {
       await main(url, options)
+      process.exit(0)
     } catch (err) {
       logger.error(err.message || 'unknown exception')
+      process.exit(1)
     }
   })
 

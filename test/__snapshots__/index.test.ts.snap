@@ -1,0 +1,54 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`main > should work 1`] = `
+"# 知识库TEST1
+
+> 知识库 test desc
+
+
+## Title1
+
+- [文档1](Title1/文档1.md)
+
+## Title2
+
+- [文档2](Title2/文档2.md)
+"
+`;
+
+exports[`main > should work 2`] = `
+"# 文档2
+
+- [DOC2](#doc2)
+  * [Title](#title)
+    + [Title2](#title2)
+
+---
+
+# DOC2
+## Title
+text...
+### Title2
+text...
+
+
+> 原文: <https://www.yuque.com/yuque/base1/two>"
+`;
+
+exports[`main > should work 3`] = `"[{"path":"Title1","pathTitleList":["Title1"],"pathIdList":["001"],"toc":{"type":"TITLE","title":"Title1","uuid":"001","child_uuid":"002","parent_uuid":""}},{"path":"Title1/文档1.md","savePath":"Title1","pathTitleList":["Title1","文档1"],"pathIdList":["001","002"],"toc":{"type":"DOC","title":"文档1","uuid":"002","url":"one","child_uuid":"","parent_uuid":"001"}},{"path":"Title2","pathTitleList":["Title2"],"pathIdList":["003"],"toc":{"type":"TITLE","title":"Title2","uuid":"003","child_uuid":"004","parent_uuid":""}},{"path":"Title2/文档2.md","savePath":"Title2","pathTitleList":["Title2","文档2"],"pathIdList":["003","004"],"toc":{"type":"DOC","title":"文档2","uuid":"004","url":"two","child_uuid":"","parent_uuid":"003"}}]"`;
+
+exports[`main > should work 4`] = `
+"# 文档1
+
+- [DOC1](#doc1)
+  * [SubTitle](#subtitle)
+
+---
+
+# DOC1
+![1.jpeg](./img/002/1-123456.jpeg)
+## SubTitle
+![2.jpeg](./img/002/2-123456.jpeg)
+
+> 原文: <https://www.yuque.com/yuque/base1/one>"
+`;

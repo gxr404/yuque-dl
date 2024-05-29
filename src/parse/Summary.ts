@@ -1,23 +1,9 @@
 import fs from 'node:fs/promises'
-import { ARTICLE_TOC_TYPE } from './constant'
-import logger from './log'
+import { ARTICLE_TOC_TYPE } from '../constant'
+import { logger } from '../utils'
 
-import type { IProgressItem } from './ProgressBar'
+import type { IGenSummaryFile, SummaryItem } from '../types'
 
-interface IGenSummaryFile {
-  bookPath: string,
-  bookName?: string,
-  bookDesc?: string,
-  uuidMap: Map<string, IProgressItem>
-}
-interface SummaryItem {
-  id: string,
-  children?: SummaryItem[],
-  type: 'link' | 'title',
-  text: string,
-  level: number,
-  link?: string
-}
 
 export default class Summary {
   summaryInfo: IGenSummaryFile
@@ -91,7 +77,7 @@ export default class Summary {
     } catch (err) {
       logger.error('Generate Summary Error')
     }
-
+    return mdContent
   }
 
   genSummaryContent(summary: SummaryItem[], summaryContent: string): string {
@@ -115,7 +101,6 @@ export default class Summary {
     return summaryContent
   }
 
-
   findIdItem(node: SummaryItem, id: string) {
     if (node.id === id) {
       return node
@@ -125,6 +110,7 @@ export default class Summary {
     }
     return false
   }
+
   findTree(tree: SummaryItem[], id: string): SummaryItem | boolean {
     if (!id) return false
     for (const item of tree) {

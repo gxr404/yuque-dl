@@ -1,51 +1,23 @@
 import pako from 'pako'
-
-interface SheetItemData {
-  [key: string]: {
-    [key: string]: {
-      v: string
-    }
-  }
-}
-
-interface SheetItem {
-  name: string,
-  rowCount: number,
-  selections: {
-    row: number,
-    col: number,
-    rowCount: number,
-    colCount: number,
-    activeCol: number,
-    activeRow: number
-  },
-  rows: any,
-  columns: any,
-  filter: any,
-  index: 0,
-  colCount: 26,
-  mergeCells: any,
-  id: string,
-  data: SheetItemData,
-  vStore: any
-}
+import type { SheetItem, SheetItemData } from '../types'
 
 // 表格类型解析
 export const parseSheet = (sheetStr: string) => {
   if (!sheetStr) return ''
-  const sheetList: SheetItem[] = JSON.parse(pako.inflate(sheetStr, {
+  const parseStr = pako.inflate(sheetStr, {
     to: "string"
-  }))
+  })
+  const sheetList: SheetItem[] = JSON.parse(parseStr)
   let mdData = ''
   sheetList.forEach((item) => {
     const sheetTitle = `## ${item.name}\n`
-    const table = genMdTable(item.data)
+    const table = genMarkdownTable(item.data)
     mdData = `${mdData}\n${sheetTitle}\n${table}`
   })
   return mdData
 }
 
-function genMdTable(data: SheetItemData) {
+export function genMarkdownTable(data: SheetItemData) {
   let rowList: string[] = Object.keys(data)
   // 过滤掉空白行
   rowList = rowList.filter(rowKey => {

@@ -1,0 +1,70 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`downloadArticle > custom key token 1`] = `
+"# downloadArticle Title
+
+MyKey=MyToken;
+
+> 原文: <https://www.yuque.com/yuque/base1/one>"
+`;
+
+exports[`downloadArticle > sheet type 1`] = `
+"# downloadArticle Title
+
+- [Sheet1](#sheet1)
+- [Sheet2](#sheet2)
+- [Sheet3](#sheet3)
+
+---
+
+
+## Sheet1
+
+| |A | B | C | D | E | F | G | H | I|
+|--- |--- |--- |--- |--- |--- |--- |--- |--- |---|
+| 1 | 1 |  |  |  |  |  |  |  | |
+| 2 |  |  |  | GSSSAPPAP |  |  |  |  | |
+| 3 |  |  |  |  |  |  |  |  | |
+| 4 |  | 12 |  |  |  |  |  |  | |
+| 5 |  |  |  | 123 |  |  |  |  | |
+| 6 |  |  |  |  |  |  |  |  | |
+| 7 |  |  |  |  |  |  |  |  | |
+| 8 |  |  |  |  |  |  |  |  | |
+| 9 |  |  |  |  |  |  |  |  | |
+| 10 |  |  |  |  |  |  |  |  | |
+| 11 |  |  |  |  |  |  |  |  | |
+| 12 |  |  |  |  |  |  |  |  | |
+| 13 |  |  |  |  |  |  | 234 |  | |
+| 14 |  |  |  |  |  |  |  |  | 32423|
+
+## Sheet2
+
+| |A | B | C | D | E | F | G | H|
+|--- |--- |--- |--- |--- |--- |--- |--- |---|
+| 1 | s |  |  | [x]  | 1 |  |  | |
+| 2 |  |  |  | [baidu](https://www.baidu.com) | 13,21321 |  |  | |
+| 3 |  | 34 |  | ![2x-00037-3212833155.png'](./img/img_dir_uuid/images-123456.jpeg) |  |  |  | |
+| 4 |  | 34 |  | ![2x-00037-3212833155.png'](./img/img_dir_uuid/images-123456.jpeg) |  |  |  | |
+
+## Sheet3
+
+
+
+> 原文: <https://www.yuque.com/yuque/base1/one>"
+`;
+
+exports[`downloadArticle > should work 1`] = `
+"# downloadArticle Title
+
+- [DOC1](#doc1)
+  * [SubTitle](#subtitle)
+
+---
+
+# DOC1
+![1.jpeg](./img/img_dir_uuid/1-123456.jpeg)
+## SubTitle
+![2.jpeg](./img/img_dir_uuid/2-123456.jpeg)
+
+> 原文: <https://www.yuque.com/yuque/base1/one>"
+`;

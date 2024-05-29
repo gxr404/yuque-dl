@@ -1,0 +1,46 @@
+{
+  "space": {
+    "host": "https://www.yuque.com"
+  },
+  "book": {
+    "id": 41966892,
+    "slug": "welfare",
+    "name": "知识库TEST1",
+    "description": "知识库 test desc",
+    "toc": [
+      {
+        "type": "TITLE",
+        "title": "Title1",
+        "uuid": "001",
+        "child_uuid": "002",
+        "parent_uuid": ""
+      },
+      {
+        "type": "DOC",
+        "title": "文档1",
+        "uuid": "002",
+        "url": "one",
+        "child_uuid": "",
+        "parent_uuid": "001"
+      },
+      {
+        "type": "TITLE",
+        "title": "Title2",
+        "uuid": "003",
+        "child_uuid": "004",
+        "parent_uuid": ""
+      },
+      {
+        "type": "DOC",
+        "title": "文档2",
+        "uuid": "004",
+        "url": "two",
+        "child_uuid": "",
+        "parent_uuid": "003"
+      }
+    ]
+  },
+  "imageServiceDomains": [
+    "gxr404.com"
+  ]
+}

@@ -1,0 +1,14 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`fixMarkdownImage > should work 1`] = `
+"
+    # Test
+    ![](http://www.abc.com/3.jpg?a=3&b=c#33)
+    ![](./test.jpg)
+    ![](http://www.abc.com/1.jpg?a=1&b=c#11)
+    ![](http://www.abc.com/2.jpg)
+    ![](http://www.abc.com/1.jpg?a=2&b=c#22)
+    ![](http://www.abc.com/1.jpg)
+    ![](http://www.abc.com/3.jpg)
+    "
+`;

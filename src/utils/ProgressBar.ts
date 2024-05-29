@@ -1,20 +1,10 @@
 import fs from 'node:fs/promises'
-
 import cliProgress from 'cli-progress'
+import { logger } from './log'
 
-import logger from './log'
+import type { IProgress, IProgressItem } from '../types'
 
-import type { KnowledgeBase } from './types/KnowledgeBaseResponse'
-
-export interface IProgressItem {
-  path: string,
-  toc: KnowledgeBase.Toc,
-  pathIdList: string[],
-  pathTitleList: string[]
-}
-export type IProgress = IProgressItem[]
-
-export default class ProgressBar {
+export class ProgressBar {
   bookPath: string = ''
   progressFilePath: string = ''
   progressInfo: IProgress = []
@@ -65,6 +55,7 @@ export default class ProgressBar {
   }
 
   async updateProgress(progressItem: IProgressItem, isSuccess: boolean) {
+    if (this.curr === this.total) return
     this.curr = this.curr + 1
     // 成功才写入 progress.json 以便重新执行时重新下载
     if (isSuccess) {

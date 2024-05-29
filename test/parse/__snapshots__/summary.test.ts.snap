@@ -1,0 +1,33 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`summary > should work 1`] = `
+"# Test Book
+
+> This is a test book
+
+
+## Title1
+
+- [DOC1](002/doc.md)
+
+## Title2
+
+- [DOC2](004/doc.md)
+
+### Title2-1
+
+- [DOC3](006/doc.md)
+"
+`;
+
+exports[`summary > the title is also a doc 1`] = `
+"# Test Book
+
+> This is a test book
+
+
+## [Title1](001/doc.md)
+
+- [DOC1](002/doc.md)
+"
+`;

@@ -2,27 +2,16 @@ import axios from 'axios'
 import { randUserAgent } from './utils'
 import { DEFAULT_COOKIE_KEY, DEFAULT_DOMAIN } from './constant'
 
-import type { ArticleResponse } from './types/ArticleResponse'
-import type { KnowledgeBase } from './types/KnowledgeBaseResponse'
+import type {
+  ArticleResponse,
+  KnowledgeBase,
+  GetHeaderParams,
+  IReqHeader,
+  TGetKnowledgeBaseInfo,
+  TGetMdData
+} from './types'
 import type { AxiosRequestConfig } from 'axios'
 
-interface IKnowledgeBaseInfo {
-  bookId?: number
-  bookSlug?: string
-  tocList?: KnowledgeBase.Toc[],
-  bookName?: string,
-  bookDesc?: string,
-  host?: string,
-  imageServiceDomains?: string[]
-}
-
-interface IReqHeader {
-  [key: string]: string
-}
-interface GetHeaderParams {
-  key?:string,
-  token?: string
-}
 function getHeaders(params: GetHeaderParams): IReqHeader {
   const { key = DEFAULT_COOKIE_KEY, token } = params
   const headers: IReqHeader = {
@@ -50,7 +39,6 @@ function genCommonOptions(params: GetHeaderParams): AxiosRequestConfig {
 }
 
 
-type TGetKnowledgeBaseInfo = (url: string, headerParams: GetHeaderParams) => Promise<IKnowledgeBaseInfo>
 /** 获取知识库数据信息 */
 export const getKnowledgeBaseInfo: TGetKnowledgeBaseInfo = (url, headerParams) => {
   const knowledgeBaseReg = /decodeURIComponent\("(.+)"\)\);/m
@@ -74,22 +62,12 @@ export const getKnowledgeBaseInfo: TGetKnowledgeBaseInfo = (url, headerParams) =
         imageServiceDomains: jsonData.imageServiceDomains || []
       }
       return info
+    }).catch(() => {
+      return {}
     })
 }
 
-interface GetMdDataParams {
-  articleUrl: string,
-  bookId: number,
-  host?: string
-  token?: string,
-  key?: string
-}
-interface IGetDocsMdDataRes {
-  apiUrl: string,
-  httpStatus: number,
-  response?: ArticleResponse.RootObject
-}
-type TGetMdData = (params: GetMdDataParams, isMd?: boolean) => Promise<IGetDocsMdDataRes>
+
 export const getDocsMdData: TGetMdData = (params, isMd = true) => {
   const { articleUrl, bookId, token, key, host = DEFAULT_DOMAIN } = params
   let apiUrl = `${host}/api/docs/${articleUrl}`

@@ -2,17 +2,17 @@ import crypto from 'node:crypto'
 import { IMAGE_SING_KEY } from '../constant'
 
 function isCaptureImageURL(url: string, imageServiceDomains: string[]) {
+  // try Invalid URL
   try {
     const {host, pathname} = new URL(url)
     if (imageServiceDomains.includes(host)) return false
-
     return Boolean(pathname)
   } catch(e) {
     return false
   }
 }
 
-function genSign(url: string) {
+export function genSign(url: string) {
   const hash = crypto.createHash('sha256')
   hash.update(`${IMAGE_SING_KEY}${url}`)
   return hash.digest('hex')

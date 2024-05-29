@@ -1,5 +1,6 @@
 import randUserAgentLib from 'rand-user-agent'
 
+/** 随机生成UA */
 function randUserAgent({ browser = 'chrome', os = 'mac os', device = 'desktop' }) {
   device = device.toLowerCase()
   browser = browser.toLowerCase()
@@ -40,7 +41,15 @@ function getMarkdownImageList(mdStr: string) {
   return list
 }
 
+function removeEmojis(dirName:string) {
+  return dirName.replace(/[\ud800-\udbff][\udc00-\udfff]/g, '')
+}
+
 export {
   randUserAgent,
-  getMarkdownImageList
+  getMarkdownImageList,
+  removeEmojis
 }
+
+export * from './log'
+export * from './ProgressBar'
