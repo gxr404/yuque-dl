@@ -1,3 +1,12 @@
+## [1.0.49](https://github.com/gxr404/yuque-dl/compare/v1.0.48...v1.0.49) (2024-05-29)
+
+
+### Features
+
+* add test & organize files ([9eeb00f](https://github.com/gxr404/yuque-dl/commit/9eeb00fa75439a8126cb795a278e7604e7fb1f6b))
+
+
+
 ## [1.0.48](https://github.com/gxr404/yuque-dl/compare/v1.0.47...v1.0.48) (2024-05-23)
 
 
