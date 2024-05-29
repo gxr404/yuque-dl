@@ -92,7 +92,7 @@ yuque-dl "url" -k "verified_books" -t "verified_books的值"
 - [x] 支持转换表格类型的文档 (ps: 表格内插入图表暂不支持)
 - [x] 添加toc目录功能
 - [ ] 支持其他文档类型？🤔
-- [ ] 添加测试 🤔
+- [x] 添加测试 🤔
 
 ## 常见错误
 
