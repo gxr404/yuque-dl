@@ -1,3 +1,12 @@
+## [1.0.50](https://github.com/gxr404/yuque-dl/compare/v1.0.49...v1.0.50) (2024-05-29)
+
+
+### Bug Fixes
+
+*  修复部分图片异常 ([5b99de4](https://github.com/gxr404/yuque-dl/commit/5b99de455f74e7738048f96ed56943997531e55b))
+
+
+
 ## [1.0.49](https://github.com/gxr404/yuque-dl/compare/v1.0.48...v1.0.49) (2024-05-29)
 
 
