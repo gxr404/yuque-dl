@@ -102,17 +102,24 @@ export async function downloadArticle(params: DownloadArticleParams): Promise<bo
       })
       spinnerDiscardingStdin.start()
     }
-
-    const { data, errorInfo } = await mdImg.run(mdData, {
-      dist: savePath,
-      imgDir: `./img/${uuid}`,
-      isIgnoreConsole: true,
-      errorStillReturn: true,
-      referer: articleUrl || '',
-      transform(url: string) {
-        return captureImageURL(url, imageServiceDomains)
-      }
-    })
+    let errorInfo = []
+    let data = mdData
+    try {
+      const mdImgRes = await mdImg.run(mdData, {
+        dist: savePath,
+        imgDir: `./img/${uuid}`,
+        isIgnoreConsole: true,
+        errorStillReturn: true,
+        referer: articleUrl || '',
+        transform(url: string) {
+          return captureImageURL(url, imageServiceDomains)
+        }
+      })
+      errorInfo = mdImgRes.errorInfo
+      data = mdImgRes.data
+    } catch(e) {
+      errorInfo = [e]
+    }
     mdData = data
     const stopProgress = () => {
       if (spinnerDiscardingStdin) spinnerDiscardingStdin.stop()
@@ -126,9 +133,10 @@ export async function downloadArticle(params: DownloadArticleParams): Promise<bo
       //   errMessageList = `${errMessageList} ———————— ${index+1}. ${e.error?.message}: ${e.url} \n`
       // })
       const e = errorInfo[0]
-      const errMessage = `图片下载失败(失败的以远程链接保存): ${e.url}`
+      let errMessage = `图片下载失败(失败的以远程链接保存): `
+      errMessage = e.url ? `${errMessage}${e.error?.message} ${e.url.slice(0, 20)}...` : `${errMessage}${e.message}`
       // 图片下载 md文档按远程图片保存
-      await writeFile(saveFilePath, handleMdData(mdData,handleMdDataOptions))
+      await writeFile(saveFilePath, handleMdData(mdData, handleMdDataOptions))
       stopProgress()
       // throw new Error(`${errMessage}\n${errMessageList}`)
       throw new Error(`${errMessage}`)
