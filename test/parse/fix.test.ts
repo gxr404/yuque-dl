@@ -20,11 +20,11 @@ describe('fixMarkdownImage', () => {
   it('should work', () => {
     const mdData = `
     # Test
-    ![](http://www.abc.com/3.jpg)
+    ![](http://www.abc.com/3.jpg#123)
     ![](./test.jpg)
-    ![](http://www.abc.com/1.jpg)
+    ![](http://www.abc.com/1.jpg#123)
     ![](http://www.abc.com/2.jpg)
-    ![](http://www.abc.com/1.jpg)
+    ![](http://www.abc.com/1.jpg#456)
     ![](http://www.abc.com/1.jpg)
     ![](http://www.abc.com/3.jpg)
     `

@@ -94,8 +94,8 @@ export async function downloadArticle(params: DownloadArticleParams): Promise<bo
   if (imgList.length && !ignoreImg) {
     progressBar.pause()
     let spinnerDiscardingStdin: Ora
+    console.log('')
     if (env.NODE_ENV !== 'test') {
-      console.log('')
       spinnerDiscardingStdin = ora({
         text: `下载 "${articleTitle}" 的图片中...`,
         stream: stdout
@@ -120,16 +120,18 @@ export async function downloadArticle(params: DownloadArticleParams): Promise<bo
     }
 
     if (errorInfo.length > 0) {
-      // const e = errorInfo[0]
-      const errMessage = `图片下载失败(失败的以远程链接保存): \n`
-      let errMessageList = ''
-      errorInfo.forEach((e, index) => {
-        errMessageList = `${errMessageList} ———————— ${index+1}. ${e.error?.message}: ${e.url} \n`
-      })
+      // const errMessage = `图片下载失败(失败的以远程链接保存): \n`
+      // let errMessageList = ''
+      // errorInfo.forEach((e, index) => {
+      //   errMessageList = `${errMessageList} ———————— ${index+1}. ${e.error?.message}: ${e.url} \n`
+      // })
+      const e = errorInfo[0]
+      const errMessage = `图片下载失败(失败的以远程链接保存): ${e.url}`
       // 图片下载 md文档按远程图片保存
       await writeFile(saveFilePath, handleMdData(mdData,handleMdDataOptions))
       stopProgress()
-      throw new Error(`${errMessage}\n${errMessageList}`)
+      // throw new Error(`${errMessage}\n${errMessageList}`)
+      throw new Error(`${errMessage}`)
     }
     stopProgress()
   }

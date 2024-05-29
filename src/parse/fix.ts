@@ -58,9 +58,10 @@ export function fixMarkdownImage(imgList: string[], mdData: string, htmlData: st
       if (isFind) htmlImgDataList.splice(index, 1)
       return isFind
     })
+    // console.log(imgUrl, ' -> ',targetURL)
     if (targetURL) {
-      const reg = new RegExp(`${matchURL}.*?`, 'g')
-      const count = replaceURLCountMap.get(matchURL) || 0
+      const reg = new RegExp(imgUrl, 'g')
+      const count = replaceURLCountMap.get(imgUrl) || 0
       let temp = 0
       mdData = mdData.replace(reg, (match) => {
         let res = match
@@ -70,7 +71,7 @@ export function fixMarkdownImage(imgList: string[], mdData: string, htmlData: st
         temp = temp + 1
         return res
       })
-      replaceURLCountMap.set(matchURL, count + 1)
+      replaceURLCountMap.set(imgUrl, count + 1)
     }
   })
   return mdData
