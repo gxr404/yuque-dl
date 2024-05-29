@@ -1,3 +1,12 @@
+## [1.0.51](https://github.com/gxr404/yuque-dl/compare/v1.0.50...v1.0.51) (2024-05-29)
+
+
+### Bug Fixes
+
+* update pull-md-img ([ff9410e](https://github.com/gxr404/yuque-dl/commit/ff9410e14346dc695f967370e87c5b558f6bc0cc))
+
+
+
 ## [1.0.50](https://github.com/gxr404/yuque-dl/compare/v1.0.49...v1.0.50) (2024-05-29)
 
 
