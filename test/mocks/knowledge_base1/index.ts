@@ -67,7 +67,11 @@ const handlers = [
   http.get('https://www.yuque.com/api/docs/sheet', () => {
     return HttpResponse.json(sheetData)
   }),
-
+  http.get('https://www.yuque.com/api/docs/sheetError', () => {
+    const temp = structuredClone(sheetData)
+    temp.data.content = 'error'
+    return HttpResponse.json(temp)
+  }),
   http.get("https://www.yuque.com/api/filetransfer/images", ()=>{
     return HttpResponse.arrayBuffer(img1buffer, {
       headers: {
@@ -81,6 +85,14 @@ const handlers = [
       "data": {
         "type": "Doc",
         "sourcecode": request.headers.get('cookie')
+      }
+    })
+  }),
+
+  http.get('https://www.yuque.com/api/docs/sourcecodeNull', () => {
+    return HttpResponse.json({
+      "data": {
+        "type": "Doc",
       }
     })
   }),

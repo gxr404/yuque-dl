@@ -17,7 +17,9 @@
     "changelog:gen": "conventional-changelog -p angular -i CHANGELOG.md -s -r 2",
     "changelog:commit": "git add CHANGELOG.md && git commit CHANGELOG.md -m 'chore: update changelog' && git push",
     "release": "run-s clean build np changelog:gen changelog:commit",
-    "test": "vitest --run"
+    "test": "vitest --run",
+    "test:ui": "vitest --ui --coverage.enabled=true",
+    "test:coverage": "vitest run --coverage"
   },
   "repository": {
     "type": "git",
@@ -44,6 +46,8 @@
     "@types/semver": "^7.5.8",
     "@typescript-eslint/eslint-plugin": "^6.3.0",
     "@typescript-eslint/parser": "^6.3.0",
+    "@vitest/coverage-v8": "^1.6.0",
+    "@vitest/ui": "^1.6.0",
     "conventional-changelog-cli": "^5.0.0",
     "msw": "^2.3.0",
     "np": "^8.0.4",

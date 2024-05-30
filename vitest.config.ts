@@ -9,5 +9,9 @@ export default defineConfig({
       // if (/下载 "(.*?)" 的图片中/gm.test(log)) return false
       if (/^\s+$/gm.test(log)) return false
     },
+    coverage: {
+      include: ["src/**/*"],
+      exclude: ["src/types/**/*"],
+    }
   },
 })

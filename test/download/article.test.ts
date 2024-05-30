@@ -56,6 +56,40 @@ describe('downloadArticle', () => {
     expect(readFileSync(`${articleInfo.savePath}/img/${articleInfo.uuid}/${imgList[1]}`).length).toBe(81011)
   })
 
+  it('sourcecode null should work', async () => {
+    const articleInfo = {
+      savePath: testTools.cwd,
+      saveFilePath: path.join(testTools.cwd, 'test.md'),
+      host: 'https://www.yuque.com',
+      ignoreImg: false,
+      uuid: 'img_dir_uuid',
+      articleTitle: 'downloadArticle Title',
+      articleUrl: 'https://www.yuque.com/yuque/base1/one',
+      itemUrl: 'sourcecodeNull',
+      bookId: 1111,
+      imageServiceDomains: ['gxr404.com']
+    }
+    let isValidate = false
+    try {
+      await downloadArticle({
+        articleInfo,
+        progressBar: {
+          pause: vi.fn(),
+          continue: vi.fn()
+        } as any,
+        options: {
+          token: 'options token',
+          key: 'options key'
+        } as any
+      })
+    } catch(e) {
+      isValidate = true
+      expect(e.message).toMatch( /download article Error: .*?, http status 200/g)
+    }
+    expect(isValidate).toBeTruthy()
+  })
+
+
   it('board type', async () => {
     const articleInfo = {
       savePath: testTools.cwd,
@@ -154,6 +188,39 @@ describe('downloadArticle', () => {
     expect(doc1Data).toMatchSnapshot()
     const imgList = readdirSync(`${articleInfo.savePath}/img/${articleInfo.uuid}`)
     expect(readFileSync(`${articleInfo.savePath}/img/${articleInfo.uuid}/${imgList[0]}`).length).toBe(99892)
+  })
+
+  it('sheet type parse error', async () => {
+    const articleInfo = {
+      savePath: testTools.cwd,
+      saveFilePath: path.join(testTools.cwd, 'test.md'),
+      host: 'https://www.yuque.com',
+      ignoreImg: false,
+      uuid: 'img_dir_uuid',
+      articleTitle: 'downloadArticle Title',
+      articleUrl: 'https://www.yuque.com/yuque/base1/one',
+      itemUrl: 'sheetError',
+      bookId: 1111,
+      imageServiceDomains: ['gxr404.com']
+    }
+    let isValidate = false
+    try {
+      await downloadArticle({
+        articleInfo,
+        progressBar: {
+          pause: vi.fn(),
+          continue: vi.fn()
+        } as any,
+        options: {
+          token: 'options token',
+          key: 'options key'
+        } as any
+      })
+    } catch (e) {
+      isValidate = true
+      expect(e.message).toBe(`download article Error: “表格类型”解析错误 SyntaxError: Unexpected token 'e', "error" is not valid JSON`)
+    }
+    expect(isValidate).toBeTruthy()
   })
 
   it('custom key token', async () => {

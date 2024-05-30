@@ -9,6 +9,10 @@ describe('utils', () => {
     const data =  getMarkdownImageList('# test\n![](http://x.jpg)\n![](./x2.jpg)\n![](http://x3.jpg)')
     expect(data).toMatchObject(['http://x.jpg', 'http://x3.jpg'])
   })
+  it('getMarkdownImageList param null', () => {
+    const data =  getMarkdownImageList(null as any)
+    expect(data).toMatchObject([])
+  })
   it('removeEmojis', () => {
     const data = removeEmojis('🤣t😅e😁s😂t😅')
     expect(data).toBe('test')

@@ -2,7 +2,7 @@ import { afterAll, afterEach, beforeAll, beforeEach, describe, expect, it } from
 import { TestTools } from './helpers/TestTools'
 import { server } from './mocks/server'
 import { KNOWLEDGE_BASE_URL } from './helpers/constant'
-import { getDocsMdData, getKnowledgeBaseInfo } from '../src/api'
+import { getDocsMdData, getKnowledgeBaseInfo, genCommonOptions } from '../src/api'
 
 let testTools: TestTools
 
@@ -20,6 +20,7 @@ describe('api', () => {
     testTools.cleanup()
     server.resetHandlers()
   })
+
   describe('getKnowledgeBaseInfo', () => {
     it('should work', async () => {
       const data = await getKnowledgeBaseInfo(KNOWLEDGE_BASE_URL.NORMAL, {
@@ -39,6 +40,7 @@ describe('api', () => {
       expect(data).toMatchObject({})
     })
   })
+
   describe('getDocsMdData', () => {
     it('should work', async () => {
       const params = {
@@ -50,5 +52,18 @@ describe('api', () => {
       expect(data.httpStatus).toBe(200)
       expect(data.response?.data.sourcecode).toBeTruthy()
     })
+  })
+
+  it('genCommonOptions should work', async () => {
+    const data = genCommonOptions({
+      key: 'test_key',
+      token: 'test_token'
+    })
+    expect(data.headers?.cookie).toMatchObject('test_key=test_token;')
+    const redirectObj = {} as any
+    if (data.beforeRedirect) {
+      data.beforeRedirect(redirectObj, null as any)
+    }
+    expect(redirectObj?.headers?.cookie).toMatchObject('test_key=test_token;')
   })
 })

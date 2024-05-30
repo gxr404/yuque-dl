@@ -24,7 +24,7 @@ function getHeaders(params: GetHeaderParams): IReqHeader {
   return headers
 }
 
-function genCommonOptions(params: GetHeaderParams): AxiosRequestConfig {
+export function genCommonOptions(params: GetHeaderParams): AxiosRequestConfig {
   return {
     headers: getHeaders(params),
     beforeRedirect: (options) => {

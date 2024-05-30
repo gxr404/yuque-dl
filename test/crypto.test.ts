@@ -18,4 +18,10 @@ describe('captureImageURL', () => {
     const data = captureImageURL(imgUrl, imageServiceDomains)
     expect(data).toBe(`https://www.yuque.com/api/filetransfer/images?url=${encodeURIComponent(imgUrl)}&sign=${genSign(imgUrl)}`)
   })
+
+  it('An invalid URL can work properly', () => {
+    const imgUrl = '123'
+    const data = captureImageURL(imgUrl, imageServiceDomains)
+    expect(data).toBe(imgUrl)
+  })
 })
