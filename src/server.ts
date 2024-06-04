@@ -48,6 +48,11 @@ async function createVitePressConfig(root: string) {
         provider: 'local'
       },
       sidebar: ${JSON.stringify(sidebar)}
+    },
+    vite: {
+      optimizeDeps: {
+        include: []
+      }
     }
   }
   `

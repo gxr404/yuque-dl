@@ -89,7 +89,7 @@ yuque-dl "url" -k "verified_books" -t "verified_books的值"
 使用[`vitepress`](https://vitepress.dev/)快速启动一个web服务提供可预览下载的内容
 
 ```bash
-yuque-dl server ./download/
+yuque-dl server ./download/知识库/
 
 ➜  Local:   http://localhost:5173/
 ➜  Network: use --host to expose
