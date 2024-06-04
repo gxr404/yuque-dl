@@ -69,7 +69,7 @@ export async function main(url: string, options: ICliOptions) {
     uuidMap
   })
   await summary.genFile()
-  logger.info(`√ 生成目录 ${path.resolve(bookPath, 'SUMMARY.md')}`)
+  logger.info(`√ 生成目录 ${path.resolve(bookPath, 'index.md')}`)
 
   if (progressBar.curr === total) {
     logger.info(`√ 已完成: ${bookPath}`)

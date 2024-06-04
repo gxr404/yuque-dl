@@ -11,12 +11,6 @@ MyKey=MyToken;
 exports[`downloadArticle > sheet type 1`] = `
 "# downloadArticle Title
 
-- [Sheet1](#sheet1)
-- [Sheet2](#sheet2)
-- [Sheet3](#sheet3)
-
----
-
 
 ## Sheet1
 
@@ -55,11 +49,6 @@ exports[`downloadArticle > sheet type 1`] = `
 
 exports[`downloadArticle > should work 1`] = `
 "# downloadArticle Title
-
-- [DOC1](#doc1)
-  * [SubTitle](#subtitle)
-
----
 
 # DOC1
 ![1.jpeg](./img/img_dir_uuid/1-123456.jpeg)

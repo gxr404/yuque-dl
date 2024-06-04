@@ -27,9 +27,9 @@ describe('main', () => {
     await main(KNOWLEDGE_BASE_URL.BASE1, {
       distDir: testTools.cwd,
       ignoreImg: false,
-      ignoreToc: false
+      toc: false
     })
-    const summaryPath = path.join(testTools.cwd, '知识库TEST1/SUMMARY.md')
+    const summaryPath = path.join(testTools.cwd, '知识库TEST1/index.md')
     expect(readFileSync(summaryPath).toString()).toMatchSnapshot()
     const doc2 = path.join(testTools.cwd, '知识库TEST1/Title2/文档2.md')
     expect(readFileSync(doc2).toString()).toMatchSnapshot()

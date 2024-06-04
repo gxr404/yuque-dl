@@ -12,7 +12,7 @@ export interface ICliOptions {
   /** 自定义token key(企业所有部署) */
   key?: string
   /** 是否忽略markdown中toc的生成 */
-  ignoreToc: boolean
+  toc: boolean
 }
 
 // ---------------- index
@@ -40,7 +40,7 @@ export interface DownloadArticleParams {
 export interface IHandleMdDataOptions {
   articleUrl: string
   articleTitle: string
-  ignoreToc: boolean
+  toc: boolean
 }
 
 

@@ -85,7 +85,7 @@ export async function downloadArticle(params: DownloadArticleParams): Promise<bo
   }
 
   const handleMdDataOptions = {
-    ignoreToc: options.ignoreToc,
+    toc: options.toc,
     articleTitle,
     articleUrl
   }
@@ -153,18 +153,18 @@ export async function downloadArticle(params: DownloadArticleParams): Promise<bo
 }
 
 function handleMdData (rawMdData: string, options: IHandleMdDataOptions): string {
-  const {articleTitle, articleUrl, ignoreToc} = options
+  const {articleTitle, articleUrl, toc} = options
   let mdData = rawMdData
 
   mdData = mdData.replace(/<br(\s?)\/>/gm, '\n')
   mdData = mdData.replace(/<a.*?>(\s*?)<\/a>/gm, '')
   const  header = articleTitle ? `# ${articleTitle}\n\n` : ''
   // toc 目录添加
-  let toc = !ignoreToc ? mdToc(mdData).content : ''
-  if (toc) toc = `${toc}\n\n---\n\n`
+  let tocData = toc ? mdToc(mdData).content : ''
+  if (tocData) tocData = `${tocData}\n\n---\n\n`
 
   const footer = articleUrl ? `\n\n> 原文: <${articleUrl}>` : ''
 
-  mdData = `${header}${toc}${mdData}${footer}`
+  mdData = `${header}${tocData}${mdData}${footer}`
   return mdData
 }

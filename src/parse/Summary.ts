@@ -73,7 +73,7 @@ export default class Summary {
     const summaryContent = this.genSummaryContent(summary, '')
     mdContent += summaryContent
     try {
-      await fs.writeFile(`${bookPath}/SUMMARY.md`, mdContent)
+      await fs.writeFile(`${bookPath}/index.md`, mdContent)
     } catch (err) {
       logger.error('Generate Summary Error')
     }

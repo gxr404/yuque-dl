@@ -3,11 +3,6 @@
 exports[`downloadArticle > should work 1`] = `
 "# 文档1
 
-- [DOC1](#doc1)
-  * [SubTitle](#subtitle)
-
----
-
 # DOC1
 ![1.jpeg](./img/002/1-123456.jpeg)
 ## SubTitle
@@ -18,12 +13,6 @@ exports[`downloadArticle > should work 1`] = `
 
 exports[`downloadArticle > should work 2`] = `
 "# 文档2
-
-- [DOC2](#doc2)
-  * [Title](#title)
-    + [Title2](#title2)
-
----
 
 # DOC2
 ## Title
@@ -38,11 +27,6 @@ text...
 exports[`downloadArticle > the title is also a doc 1`] = `
 "# Title1_文档
 
-- [DOC1](#doc1)
-  * [SubTitle](#subtitle)
-
----
-
 # DOC1
 ![1.jpeg](./img/001/1-123456.jpeg)
 ## SubTitle
@@ -53,12 +37,6 @@ exports[`downloadArticle > the title is also a doc 1`] = `
 
 exports[`downloadArticle > the title is also a doc 2`] = `
 "# 文档1
-
-- [DOC2](#doc2)
-  * [Title](#title)
-    + [Title2](#title2)
-
----
 
 # DOC2
 ## Title

@@ -6,6 +6,7 @@ import semver from 'semver'
 import { main } from './index'
 import { logger } from './utils'
 import type { ICliOptions } from './types'
+import { runServer } from './server'
 
 const cli = cac('yuque-dl')
 
@@ -36,13 +37,24 @@ cli
   })
   .option('-k, --key <key>', '语雀的cookie key， 默认是 "_yuque_session"， 在某些企业版本中 key 不一样')
   .option('-t, --token <token>', '语雀的cookie key 对应的值')
-  .option('--ignore-toc', '默认输出toc目录,添加此参数则不输出toc目录', {
+  .option('--toc', '是否输出文档toc目录', {
     default: false
   })
   .action(async (url: string, options: ICliOptions) => {
     try {
       await main(url, options)
       process.exit(0)
+    } catch (err) {
+      logger.error(err.message || 'unknown exception')
+      process.exit(1)
+    }
+  })
+
+cli
+  .command('server <serverPath>', '启动web服务')
+  .action(async (serverPath: string) => {
+    try {
+      await runServer(serverPath)
     } catch (err) {
       logger.error(err.message || 'unknown exception')
       process.exit(1)

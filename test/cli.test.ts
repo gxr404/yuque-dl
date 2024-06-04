@@ -51,4 +51,20 @@ describe('yuque-dl CLI', () => {
     const data = fs.readFileSync(indexMdPath).toString()
     expect(data).toMatchSnapshot()
   })
+
+  it('generate toc list should work ', async () => {
+    const { stdout, exitCode } = await testTools.fork(cliPath, [
+      KNOWLEDGE_BASE_URL.NORMAL,
+      '-d', '.',
+      '--toc',
+      '-i'
+    ])
+    expect(exitCode).toBe(0)
+    expect(stdout).toContain('√ 已完成')
+    const imgDir = path.join(testTools.cwd, '语雀公益计划/语雀·大学生公益计划/img')
+    expect(fs.existsSync(imgDir)).toBeFalsy()
+    const indexMdPath = path.join(testTools.cwd, '语雀公益计划/语雀·大学生公益计划/index.md')
+    const data = fs.readFileSync(indexMdPath).toString()
+    expect(data).toMatchSnapshot()
+  })
 })

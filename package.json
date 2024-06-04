@@ -68,7 +68,8 @@
     "pako": "1.0.11",
     "pull-md-img": "^0.0.60",
     "rand-user-agent": "1.0.109",
-    "semver": "^7.6.0"
+    "semver": "^7.6.0",
+    "vitepress": "^1.2.2"
   },
   "engines": {
     "node": ">=18.4.0"

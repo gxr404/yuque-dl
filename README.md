@@ -23,21 +23,21 @@ $ yuque-dl --help
     $ yuque-dl <url>
 
   Commands:
-    <url>       语雀知识库url
-    -h, --help  显示帮助
+    <url>                语雀知识库url
+    server <serverPath>  启动web服务
 
   For more info, run any command with the `--help` flag:
     $ yuque-dl --help
-    $ yuque-dl -h, --help --help
+    $ yuque-dl server --help
 
   Options:
     -d, --dist-dir <dir>  下载的目录 eg: -d download (default: download)
     -i, --ignore-img      忽略图片不下载 (default: false)
-    -k, --key <key>       语雀的cookie key， 默认是 "_yuque_session"， 在某些企业版本中 key 不一样
-    -t, --token <token>   语雀的cookie key 对应的值
-    --ignore-toc          默认输出toc目录,添加此参数则不输出toc目录 (default: false)
-    -h, --help            Display this message
-    -v, --version         Display version number
+    -k, --key <key>       语雀的cookie key， 默认是 "_yuque_session"， 在某些企业版本中 key 不一样 
+    -t, --token <token>   语雀的cookie key 对应的值 
+    --toc                 是否输出文档toc目录 (default: false)
+    -h, --help            Display this message 
+    -v, --version         Display version number 
 ```
 
 ### Start
@@ -84,6 +84,19 @@ yuque-dl "https://www.yuque.com/yuque/thyzgp" -t "abcd..."
 yuque-dl "url" -k "verified_books" -t "verified_books的值"
 ```
 
+## 内置启动web服务可快速预览
+
+使用[`vitepress`](https://vitepress.dev/)快速启动一个web服务提供可预览下载的内容
+
+```bash
+yuque-dl server ./download/
+
+➜  Local:   http://localhost:5173/
+➜  Network: use --host to expose
+```
+
+![server.png](./docs/assets/server.png)
+
 ## Feature
 
 - [x] 支持下载中断继续
@@ -91,8 +104,8 @@ yuque-dl "url" -k "verified_books" -t "verified_books的值"
 - [x] 支持下载分享私有的知识库
 - [x] 支持转换表格类型的文档 (ps: 表格内插入图表暂不支持)
 - [x] 添加toc目录功能
+- [x] 添加测试
 - [ ] 支持其他文档类型？🤔
-- [x] 添加测试 🤔
 - [ ] 直接打包成可执行文件 🤔
 
 ## 常见错误

@@ -80,7 +80,7 @@ describe('summary', () => {
       ])
     })
     await summary.genFile()
-    const data = readFileSync(path.join(testTools.cwd, 'SUMMARY.md'))
+    const data = readFileSync(path.join(testTools.cwd, 'index.md'))
     expect(data.toString()).toMatchSnapshot()
   })
 
@@ -114,7 +114,7 @@ describe('summary', () => {
       ])
     })
     await summary.genFile()
-    const data = readFileSync(path.join(testTools.cwd, 'SUMMARY.md'))
+    const data = readFileSync(path.join(testTools.cwd, 'index.md'))
     expect(data.toString()).toMatchSnapshot()
   })
 })
