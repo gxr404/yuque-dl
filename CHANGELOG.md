@@ -1,3 +1,13 @@
+## [1.0.52](https://github.com/gxr404/yuque-dl/compare/v1.0.51...v1.0.52) (2024-06-04)
+
+
+### Features
+
+* **test:** add coverage ([44b4584](https://github.com/gxr404/yuque-dl/commit/44b45845e2e6e37138df9c0ee76d58fc163b4bf6))
+* update package ([6fbf3d4](https://github.com/gxr404/yuque-dl/commit/6fbf3d42029e0448b43dc6594f78efd9c7099a1a))
+
+
+
 ## [1.0.51](https://github.com/gxr404/yuque-dl/compare/v1.0.50...v1.0.51) (2024-05-29)
 
 
