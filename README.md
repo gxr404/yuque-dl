@@ -93,6 +93,7 @@ yuque-dl "url" -k "verified_books" -t "verified_books的值"
 - [x] 添加toc目录功能
 - [ ] 支持其他文档类型？🤔
 - [x] 添加测试 🤔
+- [ ] 直接打包成可执行文件 🤔
 
 ## 常见错误
 
