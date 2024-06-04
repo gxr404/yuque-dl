@@ -1,3 +1,12 @@
+## [1.0.54](https://github.com/gxr404/yuque-dl/compare/v1.0.53...v1.0.54) (2024-06-04)
+
+
+### Bug Fixes
+
+* 移除多余警告 ([9f3fc32](https://github.com/gxr404/yuque-dl/commit/9f3fc32aac4faf39cfc9ae1c3b45bd1525d1c401))
+
+
+
 ## [1.0.53](https://github.com/gxr404/yuque-dl/compare/v1.0.52...v1.0.53) (2024-06-04)
 
 
