@@ -1,3 +1,17 @@
+## [1.0.53](https://github.com/gxr404/yuque-dl/compare/v1.0.52...v1.0.53) (2024-06-04)
+
+
+### Bug Fixes
+
+* **types:** 修复type打包失败 ([a87c130](https://github.com/gxr404/yuque-dl/commit/a87c13022e3c95e0c54d2cb9c4e95078ea2f4100))
+
+
+### Features
+
+* 添加`yuque-dl server`命令 ([3dacf60](https://github.com/gxr404/yuque-dl/commit/3dacf60efcc88ea1b7689fc6f99a02b61589e2fe))
+
+
+
 ## [1.0.52](https://github.com/gxr404/yuque-dl/compare/v1.0.51...v1.0.52) (2024-06-04)
 
 
