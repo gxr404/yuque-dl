@@ -73,7 +73,7 @@ yuque-dl "https://www.yuque.com/yuque/thyzgp" -t "abcd..."
 
 ### 公开密码访问的知识库
 
-![public_pwd](https://github.com/gxr404/yuque-dl/assets/17134256/8e79aef3-5a94-4c5d-b9c9-1665aca0ac29)
+![public_pwd](https://github.com/gxr404/yuque-dl/assets/17134256/b546a9a3-68f0-4f76-b450-6b16f464db5d)
 
 公开密码访问的知识库两种情况:
 
@@ -95,7 +95,7 @@ yuque-dl server ./download/知识库/
 ➜  Network: use --host to expose
 ```
 
-![server.png](https://github.com/gxr404/yuque-dl/assets/17134256/abf5af31-7be0-4a11-a463-47b37a3be074)
+![server](https://github.com/gxr404/yuque-dl/assets/17134256/6d3a06cd-20b1-4eca-ae75-d9a90614336f)
 
 ## Feature
 
