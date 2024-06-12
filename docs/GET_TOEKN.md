@@ -7,7 +7,7 @@
 3. 点击左侧`Cookies` 下的 `https://www.yuque.com`
 4. 右侧列表中找到 `Name`为 `_yuque_session` 双击`Value`列复制 **Value的值**(也就是下面图片中绿色部分)
 
-![geToken](./assets/getoken.png)
+![getoken](https://github.com/gxr404/yuque-dl/assets/17134256/cd28331a-5618-4c15-90de-6b914a0dd375)
 
 之后就可以在终端执行
 
