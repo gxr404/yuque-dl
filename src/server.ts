@@ -74,7 +74,7 @@ async function fileExists(filename: string) {
 
 async function createSidebarMulti (path: string) {
   const data = [] as any
-  const ignoreList = ['.vitepress', 'img', 'index.md', 'progress.json']
+  const ignoreList = ['.vitepress', 'img', 'index.md', 'progress.json', 'attachments']
   let dirList = await readdir(path)
   dirList = dirList.filter(item => !ignoreList.includes(item))
   for (const n of dirList) {
