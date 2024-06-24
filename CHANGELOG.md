@@ -1,3 +1,12 @@
+## [1.0.56](https://github.com/gxr404/yuque-dl/compare/v1.0.55...v1.0.56) (2024-06-24)
+
+
+### Bug Fixes
+
+* server 需忽略掉附件文件夹 ([8ef1a03](https://github.com/gxr404/yuque-dl/commit/8ef1a038d6a3efdb5202fb7af658745bdf63dcc4))
+
+
+
 ## [1.0.55](https://github.com/gxr404/yuque-dl/compare/v1.0.54...v1.0.55) (2024-06-24)
 
 
