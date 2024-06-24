@@ -64,7 +64,7 @@ export async function downloadAttachments(params: IDownloadDownloadAttachments) 
 
   const attachmentsDataList = attachmentsList
     .map(item => parseAttachments(item, attachmentsDirPath))
-    .filter(item => item !== false)
+    .filter(item => item !== false) as IAttachmentsItem[]
 
   // 创建文件夹
   mkdirSync(attachmentsDirPath, { recursive: true })
