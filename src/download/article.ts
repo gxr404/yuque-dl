@@ -12,6 +12,7 @@ import { captureImageURL } from '../crypto'
 import { getMarkdownImageList } from '../utils'
 
 import type { DownloadArticleParams, IHandleMdDataOptions } from '../types'
+import { downloadAttachments } from './attachments'
 
 
 /** 下载单篇文章 */
@@ -90,6 +91,27 @@ export async function downloadArticle(params: DownloadArticleParams): Promise<bo
     articleUrl
   }
 
+  const attachmentsErrInfo = []
+
+  // 附件下载
+  try {
+    progressBar.pause()
+    console.log('')
+    const resData = await downloadAttachments({
+      mdData,
+      savePath,
+      attachmentsDir: `./attachments/${uuid}`,
+      articleTitle,
+      token,
+      key
+    })
+    mdData = resData.mdData
+  } catch (e) {
+    attachmentsErrInfo.push(`附件下载失败: ${e.message || 'unknown error'}`)
+  } finally {
+    progressBar.continue()
+  }
+
   // 有图片 且 未忽略图片
   if (imgList.length && !ignoreImg) {
     progressBar.pause()
@@ -146,6 +168,10 @@ export async function downloadArticle(params: DownloadArticleParams): Promise<bo
 
   try {
     await writeFile(saveFilePath, handleMdData(mdData, handleMdDataOptions))
+    // 保存后检查附件是否下载失败， 优先图片下载错误显示 图片下载失败直接就 throw不会走到这里
+    if (attachmentsErrInfo.length > 0) {
+      throw new Error(attachmentsErrInfo[0])
+    }
     return true
   } catch(e) {
     throw new Error(`download article Error ${articleUrl}: ${e.message}`)

@@ -1,0 +1,8 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`downloadAttachments > should work 1`] = `
+"# test 
+
+[附件: test.pdf](./attachments/123456789/test.pdf)
+"
+`;
