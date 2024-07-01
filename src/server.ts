@@ -1,6 +1,6 @@
 import { createServer } from 'vitepress'
 import { mkdir, writeFile, readFile, readdir, stat, access } from 'node:fs/promises'
-import { join, resolve } from 'node:path'
+import { join, resolve, sep } from 'node:path'
 
 let restartPromise: Promise<void> | undefined
 
@@ -35,7 +35,7 @@ export async function runServer(root: string) {
 }
 
 async function createVitePressConfig(root: string) {
-  const bookName = root.split('/').filter(Boolean).at(-1) || 'yuque-dl'
+  const bookName = root.split(sep).filter(Boolean).at(-1) || 'yuque-dl'
   const vitepressPath = join(root, '/.vitepress')
   await mkdir(vitepressPath, {recursive: true})
   const vitePressConfig = join(vitepressPath, 'config.ts')
