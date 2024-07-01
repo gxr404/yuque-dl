@@ -1,3 +1,12 @@
+## [1.0.58](https://github.com/gxr404/yuque-dl/compare/v1.0.57...v1.0.58) (2024-07-01)
+
+
+### Bug Fixes
+
+* **server:** 不解析markdown的html标签 ([1b2ec46](https://github.com/gxr404/yuque-dl/commit/1b2ec460e4fa05e696b3bde149f55a79a0982957))
+
+
+
 ## [1.0.57](https://github.com/gxr404/yuque-dl/compare/v1.0.56...v1.0.57) (2024-07-01)
 
 
