@@ -53,6 +53,9 @@ async function createVitePressConfig(root: string) {
       optimizeDeps: {
         include: []
       }
+    },
+    markdown: {
+      html: false
     }
   }
   `
