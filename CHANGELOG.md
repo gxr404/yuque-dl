@@ -1,3 +1,12 @@
+## [1.0.57](https://github.com/gxr404/yuque-dl/compare/v1.0.56...v1.0.57) (2024-07-01)
+
+
+### Bug Fixes
+
+* **server:** 修复window路径`\xx\132`识别为特殊字符 ([7e8bbc8](https://github.com/gxr404/yuque-dl/commit/7e8bbc87e4f916be703996e44efd2cf8b3991229))
+
+
+
 ## [1.0.56](https://github.com/gxr404/yuque-dl/compare/v1.0.55...v1.0.56) (2024-06-24)
 
 
