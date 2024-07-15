@@ -1,3 +1,12 @@
+## [1.0.59](https://github.com/gxr404/yuque-dl/compare/v1.0.58...v1.0.59) (2024-07-15)
+
+
+### Bug Fixes
+
+* 修复附件下载失败和优化错误提示 ([0433fd5](https://github.com/gxr404/yuque-dl/commit/0433fd52f4c71de982182813cebe7063d79c7801))
+
+
+
 ## [1.0.58](https://github.com/gxr404/yuque-dl/compare/v1.0.57...v1.0.58) (2024-07-01)
 
 
