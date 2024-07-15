@@ -8,7 +8,8 @@ import axios from 'axios'
 
 import { genCommonOptions } from '../api'
 
-const AttachmentsReg = /\[(.*?)\]\((.*?\.yuque\.com\/attachments.*?)\)/g
+const mdUrlReg = /\[(.*?)\]\((.*?)\)/g
+const AttachmentsReg = /\[(.*?)\]\((.*?\.yuque\.com\/attachments.*?)\)/
 
 interface IDownloadDownloadAttachments {
   mdData: string
@@ -30,7 +31,8 @@ interface IDownloadFileParams {
   fileUrl: string,
   savePath: string,
   token?: string
-  key?: string
+  key?: string,
+  fileName: string
 }
 
 export async function downloadAttachments(params: IDownloadDownloadAttachments) {
@@ -42,8 +44,8 @@ export async function downloadAttachments(params: IDownloadDownloadAttachments) 
     token,
     key
   } = params
-  const attachmentsList = mdData.match(AttachmentsReg) || []
 
+  const attachmentsList = (mdData.match(mdUrlReg) || []).filter(item => AttachmentsReg.test(item))
   // 无附件
   if (attachmentsList.length === 0) {
     return {
@@ -68,16 +70,16 @@ export async function downloadAttachments(params: IDownloadDownloadAttachments) 
 
   // 创建文件夹
   mkdirSync(attachmentsDirPath, { recursive: true })
-
   const promiseList = attachmentsDataList.map((item) => {
     return downloadFile({
       fileUrl: item.url,
       savePath: item.currentFilePath,
       token,
-      key
+      key,
+      fileName: item.fileName
     })
   })
-  const downloadFileInfo = await Promise.all(promiseList)
+  const downloadFileInfo = await Promise.all(promiseList).finally(spinnerStop)
 
   let resMdData = mdData
   downloadFileInfo.forEach(info => {
@@ -88,15 +90,15 @@ export async function downloadAttachments(params: IDownloadDownloadAttachments) 
     }
   })
 
-  if (spinner) spinner.stop()
-
+  function spinnerStop() {
+    if (spinner) spinner.stop()
+  }
   return {
     mdData: resMdData
   }
 }
 
 function parseAttachments(mdData: string, attachmentsDirPath: string): IAttachmentsItem | false {
-  AttachmentsReg.lastIndex = 0
   const [, rawFileName, url] = AttachmentsReg.exec(mdData) || []
   if (!url) return false
   const fileName = rawFileName || url.split('/').at(-1)
@@ -112,14 +114,16 @@ function parseAttachments(mdData: string, attachmentsDirPath: string): IAttachme
 
 const finished = promisify(stream.finished)
 export async function downloadFile(params: IDownloadFileParams) {
-  const {fileUrl, savePath, token, key} = params
+  const {fileUrl, savePath, token, key, fileName} = params
   return axios.get(fileUrl, {
     ...genCommonOptions({token, key}),
     responseType: 'stream'
   }).then(async response => {
-    if (response.status === 200) {
+    if (response.request?.path?.startsWith('/login')) {
+      throw new Error(`"${fileName}" need token`)
+    } else if (response.status === 200) {
       const writer = createWriteStream(savePath)
-      response.data.pipe(writer)
+      response.data?.pipe(writer)
       return finished(writer)
         .then(() => ({
           fileUrl,

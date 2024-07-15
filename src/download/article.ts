@@ -174,7 +174,7 @@ export async function downloadArticle(params: DownloadArticleParams): Promise<bo
     }
     return true
   } catch(e) {
-    throw new Error(`download article Error ${articleUrl}: ${e.message}`)
+    throw new Error(`${e.message}`)
   }
 }
 

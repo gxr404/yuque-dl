@@ -153,7 +153,9 @@ export async function downloadArticleList(params: IDownloadArticleListParams) {
     logger.error(`本次执行总数${totalArticleCount}篇，✕ 失败${errArticleCount}篇`)
     for (const errInfo of errArticleInfo) {
       logger.error(`《${errInfo.errItem.path}》: ${errInfo.articleUrl}`)
-      logger.error(`———— ✕ ${errInfo.errMsg}`)
+      errInfo.errMsg.split('\n').forEach(errMsg => {
+        logger.error(`———— ✕ ${errMsg}`)
+      })
     }
     logger.error(`o(╥﹏╥)o 由于网络波动或链接失效以上下载失败，可重新执行命令重试(PS:不会影响已下载成功的数据)`)
   }
