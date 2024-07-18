@@ -129,7 +129,7 @@ yuque-dl [ERROR]: Unknown option `-1`
 yuque-dl "https://www.yuque.com/yuque/thyzgp" -t="-a123"
 ```
 
-2. 部分附件下载失败，需设置登录token
+2. 附件下载失败，需设置登录token
 
 附件文件下载需要用户登录token，即使是完全公开的知识库，下载附件也可能需要
 
