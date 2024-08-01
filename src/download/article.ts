@@ -188,10 +188,10 @@ function handleMdData (rawMdData: string, options: IHandleMdDataOptions): string
     return `| <br />- [${$1}]${$2}|`.replace(/\n/gm, '').replace(/<br(\s?)\/>/gm, '')
   })
   // '| <br />xxx<br /> xxx <br/> |' ==> '| xxx xxx  |'
-  mdData = mdData.replace(/\|(.*?)\|/gm,(text, $1) => {
-    return `|${$1.replace(/<br(\s?)\/>/gm, '')}|`
+  // '| <br /> | <br/> | <br/> | <br/> |' ==> '|  |  |  |  |'
+  mdData = mdData.replace(/(\|?)(.*?)\|/gm,(text, $1, $2) => {
+    return `${$1}${$2.replace(/<br(\s?)\/>/gm, '')}|`
   })
-
   mdData = mdData.replace(/<br(\s?)\/>/gm, '\n')
   mdData = mdData.replace(/<a.*?>(\s*?)<\/a>/gm, '')
   const  header = articleTitle ? `# ${articleTitle}\n\n` : ''
