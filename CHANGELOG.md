@@ -1,3 +1,12 @@
+## [1.0.61](https://github.com/gxr404/yuque-dl/compare/v1.0.60...v1.0.61) (2024-08-01)
+
+
+### Bug Fixes
+
+* 修复文档中表格含单选时解析错误 ([f6f30b6](https://github.com/gxr404/yuque-dl/commit/f6f30b641e311985420a0f6af5f573f000781071))
+
+
+
 ## [1.0.60](https://github.com/gxr404/yuque-dl/compare/v1.0.59...v1.0.60) (2024-08-01)
 
 
