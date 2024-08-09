@@ -29,8 +29,8 @@ checkVersion()
 
 cli
   .command('<url>', '语雀知识库url')
-  .option('-d, --dist-dir <dir>', '下载的目录 eg: -d download', {
-    default: 'download',
+  .option('-d, --dist-dir <dir>', '下载的目录 eg: -d Downloads', {
+    default: 'Downloads',
   })
   .option('-i, --ignore-img', '忽略图片不下载', {
     default: false
