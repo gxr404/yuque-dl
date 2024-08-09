@@ -35,9 +35,16 @@ describe('api', () => {
       expect(data.imageServiceDomains?.length).toBe(70)
     })
 
-    it('404 should empty object', async () => {
-      const data = await getKnowledgeBaseInfo('/404', {})
-      expect(data).toMatchObject({})
+    it('404 should throw Error', async () => {
+      let isError = false
+      try {
+        const data = await getKnowledgeBaseInfo('/404', {})
+        expect(data).toMatchObject({})
+      } catch(e) {
+        isError = true
+        expect(e.message).toBe('Request failed with status code 404')
+      }
+      expect(isError).toBe(true)
     })
   })
 

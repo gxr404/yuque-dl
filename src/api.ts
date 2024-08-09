@@ -62,8 +62,20 @@ export const getKnowledgeBaseInfo: TGetKnowledgeBaseInfo = (url, headerParams) =
         imageServiceDomains: jsonData.imageServiceDomains || []
       }
       return info
-    }).catch(() => {
-      return {}
+    }).catch((e) => {
+      // console.log(e.message)
+      const errMsg = e?.message ?? ''
+      if (!errMsg) throw new Error('unknown error')
+      const netErrInfoList = [
+        'getaddrinfo ENOTFOUND',
+        'read ECONNRESET',
+        'Client network socket disconnected before secure TLS connection was established'
+      ]
+      const isNetError = netErrInfoList.some(netErrMsg => errMsg.startsWith(netErrMsg))
+      if (isNetError) {
+        throw new Error('请检查网络(是否正常联网/是否开启了代理软件)')
+      }
+      throw new Error(errMsg)
     })
 }
 

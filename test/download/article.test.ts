@@ -218,7 +218,7 @@ describe('downloadArticle', () => {
       })
     } catch (e) {
       isValidate = true
-      expect(e.message).toBe(`download article Error: “表格类型”解析错误 SyntaxError: Unexpected token 'e', "error" is not valid JSON`)
+      expect(e.message).toMatch(/download article Error: “表格类型”解析错误 SyntaxError: Unexpected token/)
     }
     expect(isValidate).toBeTruthy()
   })

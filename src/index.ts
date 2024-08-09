@@ -3,12 +3,15 @@ import path from 'node:path'
 import Summary from './parse/Summary'
 import { getKnowledgeBaseInfo } from './api'
 import { fixPath } from './parse/fix'
-import { ProgressBar, logger } from './utils'
+import { ProgressBar, isValidUrl, logger } from './utils'
 import { downloadArticleList } from './download/list'
 
 import type { ICliOptions, IProgressItem } from './types'
 
 export async function main(url: string, options: ICliOptions) {
+  if (!isValidUrl(url)) {
+    throw new Error('Please enter a valid URL')
+  }
   const {
     bookId,
     tocList,

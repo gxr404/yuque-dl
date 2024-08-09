@@ -45,10 +45,24 @@ function removeEmojis(dirName:string) {
   return dirName.replace(/[\ud800-\udbff][\udc00-\udfff]/g, '')
 }
 
+function isValidUrl(url: string): boolean {
+  if (typeof URL.canParse === 'function') {
+    return URL.canParse(url)
+  }
+  try {
+    new URL(url)
+    return true
+  } catch (e) {
+    return false
+  }
+}
+
+
 export {
   randUserAgent,
   getMarkdownImageList,
-  removeEmojis
+  removeEmojis,
+  isValidUrl
 }
 
 export * from './log'
