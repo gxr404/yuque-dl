@@ -135,7 +135,7 @@ yuque-dl "https://www.yuque.com/yuque/thyzgp" -t="-a123"
 
 完全公开的知识库未登录的情况下查看附件:
 
-![attachments](./docs/assets/attachments.png)
+![attachments](https://github.com/user-attachments/assets/6e764abf-0da6-4fb8-ab96-7d027830b291)
 
 ## Tips
 
