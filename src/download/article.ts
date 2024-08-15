@@ -134,6 +134,8 @@ export async function downloadArticle(params: DownloadArticleParams): Promise<bo
         errorStillReturn: true,
         referer: articleUrl || '',
         transform(url: string) {
+          // 去除水印参数
+          url = url.replace('x-oss-process=image%2Fwatermark%2C', '')
           return captureImageURL(url, imageServiceDomains)
         }
       })
