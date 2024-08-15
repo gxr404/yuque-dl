@@ -13,34 +13,6 @@
 * 移除图片水印 ([663d5d0](https://github.com/gxr404/yuque-dl/commit/663d5d07bfd2796406cc1a566343e8bb57a9a35e))
 
 
-
-## [1.0.62](https://github.com/gxr404/yuque-dl/compare/v1.0.61...v1.0.62) (2024-08-09)
-
-
-### Features
-
-* 优化错误提示 ([9356004](https://github.com/gxr404/yuque-dl/commit/935600415e13dcffb5a9b95c556e5cbadf9e1af2))
-
-
-
-## [1.0.62](https://github.com/gxr404/yuque-dl/compare/v1.0.61...v1.0.62) (2024-08-09)
-
-
-### Features
-
-* 优化错误提示 ([9356004](https://github.com/gxr404/yuque-dl/commit/935600415e13dcffb5a9b95c556e5cbadf9e1af2))
-
-
-
-## [1.0.62](https://github.com/gxr404/yuque-dl/compare/v1.0.61...v1.0.62) (2024-08-09)
-
-
-### Features
-
-* 优化错误提示 ([9356004](https://github.com/gxr404/yuque-dl/commit/935600415e13dcffb5a9b95c556e5cbadf9e1af2))
-
-
-
 ## [1.0.62](https://github.com/gxr404/yuque-dl/compare/v1.0.61...v1.0.62) (2024-08-09)
 
 
