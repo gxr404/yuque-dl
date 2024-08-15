@@ -11,7 +11,7 @@ import { genCommonOptions } from '../api'
 const mdUrlReg = /\[(.*?)\]\((.*?)\)/g
 const AttachmentsReg = /\[(.*?)\]\((.*?\.yuque\.com\/attachments.*?)\)/
 
-interface IDownloadDownloadAttachments {
+interface IDownloadAttachments {
   mdData: string
   savePath: string
   attachmentsDir: string
@@ -35,7 +35,7 @@ interface IDownloadFileParams {
   fileName: string
 }
 
-export async function downloadAttachments(params: IDownloadDownloadAttachments) {
+export async function downloadAttachments(params: IDownloadAttachments) {
   const {
     mdData,
     savePath,
