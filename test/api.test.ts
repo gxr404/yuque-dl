@@ -38,7 +38,7 @@ describe('api', () => {
     it('404 should throw Error', async () => {
       let isError = false
       try {
-        const data = await getKnowledgeBaseInfo('/404', {})
+        const data = await getKnowledgeBaseInfo('http://localhost/404', {})
         expect(data).toMatchObject({})
       } catch(e) {
         isError = true
