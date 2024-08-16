@@ -1,3 +1,17 @@
+## [1.0.64](https://github.com/gxr404/yuque-dl/compare/v1.0.63...v1.0.64) (2024-08-16)
+
+
+### Bug Fixes
+
+*  env test axios proxy false ([3828178](https://github.com/gxr404/yuque-dl/commit/3828178fac8ee0c9bdf410675b6b7df56877a01e))
+
+
+### Features
+
+* 添加音视频下载功能——音频待定 ([37ff91e](https://github.com/gxr404/yuque-dl/commit/37ff91e9e8a587820b21b91947c19be8440befd3))
+
+
+
 ## [1.0.63](https://github.com/gxr404/yuque-dl/compare/v1.0.62...v1.0.63) (2024-08-15)
 
 
