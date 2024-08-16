@@ -1,3 +1,12 @@
+## [1.0.66](https://github.com/gxr404/yuque-dl/compare/v1.0.65...v1.0.66) (2024-08-16)
+
+
+### Features
+
+* 音频下载 ([ba7a08f](https://github.com/gxr404/yuque-dl/commit/ba7a08f9e53c22b79109f7c107f3d269ff6ec13d))
+
+
+
 ## [1.0.65](https://github.com/gxr404/yuque-dl/compare/v1.0.64...v1.0.65) (2024-08-16)
 
 
