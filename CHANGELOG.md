@@ -11,23 +11,6 @@
 * 添加音视频下载功能——音频待定 ([37ff91e](https://github.com/gxr404/yuque-dl/commit/37ff91e9e8a587820b21b91947c19be8440befd3))
 
 
-
-## [1.0.63](https://github.com/gxr404/yuque-dl/compare/v1.0.62...v1.0.63) (2024-08-15)
-
-
-### Bug Fixes
-
-* changelog markdown ([e8f7a0b](https://github.com/gxr404/yuque-dl/commit/e8f7a0b19e19374ffee2061a038a05af0dfca1a8))
-* changelog markdown ([7dc7fb6](https://github.com/gxr404/yuque-dl/commit/7dc7fb6b9fc03eec8c7a83c480fbb39dde345bbd))
-* **test:** Invalid URL ([e792cdc](https://github.com/gxr404/yuque-dl/commit/e792cdc5dc2aa84840217c7bc265bfc04dc0ed24))
-
-
-### Features
-
-* 移除图片水印 ([663d5d0](https://github.com/gxr404/yuque-dl/commit/663d5d07bfd2796406cc1a566343e8bb57a9a35e))
-
-
-
 ## [1.0.63](https://github.com/gxr404/yuque-dl/compare/v1.0.62...v1.0.63) (2024-08-15)
 
 
