@@ -68,7 +68,6 @@ export async function downloadVideo(params: IDownloadVideo) {
   downloadFileInfo.forEach(info => {
     const replaceInfo = realVideoList.find(item => item.videoInfo.video === info.fileUrl)
     if (replaceInfo) {
-      console.log( replaceInfo.astNode.node)
       // TODO: 这里直接更改了ast 还需考虑
       replaceInfo.astNode.node.url = `${attachmentsDir}${path.sep}${replaceInfo.fileName}`
       replaceInfo.astNode.node.children = [
