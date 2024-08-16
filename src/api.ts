@@ -1,3 +1,4 @@
+import { env } from 'node:process'
 import axios from 'axios'
 import { randUserAgent } from './utils'
 import { DEFAULT_COOKIE_KEY, DEFAULT_DOMAIN } from './constant'
@@ -25,7 +26,7 @@ function getHeaders(params: GetHeaderParams): IReqHeader {
 }
 
 export function genCommonOptions(params: GetHeaderParams): AxiosRequestConfig {
-  return {
+  const config: AxiosRequestConfig = {
     headers: getHeaders(params),
     beforeRedirect: (options) => {
       // 语雀免费非企业空间会重定向如: www.yuque.com -> gxr404.yuque.com
@@ -36,6 +37,10 @@ export function genCommonOptions(params: GetHeaderParams): AxiosRequestConfig {
       }
     }
   }
+  if (env.NODE_ENV === 'test') {
+    config.proxy = false
+  }
+  return config
 }
 
 
