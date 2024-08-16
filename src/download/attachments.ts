@@ -1,12 +1,9 @@
-import * as stream from 'node:stream'
-import { promisify } from 'node:util'
 import { stdout, env } from "node:process"
-import { createWriteStream, mkdirSync } from 'node:fs'
+import { mkdirSync } from 'node:fs'
 import path from 'node:path'
 import ora from "ora"
-import axios from 'axios'
 
-import { genCommonOptions } from '../api'
+import { downloadFile } from "./common"
 
 const mdUrlReg = /\[(.*?)\]\((.*?)\)/g
 const AttachmentsReg = /\[(.*?)\]\((.*?\.yuque\.com\/attachments.*?)\)/
@@ -27,13 +24,6 @@ interface IAttachmentsItem {
   currentFilePath: string
 }
 
-interface IDownloadFileParams {
-  fileUrl: string,
-  savePath: string,
-  token?: string
-  key?: string,
-  fileName: string
-}
 
 export async function downloadAttachments(params: IDownloadAttachments) {
   const {
@@ -110,26 +100,4 @@ function parseAttachments(mdData: string, attachmentsDirPath: string): IAttachme
     rawMd: mdData,
     currentFilePath
   }
-}
-
-const finished = promisify(stream.finished)
-export async function downloadFile(params: IDownloadFileParams) {
-  const {fileUrl, savePath, token, key, fileName} = params
-  return axios.get(fileUrl, {
-    ...genCommonOptions({token, key}),
-    responseType: 'stream'
-  }).then(async response => {
-    if (response.request?.path?.startsWith('/login')) {
-      throw new Error(`"${fileName}" need token`)
-    } else if (response.status === 200) {
-      const writer = createWriteStream(savePath)
-      response.data?.pipe(writer)
-      return finished(writer)
-        .then(() => ({
-          fileUrl,
-          savePath
-        }))
-    }
-    throw new Error(`response status ${response.status}`)
-  })
 }

@@ -13,6 +13,7 @@ import { getMarkdownImageList } from '../utils'
 
 import type { DownloadArticleParams, IHandleMdDataOptions } from '../types'
 import { downloadAttachments } from './attachments'
+import { downloadVideo } from './video'
 
 
 /** 下载单篇文章 */
@@ -108,6 +109,26 @@ export async function downloadArticle(params: DownloadArticleParams): Promise<bo
     mdData = resData.mdData
   } catch (e) {
     attachmentsErrInfo.push(`附件下载失败: ${e.message || 'unknown error'}`)
+  } finally {
+    progressBar.continue()
+  }
+
+
+  // 音、视频下载
+  try {
+    progressBar.pause()
+    console.log('')
+    const resData = await downloadVideo({
+      mdData,
+      savePath,
+      attachmentsDir: `./attachments/${uuid}`,
+      articleTitle,
+      token,
+      key
+    })
+    mdData = resData.mdData
+  } catch (e) {
+    attachmentsErrInfo.push(`音视频下载失败: ${e.message || 'unknown error'}`)
   } finally {
     progressBar.continue()
   }
