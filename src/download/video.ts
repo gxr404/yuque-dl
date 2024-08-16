@@ -8,8 +8,11 @@ import { genCommonOptions } from '../api'
 import { getAst, getLinkList, ILinkItem, toMd } from '../parse/ast'
 import { downloadFile } from './common'
 
+const audioReg = /name="audio" value="data:(.*?audioId.*?)".*?><\/card>/gm
+
 interface IDownloadVideo {
   mdData: string
+  htmlData: string
   savePath: string
   attachmentsDir: string
   articleTitle: string
@@ -20,6 +23,7 @@ interface IDownloadVideo {
 export async function downloadVideo(params: IDownloadVideo) {
   const {
     mdData,
+    htmlData,
     savePath,
     attachmentsDir,
     articleTitle,
@@ -30,16 +34,17 @@ export async function downloadVideo(params: IDownloadVideo) {
   const astTree = getAst(mdData)
   const linkList = getLinkList(astTree)
   const videoLinkList = linkList.filter(link => /_lake_card.*?videoId/.test(link.node.url))
+  const audioLinkList = getAudioList(htmlData)
 
   // 无音视频
-  if (videoLinkList.length === 0) {
+  if (videoLinkList.length === 0 && audioLinkList.length === 0) {
     return {
       mdData
     }
   }
 
   const spinner = ora({
-    text: `下载 "${articleTitle}" 的音/视频中...`,
+    text: `下载 "${articleTitle}" 的音视频中...`,
     stream: stdout
   })
 
@@ -52,34 +57,67 @@ export async function downloadVideo(params: IDownloadVideo) {
   const attachmentsDirPath = path.resolve(savePath, attachmentsDir)
   mkdirSync(attachmentsDirPath, { recursive: true })
 
-  const realVideoList = await getRealVideoInfo(videoLinkList, params, attachmentsDirPath)
-  const promiseList = realVideoList.map((item) => {
-    const dlFileParams = {
-      fileUrl: item.videoInfo.video,
-      savePath: item.currentFilePath,
-      token,
-      key,
-      fileName: item.videoInfo.name
-    }
-    return downloadFile(dlFileParams)
-  })
-  const downloadFileInfo = await Promise.all(promiseList).finally(spinnerStop)
+  let resMdData = mdData
 
-  downloadFileInfo.forEach(info => {
-    const replaceInfo = realVideoList.find(item => item.videoInfo.video === info.fileUrl)
-    if (replaceInfo) {
-      // TODO: 这里直接更改了ast 还需考虑
-      replaceInfo.astNode.node.url = `${attachmentsDir}${path.sep}${replaceInfo.fileName}`
-      replaceInfo.astNode.node.children = [
-        {
-          "type": "text",
-          "value": `音视频附件: ${replaceInfo.videoInfo.name}`,
+  try {
+    // 类型 视频
+    if (videoLinkList.length > 0) {
+      const realVideoList = await getRealVideoInfo(videoLinkList, params, attachmentsDirPath)
+      const promiseList = realVideoList.map((item) => {
+        const dlFileParams = {
+          fileUrl: item.videoInfo.video,
+          savePath: item.currentFilePath,
+          token,
+          key,
+          fileName: item.videoInfo.name
         }
-      ]
-    }
-  })
+        return downloadFile(dlFileParams)
+      })
+      const downloadFileInfo = await Promise.all(promiseList)
 
-  const resMdData = toMd(astTree)
+      downloadFileInfo.forEach(info => {
+        const replaceInfo = realVideoList.find(item => item.videoInfo.video === info.fileUrl)
+        if (replaceInfo) {
+          // TODO: 这里直接更改了ast 还需考虑
+          replaceInfo.astNode.node.url = `${attachmentsDir}${path.sep}${replaceInfo.fileName}`
+          replaceInfo.astNode.node.children = [
+            {
+              "type": "text",
+              "value": `音视频附件: ${replaceInfo.videoInfo.name}`,
+            }
+          ]
+        }
+      })
+      resMdData = toMd(astTree)
+    }
+
+    // 类型 音频
+    if (audioLinkList.length > 0) {
+      const realVideoList = await getRealAudioInfo(audioLinkList, params, attachmentsDirPath)
+      const promiseList = realVideoList.map((item) => {
+        const dlFileParams = {
+          fileUrl: item.audioInfo.audio,
+          savePath: item.currentFilePath,
+          token,
+          key,
+          fileName: item.audioInfo.fileName
+        }
+        return downloadFile(dlFileParams)
+      })
+      const downloadFileInfo = await Promise.all(promiseList)
+      let audioMd = '\n\n> [yuque-dl warn]: 由于语雀markdown接口限制, 无法准确定位音频文件在文档中所在位置, 所以统一所有音频放到一起\n'
+      downloadFileInfo.forEach(info => {
+        const replaceInfo = realVideoList.find(item => item.audioInfo.audio === info.fileUrl)
+        if (replaceInfo) {
+          audioMd += `> - [音视频附件: ${replaceInfo.audioInfo.fileName}](${attachmentsDir}${path.sep}${replaceInfo.fileName})\n`
+        }
+      })
+      resMdData += audioMd
+    }
+
+  } finally {
+    spinnerStop()
+  }
 
   function spinnerStop() {
     if (spinner) spinner.stop()
@@ -125,7 +163,10 @@ interface IGetVideoApiResponse {
 interface IGetVideoApiInfo {
   type: string,
   cover?: string,
+  // video 特有
   video: string,
+  // audio 特有
+  audio: string,
   origin: string,
   state: number
 }
@@ -185,4 +226,53 @@ type Truthy<T> = T extends false | '' | 0 | null | undefined ? never : T; // fro
 
 function truthy<T>(value: T): value is Truthy<T> {
   return !!value
+}
+
+interface IGetAudioItem{
+  status: string,
+  audioId: string,
+  fileName: string,
+  fileSize: number,
+  id: string
+}
+
+function getAudioList(htmlData: string): IGetAudioItem[] {
+  const list = htmlData.match(audioReg) || []
+  try {
+    const audioList = list
+      .map(item => item.replace(audioReg, '$1'))
+      .map(item => JSON.parse(decodeURIComponent(item)))
+    return audioList as IGetAudioItem[]
+  } catch (e) {
+    return []
+  }
+}
+
+async function getRealAudioInfo(
+  audioLinkList: IGetAudioItem[],
+  downloadVideoParams: IDownloadVideo,
+  attachmentsDirPath: string
+) {
+  const {key, token} = downloadVideoParams
+  const parseVideoInfoPromiseList = audioLinkList.map(async audioItem => {
+
+    const res = await getVideoApi({
+      videoId: audioItem.audioId,
+      key,
+      token
+    })
+    if (!res) return false
+    const fileName = audioItem?.fileName ?? audioItem.id
+    return {
+      audioInfo: {
+        ...audioItem,
+        ...res
+      },
+      fileName,
+      currentFilePath: path.join(attachmentsDirPath, fileName)
+    }
+  })
+  const parseAudioInfoList = await Promise.all(parseVideoInfoPromiseList)
+  const realAudioInfoList = parseAudioInfoList.filter(truthy)
+  return realAudioInfoList
 }

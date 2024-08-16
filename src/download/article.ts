@@ -75,12 +75,14 @@ export async function downloadArticle(params: DownloadArticleParams): Promise<bo
   }
   const imgList = getMarkdownImageList(mdData)
   // fix md image url
+
+  // 获取浏览器直接访问的源数据，取出对应的html数据 对 md数据中的图片url修复
+  const rawData = await getDocsMdData(reqParams, false)
+  const htmlData = rawData.response?.data?.content ?? ''
+
   // TODO: 待定 需不需要区分文档类型呢？
   if (imgList.length && !ignoreImg) {
     // 没图片的话不需要修复图片url 且 没有忽略图片下载
-    // 获取浏览器直接访问的源数据，取出对应的html数据 对 md数据中的图片url修复
-    const rawData = await getDocsMdData(reqParams, false)
-    const htmlData = rawData.response?.data?.content ?? ''
     // console.log('old', mdData)
     mdData = fixMarkdownImage(imgList, mdData, htmlData)
     // console.log('new', mdData)
@@ -120,6 +122,7 @@ export async function downloadArticle(params: DownloadArticleParams): Promise<bo
     console.log('')
     const resData = await downloadVideo({
       mdData,
+      htmlData,
       savePath,
       attachmentsDir: `./attachments/${uuid}`,
       articleTitle,

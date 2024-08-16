@@ -91,6 +91,9 @@ export const getDocsMdData: TGetMdData = (params, isMd = true) => {
   const queryParams: any = {
     'book_id': String(bookId),
     'merge_dynamic_data': String(false)
+    // plain=false
+    // linebreak=true
+    // anchor=true
   }
   if (isMd) queryParams.mode = 'markdown'
   const query = new URLSearchParams(queryParams).toString()
