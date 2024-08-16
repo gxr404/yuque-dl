@@ -7,15 +7,6 @@
 
 
 
-## [1.0.65](https://github.com/gxr404/yuque-dl/compare/v1.0.64...v1.0.65) (2024-08-16)
-
-
-### Bug Fixes
-
-* 移除多余打印 ([af6b61c](https://github.com/gxr404/yuque-dl/commit/af6b61c3024d2fa16d2760d3dc8e6b38b1978e5f))
-
-
-
 ## [1.0.64](https://github.com/gxr404/yuque-dl/compare/v1.0.63...v1.0.64) (2024-08-16)
 
 
