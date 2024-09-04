@@ -1,3 +1,12 @@
+## [1.0.67](https://github.com/gxr404/yuque-dl/compare/v1.0.66...v1.0.67) (2024-09-04)
+
+
+### Features
+
+* add article update date ([96a515d](https://github.com/gxr404/yuque-dl/commit/96a515df4871331040d73d5a002e523deed66644))
+
+
+
 ## [1.0.66](https://github.com/gxr404/yuque-dl/compare/v1.0.65...v1.0.66) (2024-08-16)
 
 
