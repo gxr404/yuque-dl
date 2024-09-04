@@ -41,6 +41,7 @@ export interface IHandleMdDataOptions {
   articleUrl: string
   articleTitle: string
   toc: boolean
+  articleUpdateTime: string
 }
 
 

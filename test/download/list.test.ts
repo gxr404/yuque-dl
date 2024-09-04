@@ -20,7 +20,7 @@ describe('downloadArticle', () => {
   })
 
   afterEach(() => {
-    // testTools.cleanup()
+    testTools.cleanup()
     server.resetHandlers()
   })
   it('should work', async () => {

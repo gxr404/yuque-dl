@@ -1,7 +1,7 @@
 import randUserAgentLib from 'rand-user-agent'
 
 /** 随机生成UA */
-function randUserAgent({ browser = 'chrome', os = 'mac os', device = 'desktop' }) {
+export function randUserAgent({ browser = 'chrome', os = 'mac os', device = 'desktop' }) {
   device = device.toLowerCase()
   browser = browser.toLowerCase()
   os = os.toLowerCase()
@@ -26,7 +26,7 @@ function randUserAgent({ browser = 'chrome', os = 'mac os', device = 'desktop' }
 /**
  * 获取md中的img url
  */
-function getMarkdownImageList(mdStr: string) {
+export function getMarkdownImageList(mdStr: string) {
   if (!mdStr) return []
   const mdImgReg = /!\[(.*?)\]\((.*?)\)/gm
   let list = Array.from(mdStr.match(mdImgReg) || [])
@@ -41,11 +41,11 @@ function getMarkdownImageList(mdStr: string) {
   return list
 }
 
-function removeEmojis(dirName:string) {
+export function removeEmojis(dirName: string) {
   return dirName.replace(/[\ud800-\udbff][\udc00-\udfff]/g, '')
 }
 
-function isValidUrl(url: string): boolean {
+export function isValidUrl(url: string): boolean {
   if (typeof URL.canParse === 'function') {
     return URL.canParse(url)
   }
@@ -57,12 +57,20 @@ function isValidUrl(url: string): boolean {
   }
 }
 
+function pad(num: number) {
+  return num.toString().padStart(2, '0')
+}
 
-export {
-  randUserAgent,
-  getMarkdownImageList,
-  removeEmojis,
-  isValidUrl
+export function formateDate(d: string) {
+  const date = new Date(d)
+  if (isNaN(date.getTime())) return ''
+  const year = date.getFullYear()
+  const month = date.getMonth() + 1
+  const day = date.getDate()
+  const hour = date.getHours()
+  const minute = date.getMinutes()
+  const second = date.getSeconds()
+  return `${year}-${pad(month)}-${pad(day)} ${pad(hour)}:${pad(minute)}:${pad(second)}`
 }
 
 export * from './log'

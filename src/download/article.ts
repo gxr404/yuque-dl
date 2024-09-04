@@ -9,7 +9,7 @@ import { ARTICLE_CONTENT_TYPE, ARTICLE_CONTENT_MAP } from '../constant'
 import { fixLatex, fixMarkdownImage } from '../parse/fix'
 import { parseSheet } from '../parse/sheet'
 import { captureImageURL } from '../crypto'
-import { getMarkdownImageList } from '../utils'
+import { formateDate, getMarkdownImageList } from '../utils'
 
 import type { DownloadArticleParams, IHandleMdDataOptions } from '../types'
 import { downloadAttachments } from './attachments'
@@ -91,7 +91,8 @@ export async function downloadArticle(params: DownloadArticleParams): Promise<bo
   const handleMdDataOptions = {
     toc: options.toc,
     articleTitle,
-    articleUrl
+    articleUrl,
+    articleUpdateTime: formateDate(response?.data?.content_updated_at ?? '')
   }
 
   const attachmentsErrInfo = []
@@ -225,7 +226,13 @@ function handleMdData (rawMdData: string, options: IHandleMdDataOptions): string
   let tocData = toc ? mdToc(mdData).content : ''
   if (tocData) tocData = `${tocData}\n\n---\n\n`
 
-  const footer = articleUrl ? `\n\n> 原文: <${articleUrl}>` : ''
+  let footer = '\n\n'
+  if (options.articleUpdateTime) {
+    footer += `> 更新: ${options.articleUpdateTime}  \n`
+  }
+  if (articleUrl) {
+    footer += `> 原文: <${articleUrl}>`
+  }
 
   mdData = `${header}${tocData}${mdData}${footer}`
   return mdData

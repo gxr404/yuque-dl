@@ -1,5 +1,5 @@
 import { afterEach, beforeEach, describe, expect, it } from 'vitest'
-import { getMarkdownImageList, removeEmojis, ProgressBar } from '../src/utils'
+import { getMarkdownImageList, removeEmojis, ProgressBar, formateDate, isValidUrl, randUserAgent } from '../src/utils'
 import { TestTools } from './helpers/TestTools'
 
 let testTools: TestTools
@@ -16,6 +16,48 @@ describe('utils', () => {
   it('removeEmojis', () => {
     const data = removeEmojis('🤣t😅e😁s😂t😅')
     expect(data).toBe('test')
+  })
+
+  it('randUserAgent', () => {
+    expect(randUserAgent({})).toBeTruthy()
+    expect(randUserAgent({browser: 'safari'}).includes('Applebot')).toBeFalsy()
+  })
+
+  describe('isValidUrl',() => {
+    it('should work', () => {
+      expect(isValidUrl('http://localhost:51204/')).toBe(true)
+      expect(isValidUrl('asdfsadf')).toBe(false)
+    })
+    it('set URL.canParse null',() => {
+      const rawFn = URL.canParse
+      ;(URL.canParse as any) = null
+      expect(isValidUrl('http://localhost:51204/')).toBe(true)
+      expect(isValidUrl('asdfsadf')).toBe(false)
+      URL.canParse = rawFn
+    })
+  })
+
+  describe('formateDate', () => {
+    it('should work', () => {
+      const date = formateDate('2023-10-07T06:12:28.000Z')
+      expect(date).toBe('2023-10-07 14:12:28')
+    })
+    it('empty string', () => {
+      const date = formateDate('')
+      expect(date).toBe('')
+    })
+    it('Invalid Date', () => {
+      const date = formateDate('abcde')
+      expect(date).toBe('')
+    })
+    it('only Date', () => {
+      const date = formateDate('2023-1-2')
+      expect(date).toBe('2023-01-02 00:00:00')
+    })
+    it('only Time', () => {
+      const date = formateDate('09:0:10')
+      expect(date).toBe('')
+    })
   })
 })
 
