@@ -10,6 +10,7 @@ import doc2MdData from './doc2Md.json' assert { type: 'json' }
 import boardData from './boardData.json' assert { type: 'json' }
 import tableData from './tableData.json' assert { type: 'json' }
 import sheetData from './sheetData.json' assert { type: 'json' }
+import attachmentsDocMdData from './attachments.json' assert { type: 'json' }
 
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url))
@@ -95,6 +96,11 @@ const handlers = [
         "type": "Doc",
       }
     })
+  }),
+
+  http.get('https://www.yuque.com/api/docs/attachments', () => {
+    const res = attachmentsDocMdData
+    return HttpResponse.json(res)
   }),
 ]
 

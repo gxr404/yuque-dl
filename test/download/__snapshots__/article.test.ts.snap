@@ -57,3 +57,14 @@ exports[`downloadArticle > should work 1`] = `
 
 > 原文: <https://www.yuque.com/yuque/base1/one>"
 `;
+
+exports[`downloadArticle > uuid contains special characters 1`] = `
+"# downloadArticle Title
+
+# DOC1
+![1.jpeg](./img/img_dir/uuid/1-123456.jpeg)
+## SubTitle
+[附件: test.pdf](./attachments/img_dir_uuid/test.pdf)
+
+> 原文: <https://www.yuque.com/api/docs/attachments>"
+`;

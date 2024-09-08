@@ -6,7 +6,7 @@ import mdToc from 'markdown-toc'
 
 import { getDocsMdData } from '../api'
 import { ARTICLE_CONTENT_TYPE, ARTICLE_CONTENT_MAP } from '../constant'
-import { fixLatex, fixMarkdownImage } from '../parse/fix'
+import { fixLatex, fixMarkdownImage, fixPath } from '../parse/fix'
 import { parseSheet } from '../parse/sheet'
 import { captureImageURL } from '../crypto'
 import { formateDate, getMarkdownImageList } from '../utils'
@@ -104,7 +104,7 @@ export async function downloadArticle(params: DownloadArticleParams): Promise<bo
     const resData = await downloadAttachments({
       mdData,
       savePath,
-      attachmentsDir: `./attachments/${uuid}`,
+      attachmentsDir: `./attachments/${fixPath(uuid)}`,
       articleTitle,
       token,
       key
@@ -125,7 +125,7 @@ export async function downloadArticle(params: DownloadArticleParams): Promise<bo
       mdData,
       htmlData,
       savePath,
-      attachmentsDir: `./attachments/${uuid}`,
+      attachmentsDir: `./attachments/${fixPath(uuid)}`,
       articleTitle,
       token,
       key

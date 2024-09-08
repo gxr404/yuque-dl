@@ -250,4 +250,35 @@ describe('downloadArticle', () => {
     const docData = readFileSync(articleInfo.saveFilePath).toString()
     expect(docData).toMatchSnapshot()
   })
+
+  it('uuid contains special characters', async () => {
+    const articleInfo = {
+      savePath: testTools.cwd,
+      saveFilePath: path.join(testTools.cwd, 'test.md'),
+      host: 'https://www.yuque.com',
+      ignoreImg: false,
+      uuid: 'img:dir/uuid',
+      articleTitle: 'downloadArticle Title',
+      articleUrl: 'https://www.yuque.com/api/docs/attachments',
+      itemUrl: 'attachments',
+      bookId: 1111,
+      imageServiceDomains: ['gxr404.com']
+    }
+    await downloadArticle({
+      articleInfo,
+      progressBar: {
+        pause: vi.fn(),
+        continue: vi.fn()
+      } as any,
+      options: {
+        token: 'MyToken',
+        key: 'MyKey'
+      } as any
+    })
+    let doc1Data = readFileSync(articleInfo.saveFilePath).toString()
+    doc1Data = doc1Data.replace(/\.\/img.*?-(\d{6})\./g, (match, random) => {
+      return match.replace(random, '123456')
+    })
+    expect(doc1Data).toMatchSnapshot()
+  })
 })
