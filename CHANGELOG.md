@@ -1,3 +1,12 @@
+## [1.0.68](https://github.com/gxr404/yuque-dl/compare/v1.0.67...v1.0.68) (2024-09-08)
+
+
+### Bug Fixes
+
+* 修复uuid含特殊字符导致附近保存异常 ([b21a77e](https://github.com/gxr404/yuque-dl/commit/b21a77e70681f698ab7a4fb3e2812bb79f81a689))
+
+
+
 ## [1.0.67](https://github.com/gxr404/yuque-dl/compare/v1.0.66...v1.0.67) (2024-09-04)
 
 
