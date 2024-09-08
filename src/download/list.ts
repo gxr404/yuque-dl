@@ -94,7 +94,7 @@ export async function downloadArticleList(params: IDownloadArticleListParams) {
     let savePath = preItem.pathTitleList.map(fixPath).join('/')
     // 是标题也是文档
     if (itemType === ARTICLE_CONTENT_TYPE.DOC && item['child_uuid']) {
-      mdPath = [...preItem.pathTitleList, fileName, `index.md`].map(fixPath).join('/')
+      mdPath = [...preItem.pathTitleList, fileName, 'index.md'].map(fixPath).join('/')
       savePath = pathTitleList.map(fixPath).join('/')
     }
     const progressItem = {
@@ -157,6 +157,6 @@ export async function downloadArticleList(params: IDownloadArticleListParams) {
         logger.error(`———— ✕ ${errMsg}`)
       })
     }
-    logger.error(`o(╥﹏╥)o 由于网络波动或链接失效以上下载失败，可重新执行命令重试(PS:不会影响已下载成功的数据)`)
+    logger.error('o(╥﹏╥)o 由于网络波动或链接失效以上下载失败，可重新执行命令重试(PS:不会影响已下载成功的数据)')
   }
 }

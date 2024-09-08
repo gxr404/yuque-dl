@@ -5,7 +5,7 @@ import type { SheetItem, SheetItemData } from '../types'
 export const parseSheet = (sheetStr: string) => {
   if (!sheetStr) return ''
   const parseStr = pako.inflate(sheetStr, {
-    to: "string"
+    to: 'string'
   })
   const sheetList: SheetItem[] = JSON.parse(parseStr)
   let mdData = ''

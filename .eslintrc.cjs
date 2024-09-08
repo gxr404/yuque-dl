@@ -12,6 +12,7 @@ module.exports = {
   ],
   rules: {
     semi: ['error', 'never'],
+    quotes: ['error', 'single'],
     'no-console': 'off',
     'no-plusplus': ['error', { allowForLoopAfterthoughts: true }],
     // TODO

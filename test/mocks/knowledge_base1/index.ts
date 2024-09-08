@@ -73,7 +73,7 @@ const handlers = [
     temp.data.content = 'error'
     return HttpResponse.json(temp)
   }),
-  http.get("https://www.yuque.com/api/filetransfer/images", ()=>{
+  http.get('https://www.yuque.com/api/filetransfer/images', ()=>{
     return HttpResponse.arrayBuffer(img1buffer, {
       headers: {
         'Content-Type': 'image/jpeg',
@@ -83,17 +83,17 @@ const handlers = [
 
   http.get('https://www.yuque.com/api/docs/tokenAndKey', ({request}) => {
     return HttpResponse.json({
-      "data": {
-        "type": "Doc",
-        "sourcecode": request.headers.get('cookie')
+      'data': {
+        'type': 'Doc',
+        'sourcecode': request.headers.get('cookie')
       }
     })
   }),
 
   http.get('https://www.yuque.com/api/docs/sourcecodeNull', () => {
     return HttpResponse.json({
-      "data": {
-        "type": "Doc",
+      'data': {
+        'type': 'Doc',
       }
     })
   }),

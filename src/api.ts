@@ -16,9 +16,9 @@ import type { AxiosRequestConfig } from 'axios'
 function getHeaders(params: GetHeaderParams): IReqHeader {
   const { key = DEFAULT_COOKIE_KEY, token } = params
   const headers: IReqHeader = {
-    "user-agent": randUserAgent({
+    'user-agent': randUserAgent({
       browser: 'chrome',
-      device: "desktop"
+      device: 'desktop'
     })
   }
   if (token) headers.cookie = `${key}=${token};`

@@ -17,8 +17,8 @@ describe('summary', () => {
   it('should work', async () => {
     const summary = new Summary({
       bookPath: testTools.cwd,
-      bookName: "Test Book",
-      bookDesc: "This is a test book",
+      bookName: 'Test Book',
+      bookDesc: 'This is a test book',
       uuidMap: new Map([
         ['001', {
           toc: {
@@ -88,8 +88,8 @@ describe('summary', () => {
   it('the title is also a doc', async () => {
     const summary = new Summary({
       bookPath: testTools.cwd,
-      bookName: "Test Book",
-      bookDesc: "This is a test book",
+      bookName: 'Test Book',
+      bookDesc: 'This is a test book',
       uuidMap: new Map([
         ['001', {
           path: '001/doc.md',

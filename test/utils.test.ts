@@ -70,64 +70,64 @@ describe('ProgressBar', () => {
     testTools.cleanup()
   })
   const updateItem = {
-    path: "语雀知识库1",
+    path: '语雀知识库1',
     toc: {
-      "type": "TITLE",
-      "title": "语雀知识库1",
-      "uuid": "6e3OzZQk2SHqApWA",
-      "url": "",
-      "prev_uuid": "",
-      "sibling_uuid": "LhaQ85mI3D03Y4Zy",
-      "child_uuid": "XZBg8vA4yir0loRp",
-      "parent_uuid": "",
-      "doc_id": 0,
-      "level": 0,
-      "id": 0,
-      "open_window": 1,
-      "visible": 1
+      'type': 'TITLE',
+      'title': '语雀知识库1',
+      'uuid': '6e3OzZQk2SHqApWA',
+      'url': '',
+      'prev_uuid': '',
+      'sibling_uuid': 'LhaQ85mI3D03Y4Zy',
+      'child_uuid': 'XZBg8vA4yir0loRp',
+      'parent_uuid': '',
+      'doc_id': 0,
+      'level': 0,
+      'id': 0,
+      'open_window': 1,
+      'visible': 1
     },
-    pathIdList: ["6e3OzZQk2SHqApWA"],
-    pathTitleList: ["语雀知识库1"]
+    pathIdList: ['6e3OzZQk2SHqApWA'],
+    pathTitleList: ['语雀知识库1']
   }
   const updateItem2 = {
-    path: "语雀知识库2",
+    path: '语雀知识库2',
     toc: {
-      "type": "TITLE",
-      "title": "语雀知识库2",
-      "uuid": "6e3OzZQk2SHqApWA",
-      "url": "",
-      "prev_uuid": "",
-      "sibling_uuid": "LhaQ85mI3D03Y4Zy",
-      "child_uuid": "XZBg8vA4yir0loRp",
-      "parent_uuid": "",
-      "doc_id": 0,
-      "level": 0,
-      "id": 0,
-      "open_window": 1,
-      "visible": 1
+      'type': 'TITLE',
+      'title': '语雀知识库2',
+      'uuid': '6e3OzZQk2SHqApWA',
+      'url': '',
+      'prev_uuid': '',
+      'sibling_uuid': 'LhaQ85mI3D03Y4Zy',
+      'child_uuid': 'XZBg8vA4yir0loRp',
+      'parent_uuid': '',
+      'doc_id': 0,
+      'level': 0,
+      'id': 0,
+      'open_window': 1,
+      'visible': 1
     },
-    pathIdList: ["6e3OzZQk2SHqApWA"],
-    pathTitleList: ["语雀知识库2"]
+    pathIdList: ['6e3OzZQk2SHqApWA'],
+    pathTitleList: ['语雀知识库2']
   }
   const updateItem3 = {
-    path: "语雀知识库3",
+    path: '语雀知识库3',
     toc: {
-      "type": "TITLE",
-      "title": "语雀知识库3",
-      "uuid": "6e3OzZQk2SHqApWA",
-      "url": "",
-      "prev_uuid": "",
-      "sibling_uuid": "LhaQ85mI3D03Y4Zy",
-      "child_uuid": "XZBg8vA4yir0loRp",
-      "parent_uuid": "",
-      "doc_id": 0,
-      "level": 0,
-      "id": 0,
-      "open_window": 1,
-      "visible": 1
+      'type': 'TITLE',
+      'title': '语雀知识库3',
+      'uuid': '6e3OzZQk2SHqApWA',
+      'url': '',
+      'prev_uuid': '',
+      'sibling_uuid': 'LhaQ85mI3D03Y4Zy',
+      'child_uuid': 'XZBg8vA4yir0loRp',
+      'parent_uuid': '',
+      'doc_id': 0,
+      'level': 0,
+      'id': 0,
+      'open_window': 1,
+      'visible': 1
     },
-    pathIdList: ["6e3OzZQk2SHqApWA"],
-    pathTitleList: ["语雀知识库3"]
+    pathIdList: ['6e3OzZQk2SHqApWA'],
+    pathTitleList: ['语雀知识库3']
   }
   it('should work', async () => {
     let pr = new ProgressBar(testTools.cwd, 3)

@@ -1,7 +1,7 @@
-import { stdout, env } from "node:process"
+import { stdout, env } from 'node:process'
 import { mkdirSync } from 'node:fs'
 import path from 'node:path'
-import ora from "ora"
+import ora from 'ora'
 import axios from 'axios'
 
 import { genCommonOptions } from '../api'
@@ -82,8 +82,8 @@ export async function downloadVideo(params: IDownloadVideo) {
           replaceInfo.astNode.node.url = `${attachmentsDir}${path.sep}${replaceInfo.fileName}`
           replaceInfo.astNode.node.children = [
             {
-              "type": "text",
-              "value": `音视频附件: ${replaceInfo.videoInfo.name}`,
+              'type': 'text',
+              'value': `音视频附件: ${replaceInfo.videoInfo.name}`,
             }
           ]
         }

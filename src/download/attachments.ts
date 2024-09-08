@@ -1,9 +1,9 @@
-import { stdout, env } from "node:process"
+import { stdout, env } from 'node:process'
 import { mkdirSync } from 'node:fs'
 import path from 'node:path'
-import ora from "ora"
+import ora from 'ora'
 
-import { downloadFile } from "./common"
+import { downloadFile } from './common'
 
 const mdUrlReg = /\[(.*?)\]\((.*?)\)/g
 const AttachmentsReg = /\[(.*?)\]\((.*?\.yuque\.com\/attachments.*?)\)/

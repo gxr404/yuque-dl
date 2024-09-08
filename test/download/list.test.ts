@@ -127,7 +127,7 @@ describe('downloadArticle', () => {
     })
     expect(pr.curr).toBe(tocList.length)
 
-    let doc1Data = readFileSync(path.join(testTools.cwd, tocList[0].title, `index.md`)).toString()
+    let doc1Data = readFileSync(path.join(testTools.cwd, tocList[0].title, 'index.md')).toString()
     doc1Data = doc1Data.replace(/\.\/img.*?-(\d{6})\./g, (match, random) => {
       return match.replace(random, '123456')
     })

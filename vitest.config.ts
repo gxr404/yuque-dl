@@ -10,8 +10,8 @@ export default defineConfig({
       if (/^\s+$/gm.test(log)) return false
     },
     coverage: {
-      include: ["src/**/*"],
-      exclude: ["src/types/**/*"],
+      include: ['src/**/*'],
+      exclude: ['src/types/**/*'],
     }
   },
 })
