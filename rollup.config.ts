@@ -9,10 +9,6 @@ export default defineConfig({
   },
   output:[
     {
-      format: 'cjs',
-      dir: 'dist/cjs'
-    },
-    {
       format: 'es',
       dir: 'dist/es',
     },
