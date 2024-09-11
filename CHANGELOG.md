@@ -1,3 +1,12 @@
+## [1.0.69](https://github.com/gxr404/yuque-dl/compare/v1.0.68...v1.0.69) (2024-09-11)
+
+
+### Bug Fixes
+
+* 优化nodejs版本过低提示 ([30a87eb](https://github.com/gxr404/yuque-dl/commit/30a87ebf15dc8d159fca2b966d3a7ae2cb2bc01e))
+
+
+
 ## [1.0.68](https://github.com/gxr404/yuque-dl/compare/v1.0.67...v1.0.68) (2024-09-08)
 
 
