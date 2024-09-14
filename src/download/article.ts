@@ -209,17 +209,21 @@ function handleMdData (rawMdData: string, options: IHandleMdDataOptions): string
   const {articleTitle, articleUrl, toc} = options
   let mdData = rawMdData
 
-  // Close: https://github.com/gxr404/yuque-dl/issues/35
-  // '| <br />- [x] xxx\n\n\nx|' ==> '| - [x] xxxx|'
-  mdData = mdData.replace(/\|\s?<br \/>- \[(x|\s)\]([\s\S\n]*?)\|/gm, (text, $1, $2) => {
-    return `| <br />- [${$1}]${$2}|`.replace(/\n/gm, '').replace(/<br(\s?)\/>/gm, '')
-  })
-  // '| <br />xxx<br /> xxx <br/> |' ==> '| xxx xxx  |'
-  // '| <br /> | <br/> | <br/> | <br/> |' ==> '|  |  |  |  |'
-  mdData = mdData.replace(/(\|?)(.*?)\|/gm,(text, $1, $2) => {
-    return `${$1}${$2.replace(/<br(\s?)\/>/gm, '')}|`
-  })
-  mdData = mdData.replace(/<br(\s?)\/>/gm, '\n')
+  /**
+   * https://github.com/gxr404/yuque-dl/issues/46 ps: 还是不修改用户的源数据！ <br />
+    // Close: https://github.com/gxr404/yuque-dl/issues/35
+    // '| <br />- [x] xxx\n\n\nx|' ==> '| - [x] xxxx|'
+    mdData = mdData.replace(/\|\s?<br \/>- \[(x|\s)\]([\s\S\n]*?)\|/gm, (text, $1, $2) => {
+      return `| <br />- [${$1}]${$2}|`.replace(/\n/gm, '').replace(/<br(\s?)\/>/gm, '')
+    })
+    // '| <br />xxx<br /> xxx <br/> |' ==> '| xxx xxx  |'
+    // '| <br /> | <br/> | <br/> | <br/> |' ==> '|  |  |  |  |'
+    mdData = mdData.replace(/(\|?)(.*?)\|/gm,(text, $1, $2) => {
+      return `${$1}${$2.replace(/<br(\s?)\/>/gm, '')}|`
+    })
+    mdData = mdData.replace(/<br(\s?)\/>/gm, '\n')
+   */
+
   mdData = mdData.replace(/<a.*?>(\s*?)<\/a>/gm, '')
   const  header = articleTitle ? `# ${articleTitle}\n\n` : ''
   // toc 目录添加
