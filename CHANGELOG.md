@@ -1,3 +1,12 @@
+## [1.0.70](https://github.com/gxr404/yuque-dl/compare/v1.0.69...v1.0.70) (2024-09-14)
+
+
+### Bug Fixes
+
+* 移除 `<br/>`替换为`\n` ([8a46bf6](https://github.com/gxr404/yuque-dl/commit/8a46bf6d40cc148aa7fbbf66b55be54092e82481))
+
+
+
 ## [1.0.69](https://github.com/gxr404/yuque-dl/compare/v1.0.68...v1.0.69) (2024-09-11)
 
 
