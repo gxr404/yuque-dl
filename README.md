@@ -1,6 +1,6 @@
 # yuque-dl
 
-语雀知识库下载为本地markdown
+语雀知识库下载为本地 markdown
 
 ![header](https://socialify.git.ci/gxr404/yuque-dl/image?description=1&descriptionEditable=%E8%AF%AD%E9%9B%80%E7%9F%A5%E8%AF%86%E5%BA%93%E4%B8%8B%E8%BD%BD&issues=1&logo=https%3A%2F%2Fraw.githubusercontent.com%2Fgxr404%2Fyuque-dl%2Fmain%2Fdocs%2Fassets%2Flogo.png&name=1&pattern=Circuit%20Board&pulls=1&stargazers=1&theme=Light)
 
@@ -31,13 +31,18 @@ $ yuque-dl --help
     $ yuque-dl server --help
 
   Options:
-    -d, --dist-dir <dir>  下载的目录 eg: -d download (default: download)
-    -i, --ignore-img      忽略图片不下载 (default: false)
-    -k, --key <key>       语雀的cookie key， 默认是 "_yuque_session"， 在某些企业版本中 key 不一样 
-    -t, --token <token>   语雀的cookie key 对应的值 
-    --toc                 是否输出文档toc目录 (default: false)
-    -h, --help            Display this message 
-    -v, --version         Display version number 
+    -d, --dist-dir <dir>     下载的目录 eg: -d download (default: download)
+    -i, --ignore-img         忽略图片不下载 (default: false)
+    -k, --key <key>          语雀的cookie key， 默认是 "_yuque_session"， 在某些企业版本中 key 不一样
+    -t, --token <token>      语雀的cookie key 对应的值
+    --toc                    是否输出文档toc目录 (default: false)
+    -h, --help               Display this message
+    -v, --version            Display version number
+    --docExportType <d>      指定文档导出类型，可选范围：md，lake，pdf，默认值是 md
+    --boardExportType <b>    指定画板导出类型，可选范围：lakeboard，jpg，png，默认值是 lakeboard
+    --sheetExportType <s>    指定sheet导出类型，可选范围：lakesheet，xlsx，md，默认值是 lakesheet
+    --tableExportType <t>    指定数据表导出类型，可选范围：laketable，xlsx，默认值是 laketable
+    --ctoken <c>             语雀的yuque_ctoken cookie值，用于导出文档内容等，如果到处类型选了语雀自由格式则必填，默认为空
 ```
 
 ### Start
@@ -55,21 +60,21 @@ yuque-dl "https://www.yuque.com/yuque/thyzgp"
 
 ### 私有知识库
 
-通过别人私有知识库 分享的链接，需使用`-t`添加token才能下载
+通过别人私有知识库 分享的链接，需使用`-t`添加 token 才能下载
 
 ```bash
 yuque-dl "https://www.yuque.com/yuque/thyzgp" -t "abcd..."
 ```
 
-[token的获取请看](./docs/GET_TOEKN.md)
+[token 的获取请看](./docs/GET_TOEKN.md)
 
 ### 企业私有服务
 
-企业服务有自己的域名(黄色语雀logo)，非`yuque.com`结尾, 如`https://yuque.antfin.com/r/zone`
+企业服务有自己的域名(黄色语雀 logo)，非`yuque.com`结尾, 如`https://yuque.antfin.com/r/zone`
 
-这种情况 token的key不唯一, 不一定是为`_yuque_session` 需用户使用 `-k` 指定 token的key,`-t` 指定 token的值。
+这种情况 token 的 key 不唯一, 不一定是为`_yuque_session` 需用户使用 `-k` 指定 token 的 key,`-t` 指定 token 的值。
 
-至于`key`具体是什么只能靠用户自己在 `浏览器Devtools-> Application -> Cookies` 里找了🤔
+至于`key`具体是什么只能靠用户自己在 `浏览器Devtools-> Application -> Cookies` 里找了 🤔
 
 ### 公开密码访问的知识库
 
@@ -77,21 +82,27 @@ yuque-dl "https://www.yuque.com/yuque/thyzgp" -t "abcd..."
 
 ⚠️ 公开密码访问的知识库两种情况:
 
-- 已经登录语雀，访问需要密码的知识库 输入密码后使用`_yuque_session`这个cookie
+- 已经登录语雀，访问需要密码的知识库 输入密码后使用`_yuque_session`这个 cookie
 
-    ```bash
-    yuque-dl "url" -t "_yuque_session的值"
-    ```
+  ```bash
+  yuque-dl "url" -t "_yuque_session的值"
+  ```
 
-- 未登录语雀，访问需要密码的知识库 输入密码后需要使用`verified_books`/`verified_docs`这个cookie
+- 未登录语雀，访问需要密码的知识库 输入密码后需要使用`verified_books`/`verified_docs`这个 cookie
 
-    ```bash
-    yuque-dl "url" -k "verified_books" -t "verified_books的值"
-    ```
+  ```bash
+  yuque-dl "url" -k "verified_books" -t "verified_books的值"
+  ```
 
-## 内置启动web服务可快速预览
+### 需要导出 lake\* 格式文档
 
-使用[`vitepress`](https://vitepress.dev/)快速启动一个web服务提供可预览下载的内容
+```bash
+yuque-dl "url" --ctoken "yuque_ctoken的值"
+```
+
+## 内置启动 web 服务可快速预览
+
+使用[`vitepress`](https://vitepress.dev/)快速启动一个 web 服务提供可预览下载的内容
 
 ```bash
 yuque-dl server ./download/知识库/
@@ -108,7 +119,7 @@ yuque-dl server ./download/知识库/
 - [x] 支持图片下载本地
 - [x] 支持下载分享私有的知识库
 - [x] 支持转换表格类型的文档 (ps: 表格内插入图表暂不支持)
-- [x] 添加toc目录功能
+- [x] 添加 toc 目录功能
 - [x] 添加测试
 - [x] 添加附件下载
 - [ ] 支持其他文档类型？🤔
@@ -116,7 +127,7 @@ yuque-dl server ./download/知识库/
 
 ## 常见错误
 
-1. 由于token可能含有 特殊字符导致参数识别错误
+1. 由于 token 可能含有 特殊字符导致参数识别错误
 
 ```bash
 yuque-dl "https://www.yuque.com/yuque/thyzgp" -t "-a123"
@@ -129,9 +140,9 @@ yuque-dl [ERROR]: Unknown option `-1`
 yuque-dl "https://www.yuque.com/yuque/thyzgp" -t="-a123"
 ```
 
-2. 附件下载失败，需设置登录token
+2. 附件下载失败，需设置登录 token
 
-附件文件下载需要用户登录token，即使是完全公开的知识库，下载附件也可能需要
+附件文件下载需要用户登录 token，即使是完全公开的知识库，下载附件也可能需要
 
 完全公开的知识库未登录的情况下查看附件:
 
