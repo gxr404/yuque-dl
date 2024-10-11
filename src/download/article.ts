@@ -11,15 +11,23 @@ import { parseSheet } from '../parse/sheet'
 import { captureImageURL } from '../crypto'
 import { formateDate, getMarkdownImageList } from '../utils'
 
-import type { DownloadArticleParams, IHandleMdDataOptions } from '../types'
+import {
+  BoardExportType,
+  LakeType,
+  SheetExportType,
+  TableExportType,
+  type DownloadArticleParams,
+  type IHandleMdDataOptions,
+} from '../types'
 import { downloadAttachments } from './attachments'
 import { downloadVideo } from './video'
-
+import { exportLakeFile } from './common'
 
 /** 下载单篇文章 */
-export async function downloadArticle(params: DownloadArticleParams): Promise<boolean> {
+export async function downloadArticle(
+  params: DownloadArticleParams,
+): Promise<boolean> {
   const { articleInfo, progressBar, options } = params
-  const { token, key } = options
   const {
     bookId,
     itemUrl,
@@ -29,45 +37,107 @@ export async function downloadArticle(params: DownloadArticleParams): Promise<bo
     articleUrl,
     articleTitle,
     ignoreImg,
-    host,
-    imageServiceDomains
+    imageServiceDomains,
+    id,
+    progressItem,
   } = articleInfo
   const reqParams = {
     articleUrl: itemUrl,
     bookId,
-    token,
-    host,
-    key,
   }
   const { httpStatus, apiUrl, response } = await getDocsMdData(reqParams)
 
-  const contentType = response?.data?.type?.toLocaleLowerCase() as ARTICLE_CONTENT_TYPE
+  const contentType =
+    response?.data?.type?.toLocaleLowerCase() as ARTICLE_CONTENT_TYPE
   let mdData = ''
-
   /** 表格类型 */
   if (contentType === ARTICLE_CONTENT_TYPE.SHEET) {
-    const {response} = await getDocsMdData(reqParams, false)
-    try {
-      const rawContent = response?.data?.content
-      const content = rawContent ? JSON.parse(rawContent) : {}
-      const sheetData = content?.sheet
-      mdData = sheetData ? parseSheet(sheetData) : ''
-      // 表格类型默认忽略图片
-      // ignoreImg = true
-      // TODO 表格类型中插入图表 vessels字段
-    } catch(e) {
-      const notSupportType = ARTICLE_CONTENT_MAP.get(contentType)
-      throw new Error(`download article Error: “${notSupportType}”解析错误 ${e}`)
+    if (options.sheetExportType === SheetExportType.lakesheet && id) {
+      try {
+        await exportLakeFile({
+          id,
+          articleTitle,
+          savePath,
+          type: LakeType.lakesheet,
+        })
+        const newPath = progressItem.path
+          .split('/')
+          .slice(0, -1)
+          .concat(`${articleTitle}.lakesheet`)
+          .join('/')
+        progressItem.path = newPath
+      } catch (e) {
+        throw new Error(`export sheet Error: ${e}`)
+      }
+    } else {
+      const { response } = await getDocsMdData(reqParams, false)
+      try {
+        const rawContent = response?.data?.content
+        const content = rawContent ? JSON.parse(rawContent) : {}
+        const sheetData = content?.sheet
+        mdData = sheetData ? parseSheet(sheetData) : ''
+        // 表格类型默认忽略图片
+        // ignoreImg = true
+        // TODO 表格类型中插入图表 vessels字段
+      } catch (e) {
+        const notSupportType = ARTICLE_CONTENT_MAP.get(contentType)
+        throw new Error(
+          `download article Error: “${notSupportType}”解析错误 ${e}`,
+        )
+      }
     }
-  } else if ([
-      ARTICLE_CONTENT_TYPE.BOARD,
-      ARTICLE_CONTENT_TYPE.TABLE
-    ].includes(contentType)) {
-    // 暂时不支持的文档类型
-    const notSupportType = ARTICLE_CONTENT_MAP.get(contentType)
-    throw new Error(`download article Error: 暂不支持“${notSupportType}”的文档`)
+  } else if (ARTICLE_CONTENT_TYPE.BOARD === contentType) {
+    if (options.boardExportType === BoardExportType.lakeboard && id) {
+      try {
+        await exportLakeFile({
+          id,
+          articleTitle,
+          savePath,
+          type: LakeType.lakeboard,
+        })
+        const newPath = progressItem.path
+          .split('/')
+          .slice(0, -1)
+          .concat(`${articleTitle}.lakeboard`)
+          .join('/')
+        progressItem.path = newPath
+      } catch (e) {
+        throw new Error(`export board Error: ${e}`)
+      }
+    } else {
+      const notSupportType = ARTICLE_CONTENT_MAP.get(contentType)
+      throw new Error(
+        `download article Error: 暂不支持“${notSupportType}”的文档`,
+      )
+    }
+  } else if (ARTICLE_CONTENT_TYPE.TABLE === contentType) {
+    if (options.tableExportType === TableExportType.laketable && id) {
+      try {
+        await exportLakeFile({
+          id,
+          articleTitle,
+          savePath,
+          type: LakeType.laketable,
+        })
+        const newPath = progressItem.path
+          .split('/')
+          .slice(0, -1)
+          .concat(`${articleTitle}.laketable`)
+          .join('/')
+        progressItem.path = newPath
+      } catch (e) {
+        throw new Error(`export table Error: ${e}`)
+      }
+    } else {
+      const notSupportType = ARTICLE_CONTENT_MAP.get(contentType)
+      throw new Error(
+        `download article Error: 暂不支持“${notSupportType}”的文档`,
+      )
+    }
   } else if (typeof response?.data?.sourcecode !== 'string') {
-    throw new Error(`download article Error: ${apiUrl}, http status ${httpStatus}`)
+    throw new Error(
+      `download article Error: ${apiUrl}, http status ${httpStatus}`,
+    )
   } else {
     mdData = response.data.sourcecode
     // fix latex
@@ -92,7 +162,7 @@ export async function downloadArticle(params: DownloadArticleParams): Promise<bo
     toc: options.toc,
     articleTitle,
     articleUrl,
-    articleUpdateTime: formateDate(response?.data?.content_updated_at ?? '')
+    articleUpdateTime: formateDate(response?.data?.content_updated_at ?? ''),
   }
 
   const attachmentsErrInfo = []
@@ -106,8 +176,6 @@ export async function downloadArticle(params: DownloadArticleParams): Promise<bo
       savePath,
       attachmentsDir: `./attachments/${fixPath(uuid)}`,
       articleTitle,
-      token,
-      key
     })
     mdData = resData.mdData
   } catch (e) {
@@ -115,7 +183,6 @@ export async function downloadArticle(params: DownloadArticleParams): Promise<bo
   } finally {
     progressBar.continue()
   }
-
 
   // 音、视频下载
   try {
@@ -127,8 +194,6 @@ export async function downloadArticle(params: DownloadArticleParams): Promise<bo
       savePath,
       attachmentsDir: `./attachments/${fixPath(uuid)}`,
       articleTitle,
-      token,
-      key
     })
     mdData = resData.mdData
   } catch (e) {
@@ -145,7 +210,7 @@ export async function downloadArticle(params: DownloadArticleParams): Promise<bo
     if (env.NODE_ENV !== 'test') {
       spinnerDiscardingStdin = ora({
         text: `下载 "${articleTitle}" 的图片中...`,
-        stream: stdout
+        stream: stdout,
       })
       spinnerDiscardingStdin.start()
     }
@@ -162,11 +227,11 @@ export async function downloadArticle(params: DownloadArticleParams): Promise<bo
           // 去除水印参数
           url = url.replace('x-oss-process=image%2Fwatermark%2C', '')
           return captureImageURL(url, imageServiceDomains)
-        }
+        },
       })
       errorInfo = mdImgRes.errorInfo
       data = mdImgRes.data
-    } catch(e) {
+    } catch (e) {
       errorInfo = [e]
     }
     mdData = data
@@ -183,7 +248,9 @@ export async function downloadArticle(params: DownloadArticleParams): Promise<bo
       // })
       const e = errorInfo[0]
       let errMessage = '图片下载失败(失败的以远程链接保存): '
-      errMessage = e.url ? `${errMessage}${e.error?.message} ${e.url.slice(0, 20)}...` : `${errMessage}${e.message}`
+      errMessage = e.url
+        ? `${errMessage}${e.error?.message} ${e.url.slice(0, 20)}...`
+        : `${errMessage}${e.message}`
       // 图片下载 md文档按远程图片保存
       await writeFile(saveFilePath, handleMdData(mdData, handleMdDataOptions))
       stopProgress()
@@ -194,19 +261,25 @@ export async function downloadArticle(params: DownloadArticleParams): Promise<bo
   }
 
   try {
+    if (!mdData) {
+      return true
+    }
     await writeFile(saveFilePath, handleMdData(mdData, handleMdDataOptions))
     // 保存后检查附件是否下载失败， 优先图片下载错误显示 图片下载失败直接就 throw不会走到这里
     if (attachmentsErrInfo.length > 0) {
       throw new Error(attachmentsErrInfo[0])
     }
     return true
-  } catch(e) {
+  } catch (e) {
     throw new Error(`${e.message}`)
   }
 }
 
-function handleMdData (rawMdData: string, options: IHandleMdDataOptions): string {
-  const {articleTitle, articleUrl, toc} = options
+function handleMdData(
+  rawMdData: string,
+  options: IHandleMdDataOptions,
+): string {
+  const { articleTitle, articleUrl, toc } = options
   let mdData = rawMdData
 
   /**
@@ -225,7 +298,7 @@ function handleMdData (rawMdData: string, options: IHandleMdDataOptions): string
    */
 
   mdData = mdData.replace(/<a.*?>(\s*?)<\/a>/gm, '')
-  const  header = articleTitle ? `# ${articleTitle}\n\n` : ''
+  const header = articleTitle ? `# ${articleTitle}\n\n` : ''
   // toc 目录添加
   let tocData = toc ? mdToc(mdData).content : ''
   if (tocData) tocData = `${tocData}\n\n---\n\n`

@@ -5,11 +5,13 @@ import { ARTICLE_CONTENT_TYPE, ARTICLE_TOC_TYPE } from '../constant'
 import { logger } from '../utils'
 
 import type {
-  KnowledgeBase, IProgressItem, IErrArticleInfo, IDownloadArticleListParams
+  KnowledgeBase,
+  IProgressItem,
+  IErrArticleInfo,
+  IDownloadArticleListParams,
 } from '../types'
 import { fixPath } from '../parse/fix'
 import { downloadArticle } from './article'
-
 
 export async function downloadArticleList(params: IDownloadArticleListParams) {
   const {
@@ -22,7 +24,7 @@ export async function downloadArticleList(params: IDownloadArticleListParams) {
     progressBar,
     host,
     options,
-    imageServiceDomains = []
+    imageServiceDomains = [],
   } = params
   let errArticleCount = 0
   let totalArticleCount = 0
@@ -36,9 +38,10 @@ export async function downloadArticleList(params: IDownloadArticleListParams) {
 
     const itemType = item.type.toLocaleLowerCase()
     // title目录类型/link外链类型
-    if (itemType === ARTICLE_TOC_TYPE.TITLE
-      || item['child_uuid'] !== ''
-      || itemType === ARTICLE_TOC_TYPE.LINK
+    if (
+      itemType === ARTICLE_TOC_TYPE.TITLE ||
+      item['child_uuid'] !== '' ||
+      itemType === ARTICLE_TOC_TYPE.LINK
     ) {
       let tempItem: KnowledgeBase.Toc | undefined = item
       const pathTitleList = []
@@ -56,21 +59,26 @@ export async function downloadArticleList(params: IDownloadArticleListParams) {
         path: pathTitleList.map(fixPath).join('/'),
         pathTitleList,
         pathIdList,
-        toc: item
+        toc: item,
       }
       // 外链类型不创建目录
       if (itemType === ARTICLE_TOC_TYPE.LINK) {
         warnArticleCount += 1
         warnArticleInfo.push(progressItem)
       } else {
-        await mkdir(`${bookPath}/${pathTitleList.map(fixPath).join('/')}`, {recursive: true})
+        await mkdir(`${bookPath}/${pathTitleList.map(fixPath).join('/')}`, {
+          recursive: true,
+        })
       }
       uuidMap.set(item.uuid, progressItem)
       // 即是文档也是title则创建文件夹后不更新进度直接进行文档处理
       if (itemType === ARTICLE_CONTENT_TYPE.DOC) {
         await docHandle(item)
       } else {
-        await progressBar.updateProgress(progressItem, itemType !== ARTICLE_TOC_TYPE.LINK)
+        await progressBar.updateProgress(
+          progressItem,
+          itemType !== ARTICLE_TOC_TYPE.LINK,
+        )
       }
     } else if (item.url) {
       await docHandle(item)
@@ -81,7 +89,7 @@ export async function downloadArticleList(params: IDownloadArticleListParams) {
     let preItem: Omit<IProgressItem, 'toc'> = {
       path: '',
       pathTitleList: [],
-      pathIdList: []
+      pathIdList: [],
     }
     const itemType = item.type.toLocaleLowerCase()
     if (uuidMap.get(item['parent_uuid'])) {
@@ -90,11 +98,15 @@ export async function downloadArticleList(params: IDownloadArticleListParams) {
     const fileName = fixPath(item.title)
     const pathTitleList = [...preItem.pathTitleList, fileName]
     const pathIdList = [...preItem.pathIdList, item.uuid]
-    let mdPath = [...preItem.pathTitleList, `${fileName}.md`].map(fixPath).join('/')
+    let mdPath = [...preItem.pathTitleList, `${fileName}.md`]
+      .map(fixPath)
+      .join('/')
     let savePath = preItem.pathTitleList.map(fixPath).join('/')
     // 是标题也是文档
     if (itemType === ARTICLE_CONTENT_TYPE.DOC && item['child_uuid']) {
-      mdPath = [...preItem.pathTitleList, fileName, 'index.md'].map(fixPath).join('/')
+      mdPath = [...preItem.pathTitleList, fileName, 'index.md']
+        .map(fixPath)
+        .join('/')
       savePath = pathTitleList.map(fixPath).join('/')
     }
     const progressItem = {
@@ -102,10 +114,11 @@ export async function downloadArticleList(params: IDownloadArticleListParams) {
       savePath,
       pathTitleList,
       pathIdList,
-      toc: item
+      toc: item,
     }
     let isSuccess = true
     const articleUrl = `${articleUrlPrefix}/${item.url}`
+
     try {
       const articleInfo = {
         bookId,
@@ -118,23 +131,24 @@ export async function downloadArticleList(params: IDownloadArticleListParams) {
         articleTitle: item.title,
         ignoreImg: options.ignoreImg,
         host,
-        imageServiceDomains
+        progressItem,
+        id: item.id,
+        imageServiceDomains,
       }
       await downloadArticle({
         articleInfo,
         progressBar,
-        options
+        options,
       })
-    } catch(e) {
+    } catch (e) {
       isSuccess = false
       errArticleCount += 1
       errArticleInfo.push({
         articleUrl,
         errItem: progressItem,
         errMsg: e.message,
-        err: e
+        err: e,
       })
-
     }
     uuidMap.set(item.uuid, progressItem)
     await progressBar.updateProgress(progressItem, isSuccess)
@@ -150,13 +164,17 @@ export async function downloadArticleList(params: IDownloadArticleListParams) {
 
   // 文章下载中失败打印
   if (errArticleCount > 0) {
-    logger.error(`本次执行总数${totalArticleCount}篇，✕ 失败${errArticleCount}篇`)
+    logger.error(
+      `本次执行总数${totalArticleCount}篇，✕ 失败${errArticleCount}篇`,
+    )
     for (const errInfo of errArticleInfo) {
       logger.error(`《${errInfo.errItem.path}》: ${errInfo.articleUrl}`)
-      errInfo.errMsg.split('\n').forEach(errMsg => {
+      errInfo.errMsg.split('\n').forEach((errMsg) => {
         logger.error(`———— ✕ ${errMsg}`)
       })
     }
-    logger.error('o(╥﹏╥)o 由于网络波动或链接失效以上下载失败，可重新执行命令重试(PS:不会影响已下载成功的数据)')
+    logger.error(
+      'o(╥﹏╥)o 由于网络波动或链接失效以上下载失败，可重新执行命令重试(PS:不会影响已下载成功的数据)',
+    )
   }
 }

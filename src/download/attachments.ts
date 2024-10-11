@@ -13,8 +13,6 @@ interface IDownloadAttachments {
   savePath: string
   attachmentsDir: string
   articleTitle: string
-  token?: string
-  key?: string
 }
 
 interface IAttachmentsItem {
@@ -24,28 +22,22 @@ interface IAttachmentsItem {
   currentFilePath: string
 }
 
-
 export async function downloadAttachments(params: IDownloadAttachments) {
-  const {
-    mdData,
-    savePath,
-    attachmentsDir,
-    articleTitle,
-    token,
-    key
-  } = params
+  const { mdData, savePath, attachmentsDir, articleTitle } = params
 
-  const attachmentsList = (mdData.match(mdUrlReg) || []).filter(item => AttachmentsReg.test(item))
+  const attachmentsList = (mdData.match(mdUrlReg) || []).filter((item) =>
+    AttachmentsReg.test(item),
+  )
   // 无附件
   if (attachmentsList.length === 0) {
     return {
-      mdData
+      mdData,
     }
   }
 
   const spinner = ora({
     text: `下载 "${articleTitle}" 的附件中...`,
-    stream: stdout
+    stream: stdout,
   })
 
   if (env.NODE_ENV !== 'test') {
@@ -55,8 +47,8 @@ export async function downloadAttachments(params: IDownloadAttachments) {
   const attachmentsDirPath = path.resolve(savePath, attachmentsDir)
 
   const attachmentsDataList = attachmentsList
-    .map(item => parseAttachments(item, attachmentsDirPath))
-    .filter(item => item !== false) as IAttachmentsItem[]
+    .map((item) => parseAttachments(item, attachmentsDirPath))
+    .filter((item) => item !== false) as IAttachmentsItem[]
 
   // 创建文件夹
   mkdirSync(attachmentsDirPath, { recursive: true })
@@ -64,16 +56,16 @@ export async function downloadAttachments(params: IDownloadAttachments) {
     return downloadFile({
       fileUrl: item.url,
       savePath: item.currentFilePath,
-      token,
-      key,
-      fileName: item.fileName
+      fileName: item.fileName,
     })
   })
   const downloadFileInfo = await Promise.all(promiseList).finally(spinnerStop)
 
   let resMdData = mdData
-  downloadFileInfo.forEach(info => {
-    const replaceInfo = attachmentsDataList.find(item => item.url === info.fileUrl)
+  downloadFileInfo.forEach((info) => {
+    const replaceInfo = attachmentsDataList.find(
+      (item) => item.url === info.fileUrl,
+    )
     if (replaceInfo) {
       const replaceData = `[附件: ${replaceInfo.fileName}](${attachmentsDir}/${replaceInfo.fileName})`
       resMdData = resMdData.replace(replaceInfo.rawMd, replaceData)
@@ -84,11 +76,14 @@ export async function downloadAttachments(params: IDownloadAttachments) {
     if (spinner) spinner.stop()
   }
   return {
-    mdData: resMdData
+    mdData: resMdData,
   }
 }
 
-function parseAttachments(mdData: string, attachmentsDirPath: string): IAttachmentsItem | false {
+function parseAttachments(
+  mdData: string,
+  attachmentsDirPath: string,
+): IAttachmentsItem | false {
   const [, rawFileName, url] = AttachmentsReg.exec(mdData) || []
   if (!url) return false
   const fileName = rawFileName || url.split('/').at(-1)
@@ -98,6 +93,6 @@ function parseAttachments(mdData: string, attachmentsDirPath: string): IAttachme
     fileName,
     url,
     rawMd: mdData,
-    currentFilePath
+    currentFilePath,
   }
 }
