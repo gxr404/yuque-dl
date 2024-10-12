@@ -4,9 +4,9 @@ import path from 'node:path'
 import ora from 'ora'
 
 import { downloadFile } from './common'
+import { getConfig } from '../config'
 
 const mdUrlReg = /\[(.*?)\]\((.*?)\)/g
-const AttachmentsReg = /\[(.*?)\]\((.*?\.yuque\.com\/attachments.*?)\)/
 
 interface IDownloadAttachments {
   mdData: string
@@ -22,12 +22,22 @@ interface IAttachmentsItem {
   currentFilePath: string
 }
 
+export const getAttachmentRegexp = () => {
+  const { secondDomain } = getConfig()
+  const domainReg = secondDomain.replace(/[-/\\^$*+?.()|[\]{}]/g, '\\$&')
+  return new RegExp(
+    `\\[(.*?)\\]\\((.*?\\.(yuque\\.com|${domainReg})\\/attachments.*?)\\)`,
+  )
+}
+
 export async function downloadAttachments(params: IDownloadAttachments) {
   const { mdData, savePath, attachmentsDir, articleTitle } = params
+  const AttachmentsReg = getAttachmentRegexp()
 
-  const attachmentsList = (mdData.match(mdUrlReg) || []).filter((item) =>
-    AttachmentsReg.test(item),
-  )
+  const attachmentsList = (mdData.match(mdUrlReg) || []).filter((item) => {
+    return AttachmentsReg.test(item)
+  })
+
   // 无附件
   if (attachmentsList.length === 0) {
     return {
@@ -84,6 +94,7 @@ function parseAttachments(
   mdData: string,
   attachmentsDirPath: string,
 ): IAttachmentsItem | false {
+  const AttachmentsReg = getAttachmentRegexp()
   const [, rawFileName, url] = AttachmentsReg.exec(mdData) || []
   if (!url) return false
   const fileName = rawFileName || url.split('/').at(-1)

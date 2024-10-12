@@ -18,6 +18,7 @@ export const globalConfig: IConfig = {
   token: '',
   url: '',
   host: '',
+  secondDomain: '',
 }
 
 export const setConfig = (config: Partial<IConfig>) => {

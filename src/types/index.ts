@@ -29,6 +29,7 @@ export interface IConfig extends ICliOptions {
   /** 语雀知识库url */
   url: string
   host: string
+  secondDomain: string
 }
 // ---------------- index
 

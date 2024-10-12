@@ -23,7 +23,8 @@ export async function main(url: string, options: ICliOptions) {
     imageServiceDomains,
   } = await getKnowledgeBaseInfo(url)
   if (host) {
-    setConfig({ host })
+    const secondDomain = host.split('.').slice(1).join('.')
+    setConfig({ host, secondDomain })
   }
 
   if (!bookId) throw new Error('No found book id')
