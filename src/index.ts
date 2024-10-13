@@ -7,6 +7,7 @@ import { ProgressBar, isValidUrl, logger } from './utils'
 import { downloadArticleList } from './download/list'
 
 import type { ICliOptions, IProgressItem } from './types'
+import { setConfig } from './config'
 
 export async function main(url: string, options: ICliOptions) {
   if (!isValidUrl(url)) {
@@ -19,16 +20,21 @@ export async function main(url: string, options: ICliOptions) {
     bookDesc,
     bookSlug,
     host,
-    imageServiceDomains
-  } = await getKnowledgeBaseInfo(url, {
-    token: options.token,
-    key: options.key
-  })
+    imageServiceDomains,
+  } = await getKnowledgeBaseInfo(url)
+  if (host) {
+    const secondDomain = host.split('.').slice(1).join('.')
+    setConfig({ host, secondDomain })
+  }
+
   if (!bookId) throw new Error('No found book id')
   if (!tocList || tocList.length === 0) throw new Error('No found toc list')
-  const bookPath = path.resolve(options.distDir, bookName ? fixPath(bookName) : String(bookId))
+  const bookPath = path.resolve(
+    options.distDir,
+    bookName ? fixPath(bookName) : String(bookId),
+  )
 
-  await mkdir(bookPath, {recursive: true})
+  await mkdir(bookPath, { recursive: true })
 
   const total = tocList.length
   const progressBar = new ProgressBar(bookPath, total)
@@ -42,11 +48,8 @@ export async function main(url: string, options: ICliOptions) {
   const uuidMap = new Map<string, IProgressItem>()
   // 下载中断 重新获取下载进度数据
   if (progressBar.isDownloadInterrupted) {
-    progressBar.progressInfo.forEach(item => {
-      uuidMap.set(
-        item.toc.uuid,
-        item
-      )
+    progressBar.progressInfo.forEach((item) => {
+      uuidMap.set(item.toc.uuid, item)
     })
   }
   const articleUrlPrefix = url.replace(new RegExp(`(.*?/${bookSlug}).*`), '$1')
@@ -61,7 +64,7 @@ export async function main(url: string, options: ICliOptions) {
     progressBar,
     host,
     options,
-    imageServiceDomains
+    imageServiceDomains,
   })
 
   // 生成目录
@@ -69,7 +72,7 @@ export async function main(url: string, options: ICliOptions) {
     bookPath,
     bookName,
     bookDesc,
-    uuidMap
+    uuidMap,
   })
   await summary.genFile()
   logger.info(`√ 生成目录 ${path.resolve(bookPath, 'index.md')}`)

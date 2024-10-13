@@ -13,27 +13,45 @@ export interface ICliOptions {
   key?: string
   /** 是否忽略markdown中toc的生成 */
   toc: boolean
+  /** doc 类型导出格式 */
+  docExportType: DocExportType
+  /** board 类型导出格式 */
+  boardExportType: BoardExportType
+  /** table 类型导出格式 */
+  tableExportType: TableExportType
+  /** sheet 类型导出格式 */
+  sheetExportType: SheetExportType
+  /** 语雀开发授权码 */
+  ctoken?: string
 }
 
+export interface IConfig extends ICliOptions {
+  /** 语雀知识库url */
+  url: string
+  host: string
+  secondDomain: string
+}
 // ---------------- index
 
 export interface ArticleInfo {
-  bookId: number,
-  itemUrl: string,
-  savePath: string,
-  saveFilePath: string,
-  uuid: string,
-  articleTitle: string,
-  articleUrl: string,
-  ignoreImg: boolean,
-  host?: string,
+  bookId: number
+  itemUrl: string
+  savePath: string
+  saveFilePath: string
+  uuid: string
+  id?: number
+  articleTitle: string
+  articleUrl: string
+  ignoreImg: boolean
+  progressItem: Record<string, any>
+  host?: string
   imageServiceDomains: string[]
 }
 export interface DownloadArticleParams {
   /** 文章信息 */
-  articleInfo: ArticleInfo,
+  articleInfo: ArticleInfo
   /** 进度条实例 */
-  progressBar: ProgressBar,
+  progressBar: ProgressBar
   /** cli options */
   options: ICliOptions
 }
@@ -44,53 +62,50 @@ export interface IHandleMdDataOptions {
   articleUpdateTime: string
 }
 
-
 export interface IErrArticleInfo {
-  articleUrl: string,
-  errItem: IProgressItem,
-  errMsg: string,
+  articleUrl: string
+  errItem: IProgressItem
+  errMsg: string
   err: any
 }
 
 export interface IDownloadArticleListParams {
-  articleUrlPrefix: string,
-  total: number,
-  uuidMap: Map<string, IProgressItem>,
-  tocList: KnowledgeBase.Toc[],
-  bookPath: string,
-  bookId: number,
-  progressBar: ProgressBar,
+  articleUrlPrefix: string
+  total: number
+  uuidMap: Map<string, IProgressItem>
+  tocList: KnowledgeBase.Toc[]
+  bookPath: string
+  bookId: number
+  progressBar: ProgressBar
   host?: string
-  options: ICliOptions,
+  options: ICliOptions
   imageServiceDomains?: string[]
 }
 
 // ---------------- ProgressBar
 export interface IProgressItem {
-  path: string,
-  toc: KnowledgeBase.Toc,
-  pathIdList: string[],
+  path: string
+  toc: KnowledgeBase.Toc
+  pathIdList: string[]
   pathTitleList: string[]
 }
 export type IProgress = IProgressItem[]
 
-
 // ---------------- Summary
 export interface IGenSummaryFile {
-  bookPath: string,
-  bookName?: string,
-  bookDesc?: string,
+  bookPath: string
+  bookName?: string
+  bookDesc?: string
   uuidMap: Map<string, IProgressItem>
 }
 export interface SummaryItem {
-  id: string,
-  children?: SummaryItem[],
-  type: 'link' | 'title',
-  text: string,
-  level: number,
+  id: string
+  children?: SummaryItem[]
+  type: 'link' | 'title'
+  text: string
+  level: number
   link?: string
 }
-
 
 // ---------------- parseSheet
 
@@ -103,24 +118,24 @@ export interface SheetItemData {
 }
 
 export interface SheetItem {
-  name: string,
-  rowCount: number,
+  name: string
+  rowCount: number
   selections: {
-    row: number,
-    col: number,
-    rowCount: number,
-    colCount: number,
-    activeCol: number,
+    row: number
+    col: number
+    rowCount: number
+    colCount: number
+    activeCol: number
     activeRow: number
-  },
-  rows: any,
-  columns: any,
-  filter: any,
-  index: 0,
-  colCount: 26,
-  mergeCells: any,
-  id: string,
-  data: SheetItemData,
+  }
+  rows: any
+  columns: any
+  filter: any
+  index: 0
+  colCount: 26
+  mergeCells: any
+  id: string
+  data: SheetItemData
   vStore: any
 }
 
@@ -128,10 +143,10 @@ export interface SheetItem {
 export interface IKnowledgeBaseInfo {
   bookId?: number
   bookSlug?: string
-  tocList?: KnowledgeBase.Toc[],
-  bookName?: string,
-  bookDesc?: string,
-  host?: string,
+  tocList?: KnowledgeBase.Toc[]
+  bookName?: string
+  bookDesc?: string
+  host?: string
   imageServiceDomains?: string[]
 }
 export interface IReqHeader {
@@ -139,25 +154,66 @@ export interface IReqHeader {
 }
 export interface GetHeaderParams {
   /** token key */
-  key?:string,
+  key?: string
   /** token value */
   token?: string
+  /** referer  */
+  host: string
 }
-export type TGetKnowledgeBaseInfo = (url: string, headerParams: GetHeaderParams) => Promise<IKnowledgeBaseInfo>
+export type TGetKnowledgeBaseInfo = (url: string) => Promise<IKnowledgeBaseInfo>
 
 export interface GetMdDataParams {
-  articleUrl: string,
-  bookId: number,
+  articleUrl: string
+  bookId: number
   host?: string
-  token?: string,
+  token?: string
   key?: string
 }
+
+export enum DocExportType {
+  md = 'md',
+  lake = 'lake',
+  pdf = 'pdf',
+}
+
+export enum SheetExportType {
+  lakesheet = 'lakesheet',
+  xlsx = 'xlsx',
+}
+
+export enum BoardExportType {
+  lakeboard = 'lakeboard',
+  jpg = 'jpg',
+  png = 'png',
+}
+
+export enum MindExportType {
+  lakeboard = 'lakeboard',
+  jpg = 'jpg',
+  png = 'png',
+}
+
+export enum TableExportType {
+  laketable = 'laketable',
+  xlsx = 'xlsx',
+}
+
+export enum LakeType {
+  lake = 'lake',
+  lakeboard = 'lakeboard',
+  lakesheet = 'lakesheet',
+  laketable = 'laketable',
+}
+
 export interface IGetDocsMdDataRes {
-  apiUrl: string,
-  httpStatus: number,
+  apiUrl: string
+  httpStatus: number
   response?: ArticleResponse.RootObject
 }
-export type TGetMdData = (params: GetMdDataParams, isMd?: boolean) => Promise<IGetDocsMdDataRes>
+export type TGetMdData = (
+  params: GetMdDataParams,
+  isMd?: boolean,
+) => Promise<IGetDocsMdDataRes>
 
 export * from './ArticleResponse'
 export * from './KnowledgeBaseResponse'
