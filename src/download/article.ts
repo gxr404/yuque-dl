@@ -162,7 +162,9 @@ export async function downloadArticle(params: DownloadArticleParams): Promise<bo
           // 去除水印参数
           url = url.replace('x-oss-process=image%2Fwatermark%2C', '')
           return captureImageURL(url, imageServiceDomains)
-        }
+        },
+        // 默认设置图片下载超时3分钟
+        timeout: 3 * 60 * 1000
       })
       errorInfo = mdImgRes.errorInfo
       data = mdImgRes.data
