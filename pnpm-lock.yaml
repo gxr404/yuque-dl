@@ -36,8 +36,8 @@ importers:
         specifier: 1.0.11
         version: 1.0.11
       pull-md-img:
-        specifier: ^0.0.60
-        version: 0.0.60
+        specifier: ^0.0.65
+        version: 0.0.65
       rand-user-agent:
         specifier: 1.0.109
         version: 1.0.109
@@ -80,7 +80,7 @@ importers:
         version: 6.21.0(eslint@8.57.0)(typescript@5.4.5)
       '@vitest/coverage-v8':
         specifier: ^1.6.0
-        version: 1.6.0(vitest@1.6.0(@types/node@20.12.12)(@vitest/ui@1.6.0)(terser@5.31.0))
+        version: 1.6.0(vitest@1.6.0)
       '@vitest/ui':
         specifier: ^1.6.0
         version: 1.6.0(vitest@1.6.0)
@@ -1508,6 +1508,7 @@ packages:
   eslint@8.57.0:
     resolution: {integrity: sha512-dZ6+mexnaTIbSBZWgou51U6OmzIhYM2VcNdtiTtI7qPNZm35Akpr0f6vtw3w1Kmn5PYo+tZVfh13WrhpS6oLqQ==}
     engines: {node: ^12.22.0 || ^14.17.0 || >=16.0.0}
+    deprecated: This version is no longer supported. Please see https://eslint.org/version-support for other options.
     hasBin: true
 
   espree@9.6.1:
@@ -2771,8 +2772,8 @@ packages:
   proxy-from-env@1.1.0:
     resolution: {integrity: sha512-D+zkORCbA9f1tdWRK0RaCR3GPv50cMxcrz4X8k5LTSUD1Dkw47mKJEZQNunItRTkWwgtaUSo1RVFRIG9ZXiFYg==}
 
-  pull-md-img@0.0.60:
-    resolution: {integrity: sha512-zMIV4esOii+qW2+5ILSiyIV3l4btU+V8yM4SMzmxJtoe/iwqlS1z5xF4ouXfbOoqT9XmZHK5KW0e+tFoAHRJzw==}
+  pull-md-img@0.0.65:
+    resolution: {integrity: sha512-/K5PvAh1Hy9lyCAN1Oja8OpPYvKe9lo5ThrxgWnswU5biRwzg9GF3HECk1C1tS51suMBi8jg/E3EhY3jk0ryFg==}
     hasBin: true
 
   punycode@2.3.1:
@@ -4191,7 +4192,7 @@ snapshots:
       vite: 5.2.12(@types/node@20.12.12)(terser@5.31.0)
       vue: 3.4.27(typescript@5.4.5)
 
-  '@vitest/coverage-v8@1.6.0(vitest@1.6.0(@types/node@20.12.12)(@vitest/ui@1.6.0)(terser@5.31.0))':
+  '@vitest/coverage-v8@1.6.0(vitest@1.6.0)':
     dependencies:
       '@ampproject/remapping': 2.3.0
       '@bcoe/v8-coverage': 0.2.3
@@ -6517,7 +6518,7 @@ snapshots:
 
   proxy-from-env@1.1.0: {}
 
-  pull-md-img@0.0.60:
+  pull-md-img@0.0.65:
     dependencies:
       commander: 8.3.0
       log4js: 5.3.0
