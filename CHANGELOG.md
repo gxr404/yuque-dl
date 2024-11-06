@@ -1,3 +1,12 @@
+## [1.0.71](https://github.com/gxr404/yuque-dl/compare/v1.0.70...v1.0.71) (2024-11-06)
+
+
+### Features
+
+* add timeout args ([f57d8a7](https://github.com/gxr404/yuque-dl/commit/f57d8a7820f3d447d31233c89d67ab0dde0f17e5))
+
+
+
 ## [1.0.70](https://github.com/gxr404/yuque-dl/compare/v1.0.69...v1.0.70) (2024-09-14)
 
 
