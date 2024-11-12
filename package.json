@@ -75,7 +75,7 @@
     "pull-md-img": "^0.0.65",
     "rand-user-agent": "1.0.109",
     "semver": "^7.6.0",
-    "vitepress": "^1.2.2"
+    "vitepress": "^1.5.0"
   },
   "engines": {
     "node": ">=18.4.0"

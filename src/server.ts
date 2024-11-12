@@ -62,16 +62,22 @@ async function createVitePressConfig(root: string) {
       }
     },
     markdown: {
+      html: true,
+      breaks: true,
       config(md) {
         // 包装原始 render 方法，捕获解析异常
         const originalRender = md.render.bind(md);
         md.render = (src, env) => {
           try {
-            const newMd = originalRender(src, env)
-            return fixHtmlTags(newMd)
+            // 临时处理 把'\n'转 '<br />'
+            const tempSrc = src.replace(/^\\n$/gm, '<br />')
+            let newMd = fixHtmlTags(originalRender(tempSrc, env))
+            newMd = newMd.replace('<html><head></head><body>', '')
+            newMd = newMd.replace('</body></html>', '')
+            return newMd
           } catch (error) {
             console.error("Markdown/HTML parsing error:", error);
-            return md
+            return src
           }
         }
       }
