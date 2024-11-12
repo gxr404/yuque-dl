@@ -69,7 +69,7 @@ async function createVitePressConfig(root: string) {
         const originalRender = md.render.bind(md);
         md.render = (src, env) => {
           try {
-            // 临时处理 把'\n'转 '<br />'
+            // 临时处理 把'\\n'转 '<br />'
             const tempSrc = src.replace(/^\\n$/gm, '<br />')
             let newMd = fixHtmlTags(originalRender(tempSrc, env))
             newMd = newMd.replace('<html><head></head><body>', '')
