@@ -1,3 +1,13 @@
+## [1.0.72](https://github.com/gxr404/yuque-dl/compare/v1.0.71...v1.0.72) (2024-11-12)
+
+
+### Bug Fixes
+
+* npm ignore `.github` ([3de7ae6](https://github.com/gxr404/yuque-dl/commit/3de7ae60b39b39c26ad78e09678afc62bab8391e))
+* **server:** vitepress改为解析markdown中html标签 ([1642916](https://github.com/gxr404/yuque-dl/commit/164291646ab35a707465c3872ef66cff7ca4afdd))
+
+
+
 ## [1.0.71](https://github.com/gxr404/yuque-dl/compare/v1.0.70...v1.0.71) (2024-11-06)
 
 
