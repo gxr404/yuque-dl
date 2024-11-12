@@ -1,3 +1,13 @@
+## [1.0.73](https://github.com/gxr404/yuque-dl/compare/v1.0.72...v1.0.73) (2024-11-12)
+
+
+### Bug Fixes
+
+* **server:**  handler breaks ([e78a535](https://github.com/gxr404/yuque-dl/commit/e78a535fecad418139775b8686d19aaf2547a8d0))
+* **server:** upgrade vitepress version & handler breaks ([a7f4738](https://github.com/gxr404/yuque-dl/commit/a7f4738e6545a7d7f4c1d607e20d454d65f57005))
+
+
+
 ## [1.0.72](https://github.com/gxr404/yuque-dl/compare/v1.0.71...v1.0.72) (2024-11-12)
 
 
