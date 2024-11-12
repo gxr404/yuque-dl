@@ -1,6 +1,7 @@
 import { createServer } from 'vitepress'
-import { mkdir, writeFile, readFile, readdir, stat, access } from 'node:fs/promises'
-import { join, resolve, sep } from 'node:path'
+import { mkdir, writeFile, readFile, readdir, stat, access, copyFile } from 'node:fs/promises'
+import { dirname, join, resolve, sep } from 'node:path'
+import { fileURLToPath } from 'node:url'
 
 let restartPromise: Promise<void> | undefined
 
@@ -38,9 +39,15 @@ async function createVitePressConfig(root: string) {
   const bookName = root.split(sep).filter(Boolean).at(-1) || 'yuque-dl'
   const vitepressPath = join(root, '/.vitepress')
   await mkdir(vitepressPath, {recursive: true})
-  const vitePressConfig = join(vitepressPath, 'config.ts')
+  const __dirname = dirname(fileURLToPath(import.meta.url))
+  // 相对于 package_dir + dist/es/xxxx.js
+  const serverLibPath = join(__dirname, '../../server-lib/bundle.js')
+  const vitePressServerLib = join(vitepressPath, 'bundle.mjs')
+  await copyFile(serverLibPath, vitePressServerLib)
+  const vitePressConfig = join(vitepressPath, 'config.mjs')
   const sidebar = await createSidebarMulti(root)
   const config = `
+  import {fixHtmlTags} from './bundle.mjs'
   export default {
     title: "${bookName}",
     themeConfig: {
@@ -55,7 +62,19 @@ async function createVitePressConfig(root: string) {
       }
     },
     markdown: {
-      html: false
+      config(md) {
+        // 包装原始 render 方法，捕获解析异常
+        const originalRender = md.render.bind(md);
+        md.render = (src, env) => {
+          try {
+            const newMd = originalRender(src, env)
+            return fixHtmlTags(newMd)
+          } catch (error) {
+            console.error("Markdown/HTML parsing error:", error);
+            return md
+          }
+        }
+      }
     }
   }
   `
