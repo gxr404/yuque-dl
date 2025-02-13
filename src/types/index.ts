@@ -15,6 +15,11 @@ export interface ICliOptions {
   toc: boolean
 }
 
+export interface IServerCliOptions {
+  host: boolean | string
+  port: number
+}
+
 // ---------------- index
 
 export interface ArticleInfo {

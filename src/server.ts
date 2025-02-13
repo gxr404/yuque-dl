@@ -1,18 +1,23 @@
-import { createServer } from 'vitepress'
 import { mkdir, writeFile, readFile, readdir, stat, access, copyFile } from 'node:fs/promises'
 import { dirname, join, resolve, sep } from 'node:path'
 import { fileURLToPath } from 'node:url'
+import { createServer } from 'vitepress'
+
+import type { IServerCliOptions } from './types'
 
 let restartPromise: Promise<void> | undefined
 
-export async function runServer(root: string) {
+export async function runServer(root: string, options: IServerCliOptions) {
   const rootPath = resolve(root)
   if (!await fileExists(rootPath)) {
     throw new Error('server root not found')
   }
   await createVitePressConfig(rootPath)
   const createDevServer = async () => {
-    const server = await createServer(root, {}, async () => {
+    const server = await createServer(root, {
+      host: options.host,
+      port: options.port
+    }, async () => {
       if (!restartPromise) {
         restartPromise = (async () => {
           await server.close()

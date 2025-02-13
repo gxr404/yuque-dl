@@ -5,8 +5,9 @@ import semver from 'semver'
 
 import { main } from './index'
 import { logger } from './utils'
-import type { ICliOptions } from './types'
 import { runServer } from './server'
+
+import type { ICliOptions, IServerCliOptions } from './types'
 
 const cli = cac('yuque-dl')
 
@@ -52,9 +53,15 @@ cli
 
 cli
   .command('server <serverPath>', '启动web服务')
-  .action(async (serverPath: string) => {
+  .option('-p, --port <port>', ' --port 1234', {
+    default: 5173,
+  })
+  .option('--host [host]', ' --host 0.0.0.0 或 --host', {
+    default: 'localhost',
+  })
+  .action(async (serverPath: string, options: IServerCliOptions) => {
     try {
-      await runServer(serverPath)
+      await runServer(serverPath, options)
     } catch (err) {
       logger.error(err.message || 'unknown exception')
       process.exit(1)
