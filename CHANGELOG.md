@@ -1,3 +1,17 @@
+## [1.0.74](https://github.com/gxr404/yuque-dl/compare/v1.0.73...v1.0.74) (2025-02-13)
+
+
+### Bug Fixes
+
+* **server:** remove handler breaks ([92b5989](https://github.com/gxr404/yuque-dl/commit/92b59892614bd3f6244e084d04c2774118d88717))
+
+
+### Features
+
+* **server:** add cli options ([d79ce29](https://github.com/gxr404/yuque-dl/commit/d79ce298293d494b76fc5dfa06cb27d1e1f4ee08))
+
+
+
 ## [1.0.73](https://github.com/gxr404/yuque-dl/compare/v1.0.72...v1.0.73) (2024-11-12)
 
 
