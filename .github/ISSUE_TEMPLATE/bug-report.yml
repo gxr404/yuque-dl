@@ -42,7 +42,7 @@ body:
   - type: textarea
     attributes:
       label: |
-        在此输入 Bug 具体信息：
+        Bug具体信息：
       placeholder: |
         1. 问题描述
 
