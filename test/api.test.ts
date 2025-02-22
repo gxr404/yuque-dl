@@ -36,15 +36,8 @@ describe('api', () => {
     })
 
     it('404 should throw Error', async () => {
-      let isError = false
-      try {
-        const data = await getKnowledgeBaseInfo('http://localhost/404', {})
-        expect(data).toMatchObject({})
-      } catch(e) {
-        isError = true
-        expect(e.message).toBe('Request failed with status code 404')
-      }
-      expect(isError).toBe(true)
+      const requestPromise = getKnowledgeBaseInfo('http://localhost/404', {})
+      await expect(requestPromise).rejects.toThrow('Request failed with status code 404')
     })
   })
 

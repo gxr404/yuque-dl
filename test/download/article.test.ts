@@ -69,24 +69,19 @@ describe('downloadArticle', () => {
       bookId: 1111,
       imageServiceDomains: ['gxr404.com']
     }
-    let isValidate = false
-    try {
-      await downloadArticle({
-        articleInfo,
-        progressBar: {
-          pause: vi.fn(),
-          continue: vi.fn()
-        } as any,
-        options: {
-          token: 'options token',
-          key: 'options key'
-        } as any
-      })
-    } catch(e) {
-      isValidate = true
-      expect(e.message).toMatch( /download article Error: .*?, http status 200/g)
-    }
-    expect(isValidate).toBeTruthy()
+
+    const requestPromise = downloadArticle({
+      articleInfo,
+      progressBar: {
+        pause: vi.fn(),
+        continue: vi.fn()
+      } as any,
+      options: {
+        token: 'options token',
+        key: 'options key'
+      } as any
+    })
+    await expect(requestPromise).rejects.toThrow(/download article Error: .*?, http status 200/g)
   })
 
 
@@ -103,24 +98,18 @@ describe('downloadArticle', () => {
       bookId: 1111,
       imageServiceDomains: ['gxr404.com']
     }
-    let isValidate = false
-    try {
-      await downloadArticle({
-        articleInfo,
-        progressBar: {
-          pause: vi.fn(),
-          continue: vi.fn()
-        } as any,
-        options: {
-          token: 'options token',
-          key: 'options key'
-        } as any
-      })
-    } catch (e) {
-      expect(e.message).toBe('download article Error: 暂不支持“画板类型”的文档')
-      isValidate = true
-    }
-    expect(isValidate).toBeTruthy()
+    const requestPromise = downloadArticle({
+      articleInfo,
+      progressBar: {
+        pause: vi.fn(),
+        continue: vi.fn()
+      } as any,
+      options: {
+        token: 'options token',
+        key: 'options key'
+      } as any
+    })
+    await expect(requestPromise).rejects.toThrow('download article Error: 暂不支持“画板类型”的文档')
   })
 
   it('table type', async () => {
@@ -136,24 +125,18 @@ describe('downloadArticle', () => {
       bookId: 1111,
       imageServiceDomains: ['gxr404.com']
     }
-    let isValidate = false
-    try {
-      await downloadArticle({
-        articleInfo,
-        progressBar: {
-          pause: vi.fn(),
-          continue: vi.fn()
-        } as any,
-        options: {
-          token: 'options token',
-          key: 'options key'
-        } as any
-      })
-    } catch (e) {
-      expect(e.message).toBe('download article Error: 暂不支持“数据表类型”的文档')
-      isValidate = true
-    }
-    expect(isValidate).toBeTruthy()
+    const requestPromise = downloadArticle({
+      articleInfo,
+      progressBar: {
+        pause: vi.fn(),
+        continue: vi.fn()
+      } as any,
+      options: {
+        token: 'options token',
+        key: 'options key'
+      } as any
+    })
+    await expect(requestPromise).rejects.toThrow('download article Error: 暂不支持“数据表类型”的文档')
   })
 
   it('sheet type', async () => {
@@ -203,24 +186,18 @@ describe('downloadArticle', () => {
       bookId: 1111,
       imageServiceDomains: ['gxr404.com']
     }
-    let isValidate = false
-    try {
-      await downloadArticle({
-        articleInfo,
-        progressBar: {
-          pause: vi.fn(),
-          continue: vi.fn()
-        } as any,
-        options: {
-          token: 'options token',
-          key: 'options key'
-        } as any
-      })
-    } catch (e) {
-      isValidate = true
-      expect(e.message).toMatch(/download article Error: “表格类型”解析错误 SyntaxError: Unexpected token/)
-    }
-    expect(isValidate).toBeTruthy()
+    const requestPromise =  downloadArticle({
+      articleInfo,
+      progressBar: {
+        pause: vi.fn(),
+        continue: vi.fn()
+      } as any,
+      options: {
+        token: 'options token',
+        key: 'options key'
+      } as any
+    })
+    await expect(requestPromise).rejects.toThrow(/download article Error: “表格类型”解析错误 SyntaxError: Unexpected token/)
   })
 
   it('custom key token', async () => {

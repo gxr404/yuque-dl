@@ -43,13 +43,7 @@ describe('downloadAttachments', () => {
       attachmentsDir: './attachments/123456789',
       articleTitle: 'test'
     }
-    let isValidate = false
-    try {
-      await downloadAttachments(params)
-    } catch(e) {
-      isValidate = true
-      expect(e.message).toMatch(/Request failed with status code 404/g)
-    }
-    expect(isValidate).toBeTruthy()
+    const requestPromise =  downloadAttachments(params)
+    await expect(requestPromise).rejects.toThrow(/Request failed with status code 404/g)
   })
 })
