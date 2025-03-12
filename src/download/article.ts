@@ -18,7 +18,7 @@ import { downloadVideo } from './video'
 
 /** 下载单篇文章 */
 export async function downloadArticle(params: DownloadArticleParams): Promise<boolean> {
-  const { articleInfo, progressBar, options } = params
+  const { articleInfo, progressBar, options, progressItem } = params
   const { token, key } = options
   const {
     bookId,
@@ -43,7 +43,6 @@ export async function downloadArticle(params: DownloadArticleParams): Promise<bo
 
   const contentType = response?.data?.type?.toLocaleLowerCase() as ARTICLE_CONTENT_TYPE
   let mdData = ''
-
   /** 表格类型 */
   if (contentType === ARTICLE_CONTENT_TYPE.SHEET) {
     const {response} = await getDocsMdData(reqParams, false)
@@ -195,7 +194,20 @@ export async function downloadArticle(params: DownloadArticleParams): Promise<bo
     stopProgress()
   }
 
+  // 更新单篇文档进度时间相关信息
+  function updateProgressItemTime() {
+    const createAt = response?.data?.created_at || ''
+    const contentUpdatedAt = response?.data?.content_updated_at || ''
+    const publishedAt = response?.data?.published_at || ''
+    const firstPublishedAt = response?.data?.first_published_at || ''
+    progressItem.createAt = createAt
+    progressItem.contentUpdatedAt = contentUpdatedAt
+    progressItem.publishedAt = publishedAt
+    progressItem.firstPublishedAt = firstPublishedAt
+  }
+
   try {
+    updateProgressItemTime()
     await writeFile(saveFilePath, handleMdData(mdData, handleMdDataOptions))
     // 保存后检查附件是否下载失败， 优先图片下载错误显示 图片下载失败直接就 throw不会走到这里
     if (attachmentsErrInfo.length > 0) {

@@ -123,7 +123,8 @@ export async function downloadArticleList(params: IDownloadArticleListParams) {
       await downloadArticle({
         articleInfo,
         progressBar,
-        options
+        options,
+        progressItem
       })
     } catch(e) {
       isSuccess = false

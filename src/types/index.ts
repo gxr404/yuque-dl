@@ -40,7 +40,9 @@ export interface DownloadArticleParams {
   /** 进度条实例 */
   progressBar: ProgressBar,
   /** cli options */
-  options: ICliOptions
+  options: ICliOptions,
+  /** 单篇文档进度信息 */
+  progressItem: IProgressItem
 }
 export interface IHandleMdDataOptions {
   articleUrl: string
@@ -75,7 +77,11 @@ export interface IProgressItem {
   path: string,
   toc: KnowledgeBase.Toc,
   pathIdList: string[],
-  pathTitleList: string[]
+  pathTitleList: string[],
+  createAt?: string,
+  contentUpdatedAt?: string,
+  publishedAt?: string,
+  firstPublishedAt?: string
 }
 export type IProgress = IProgressItem[]
 
