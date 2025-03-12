@@ -8,6 +8,7 @@ exports[`downloadArticle > should work 1`] = `
 ## SubTitle
 ![2.jpeg](./img/002/2-123456.jpeg)
 
+> 更新: 2025-03-12 20:59:27  
 > 原文: <https://www.yuque.com/yuque/base1/one>"
 `;
 
@@ -32,6 +33,7 @@ exports[`downloadArticle > the title is also a doc 1`] = `
 ## SubTitle
 ![2.jpeg](./img/001/2-123456.jpeg)
 
+> 更新: 2025-03-12 20:59:27  
 > 原文: <https://www.yuque.com/yuque/base1/one>"
 `;
 

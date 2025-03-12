@@ -3,7 +3,6 @@ import fs from 'node:fs'
 import { fileURLToPath } from 'node:url'
 import { afterEach, beforeEach, describe, expect, it } from 'vitest'
 import { TestTools } from './helpers/TestTools'
-import { KNOWLEDGE_BASE_URL } from './helpers/constant'
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url))
 const cliPath = path.join(__dirname, '../bin/index.js')
@@ -24,7 +23,7 @@ describe('yuque-dl CLI', () => {
 
   it('should work', async () => {
     const { stdout, exitCode, stderr } = await testTools.fork(cliPath, [
-      KNOWLEDGE_BASE_URL.NORMAL,
+      'https://www.yuque.com/yuque/welfare',
       '-d', '.'
     ])
     expect(exitCode).toBe(0)
@@ -39,7 +38,7 @@ describe('yuque-dl CLI', () => {
 
   it('ignore img should work ', async () => {
     const { stdout, exitCode } = await testTools.fork(cliPath, [
-      KNOWLEDGE_BASE_URL.NORMAL,
+      'https://www.yuque.com/yuque/welfare',
       '-d', '.',
       '-i'
     ])
@@ -54,7 +53,7 @@ describe('yuque-dl CLI', () => {
 
   it('generate toc list should work ', async () => {
     const { stdout, exitCode } = await testTools.fork(cliPath, [
-      KNOWLEDGE_BASE_URL.NORMAL,
+      'https://www.yuque.com/yuque/welfare',
       '-d', '.',
       '--toc',
       '-i'

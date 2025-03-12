@@ -34,6 +34,7 @@ describe('downloadArticle', () => {
       bookId: 1111,
       imageServiceDomains: ['gxr404.com']
     }
+    const progressItem = {} as any
     await downloadArticle({
       articleInfo,
       progressBar: {
@@ -43,7 +44,8 @@ describe('downloadArticle', () => {
       options: {
         token: 'options token',
         key: 'options key'
-      } as any
+      } as any,
+      progressItem
     })
 
     let doc1Data = readFileSync(articleInfo.saveFilePath).toString()
@@ -54,6 +56,10 @@ describe('downloadArticle', () => {
     const imgList = readdirSync(`${articleInfo.savePath}/img/${articleInfo.uuid}`)
     expect(readFileSync(`${articleInfo.savePath}/img/${articleInfo.uuid}/${imgList[0]}`).length).toBe(99892)
     expect(readFileSync(`${articleInfo.savePath}/img/${articleInfo.uuid}/${imgList[1]}`).length).toBe(81011)
+    expect(progressItem.createAt).toBe('2025-03-12T12:59:22.000Z')
+    expect(progressItem.contentUpdatedAt).toBe('2025-03-12T12:59:27.000Z')
+    expect(progressItem.publishedAt).toBe('2025-03-12T12:59:27.000Z')
+    expect(progressItem.firstPublishedAt).toBe('2025-03-12T12:59:26.630Z')
   })
 
   it('sourcecode null should work', async () => {
@@ -79,7 +85,8 @@ describe('downloadArticle', () => {
       options: {
         token: 'options token',
         key: 'options key'
-      } as any
+      } as any,
+      progressItem: {} as any
     })
     await expect(requestPromise).rejects.toThrow(/download article Error: .*?, http status 200/g)
   })
@@ -107,7 +114,8 @@ describe('downloadArticle', () => {
       options: {
         token: 'options token',
         key: 'options key'
-      } as any
+      } as any,
+      progressItem: {} as any
     })
     await expect(requestPromise).rejects.toThrow('download article Error: 暂不支持“画板类型”的文档')
   })
@@ -134,7 +142,8 @@ describe('downloadArticle', () => {
       options: {
         token: 'options token',
         key: 'options key'
-      } as any
+      } as any,
+      progressItem: {} as any
     })
     await expect(requestPromise).rejects.toThrow('download article Error: 暂不支持“数据表类型”的文档')
   })
@@ -161,7 +170,8 @@ describe('downloadArticle', () => {
       options: {
         token: 'options token',
         key: 'options key'
-      } as any
+      } as any,
+      progressItem: {} as any
     })
 
     let doc1Data = readFileSync(articleInfo.saveFilePath).toString()
@@ -195,7 +205,8 @@ describe('downloadArticle', () => {
       options: {
         token: 'options token',
         key: 'options key'
-      } as any
+      } as any,
+      progressItem: {} as any
     })
     await expect(requestPromise).rejects.toThrow(/download article Error: “表格类型”解析错误 SyntaxError: Unexpected token/)
   })
@@ -222,7 +233,8 @@ describe('downloadArticle', () => {
       options: {
         token: 'MyToken',
         key: 'MyKey'
-      } as any
+      } as any,
+      progressItem: {} as any
     })
     const docData = readFileSync(articleInfo.saveFilePath).toString()
     expect(docData).toMatchSnapshot()
@@ -250,7 +262,8 @@ describe('downloadArticle', () => {
       options: {
         token: 'MyToken',
         key: 'MyKey'
-      } as any
+      } as any,
+      progressItem: {} as any
     })
     let doc1Data = readFileSync(articleInfo.saveFilePath).toString()
     doc1Data = doc1Data.replace(/\.\/img.*?-(\d{6})\./g, (match, random) => {

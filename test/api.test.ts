@@ -1,7 +1,6 @@
 import { afterAll, afterEach, beforeAll, beforeEach, describe, expect, it } from 'vitest'
 import { TestTools } from './helpers/TestTools'
 import { server } from './mocks/server'
-import { KNOWLEDGE_BASE_URL } from './helpers/constant'
 import { getDocsMdData, getKnowledgeBaseInfo, genCommonOptions } from '../src/api'
 
 let testTools: TestTools
@@ -23,7 +22,7 @@ describe('api', () => {
 
   describe('getKnowledgeBaseInfo', () => {
     it('should work', async () => {
-      const data = await getKnowledgeBaseInfo(KNOWLEDGE_BASE_URL.NORMAL, {
+      const data = await getKnowledgeBaseInfo('https://www.yuque.com/yuque/welfare', {
         token: 'token',
         key: 'key'
       })

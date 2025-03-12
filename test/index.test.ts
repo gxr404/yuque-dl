@@ -2,7 +2,6 @@ import path from 'node:path'
 import { afterAll, afterEach, beforeAll, beforeEach, describe, expect, it } from 'vitest'
 import { TestTools } from './helpers/TestTools'
 import { server } from './mocks/server'
-import { KNOWLEDGE_BASE_URL } from './helpers/constant'
 import { main } from '../src/index'
 import { readdirSync, readFileSync } from 'node:fs'
 
@@ -24,7 +23,7 @@ describe('main', () => {
     server.resetHandlers()
   })
   it('should work', async () => {
-    await main(KNOWLEDGE_BASE_URL.BASE1, {
+    await main('https://www.yuque.com/yuque/base1', {
       distDir: testTools.cwd,
       ignoreImg: false,
       toc: false
