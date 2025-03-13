@@ -1,3 +1,20 @@
+## [1.0.75](https://github.com/gxr404/yuque-dl/compare/v1.0.74...v1.0.75) (2025-03-13)
+
+
+### Bug Fixes
+
+* update github issuse template ([a6ef0b2](https://github.com/gxr404/yuque-dl/commit/a6ef0b2a2f1e7e0fee26563d0be99dfd6b7438e3))
+* update github issuse template ([42a5a72](https://github.com/gxr404/yuque-dl/commit/42a5a729d485a394f7b4126cb4de92052aca0a87))
+* update github issuse template ([5a99149](https://github.com/gxr404/yuque-dl/commit/5a99149f8a06d863569b5031c36829d5b74eb0cd))
+
+
+### Features
+
+* progress.json 添加对应时间字段 ([6a61d06](https://github.com/gxr404/yuque-dl/commit/6a61d062cc4ca57ba0eee94fafa47138aeb5669e))
+* 增加 cli "incremental" 选项, 增量更新 功能 ([fbf17c9](https://github.com/gxr404/yuque-dl/commit/fbf17c98b8658da54a74c3f75a800c87e7f5d19b))
+
+
+
 ## [1.0.74](https://github.com/gxr404/yuque-dl/compare/v1.0.73...v1.0.74) (2025-02-13)
 
 
