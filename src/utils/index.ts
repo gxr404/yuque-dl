@@ -73,5 +73,9 @@ export function formateDate(d: string) {
   return `${year}-${pad(month)}-${pad(day)} ${pad(hour)}:${pad(minute)}:${pad(second)}`
 }
 
+export function isValidDate(date: Date) {
+  return date instanceof Date && !isNaN(date.getTime())
+}
+
 export * from './log'
 export * from './ProgressBar'

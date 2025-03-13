@@ -13,6 +13,8 @@ export interface ICliOptions {
   key?: string
   /** 是否忽略markdown中toc的生成 */
   toc: boolean
+  /** 是否增量下载 */
+  incremental: boolean
 }
 
 export interface IServerCliOptions {
@@ -42,8 +44,17 @@ export interface DownloadArticleParams {
   /** cli options */
   options: ICliOptions,
   /** 单篇文档进度信息 */
-  progressItem: IProgressItem
+  progressItem: IProgressItem,
+  /** 第二次下载时前一次的单篇文档进度信息 */
+  oldProgressItem?: IProgressItem
 }
+
+export interface DownloadArticleRes {
+  needDownload: boolean,
+  isUpdateDownload: boolean,
+  isDownloadFinish: boolean
+}
+
 export interface IHandleMdDataOptions {
   articleUrl: string
   articleTitle: string
@@ -57,6 +68,11 @@ export interface IErrArticleInfo {
   errItem: IProgressItem,
   errMsg: string,
   err: any
+}
+
+export interface IUpdateDownloadItem {
+  progressItem: IProgressItem,
+  articleInfo: ArticleInfo
 }
 
 export interface IDownloadArticleListParams {

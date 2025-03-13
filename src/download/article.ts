@@ -9,16 +9,16 @@ import { ARTICLE_CONTENT_TYPE, ARTICLE_CONTENT_MAP } from '../constant'
 import { fixLatex, fixMarkdownImage, fixPath } from '../parse/fix'
 import { parseSheet } from '../parse/sheet'
 import { captureImageURL } from '../crypto'
-import { formateDate, getMarkdownImageList } from '../utils'
+import { formateDate, getMarkdownImageList, isValidDate } from '../utils'
 
-import type { DownloadArticleParams, IHandleMdDataOptions } from '../types'
+import type { DownloadArticleParams, DownloadArticleRes, IHandleMdDataOptions, IProgressItem } from '../types'
 import { downloadAttachments } from './attachments'
 import { downloadVideo } from './video'
 
 
 /** 下载单篇文章 */
-export async function downloadArticle(params: DownloadArticleParams): Promise<boolean> {
-  const { articleInfo, progressBar, options, progressItem } = params
+export async function downloadArticle(params: DownloadArticleParams): Promise<DownloadArticleRes> {
+  const { articleInfo, progressBar, options, progressItem, oldProgressItem } = params
   const { token, key } = options
   const {
     bookId,
@@ -40,6 +40,18 @@ export async function downloadArticle(params: DownloadArticleParams): Promise<bo
     key,
   }
   const { httpStatus, apiUrl, response } = await getDocsMdData(reqParams)
+
+  updateProgressItemTime()
+  const { needDownload, isUpdateDownload } = checkProgressItemUpdate(progressItem, oldProgressItem)
+
+  // console.log('需要下载??', needDownload, articleUrl)
+  if (!needDownload) {
+    return {
+      needDownload,
+      isUpdateDownload,
+      isDownloadFinish: true
+    }
+  }
 
   const contentType = response?.data?.type?.toLocaleLowerCase() as ARTICLE_CONTENT_TYPE
   let mdData = ''
@@ -207,13 +219,16 @@ export async function downloadArticle(params: DownloadArticleParams): Promise<bo
   }
 
   try {
-    updateProgressItemTime()
     await writeFile(saveFilePath, handleMdData(mdData, handleMdDataOptions))
     // 保存后检查附件是否下载失败， 优先图片下载错误显示 图片下载失败直接就 throw不会走到这里
     if (attachmentsErrInfo.length > 0) {
       throw new Error(attachmentsErrInfo[0])
     }
-    return true
+    return {
+      needDownload,
+      isUpdateDownload,
+      isDownloadFinish: true
+    }
   } catch(e) {
     throw new Error(`${e.message}`)
   }
@@ -254,4 +269,37 @@ function handleMdData (rawMdData: string, options: IHandleMdDataOptions): string
 
   mdData = `${header}${tocData}${mdData}${footer}`
   return mdData
+}
+
+/** 检查当前是否是 是否增量下载 或者是否初次下载 */
+function checkProgressItemUpdate(progressItem: IProgressItem, oldProgressItem?: IProgressItem) {
+  const defaultRes =  {
+    isFirstDownload: true,
+    isUpdateDownload: false,
+    needDownload: true
+  }
+  if (!progressItem.contentUpdatedAt || !oldProgressItem || !oldProgressItem?.contentUpdatedAt) {
+    return defaultRes
+  }
+  const currentUpdateDate = new Date(progressItem.contentUpdatedAt)
+  const preUpdateDate = new Date(oldProgressItem.contentUpdatedAt)
+
+  if (!isValidDate(currentUpdateDate) || !isValidDate(preUpdateDate)) {
+    return defaultRes
+  }
+
+  if (currentUpdateDate.getTime() > preUpdateDate.getTime()) {
+    return {
+      needDownload: true,
+      isUpdateDownload: true,
+      isFirstDownload: false
+    }
+  } else if (currentUpdateDate.getTime() === preUpdateDate.getTime()) {
+    return {
+      needDownload: false,
+      isUpdateDownload: false,
+      isFirstDownload: false
+    }
+  }
+  return defaultRes
 }

@@ -31,17 +31,20 @@ export async function main(url: string, options: ICliOptions) {
   await mkdir(bookPath, {recursive: true})
 
   const total = tocList.length
-  const progressBar = new ProgressBar(bookPath, total)
+  const progressBar = new ProgressBar(bookPath, total, options.incremental)
   await progressBar.init()
 
-  if (progressBar.curr === total) {
+  // 为了检查是否有增量数据
+  // 即使已下载的与progress的数量一致也需继续进行
+  if (!options.incremental && progressBar.curr == total) {
     if (progressBar.bar) progressBar.bar.stop()
     logger.info(`√ 已完成: ${bookPath}`)
     return
   }
+
   const uuidMap = new Map<string, IProgressItem>()
-  // 下载中断 重新获取下载进度数据
-  if (progressBar.isDownloadInterrupted) {
+  // 下载中断 重新获取下载进度数据 或者 增量下载 也需获取旧的下载进度
+  if (progressBar.isDownloadInterrupted || options.incremental) {
     progressBar.progressInfo.forEach(item => {
       uuidMap.set(
         item.toc.uuid,

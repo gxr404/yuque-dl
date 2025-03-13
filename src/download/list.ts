@@ -3,12 +3,16 @@ import path from 'node:path'
 
 import { ARTICLE_CONTENT_TYPE, ARTICLE_TOC_TYPE } from '../constant'
 import { logger } from '../utils'
-
-import type {
-  KnowledgeBase, IProgressItem, IErrArticleInfo, IDownloadArticleListParams
-} from '../types'
 import { fixPath } from '../parse/fix'
 import { downloadArticle } from './article'
+
+import type {
+  KnowledgeBase,
+  IProgressItem,
+  IErrArticleInfo,
+  IDownloadArticleListParams,
+  IUpdateDownloadItem
+} from '../types'
 
 
 export async function downloadArticleList(params: IDownloadArticleListParams) {
@@ -29,10 +33,11 @@ export async function downloadArticleList(params: IDownloadArticleListParams) {
   let warnArticleCount = 0
   const errArticleInfo: IErrArticleInfo[] = []
   const warnArticleInfo = []
+  const updateDownloadList: IUpdateDownloadItem[] = []
   for (let i = 0; i < total; i++) {
     const item = tocList[i]
     if (typeof item.type !== 'string') continue
-    if (uuidMap.get(item.uuid)) continue
+    // if (uuidMap.get(item.uuid)) continue
 
     const itemType = item.type.toLocaleLowerCase()
     // title目录类型/link外链类型
@@ -120,12 +125,19 @@ export async function downloadArticleList(params: IDownloadArticleListParams) {
         host,
         imageServiceDomains
       }
-      await downloadArticle({
+      const { isUpdateDownload } = await downloadArticle({
         articleInfo,
         progressBar,
         options,
-        progressItem
+        progressItem,
+        oldProgressItem: uuidMap.get(item.uuid)
       })
+      if (isUpdateDownload) {
+        updateDownloadList.push({
+          progressItem,
+          articleInfo
+        })
+      }
     } catch(e) {
       isSuccess = false
       errArticleCount += 1
@@ -159,5 +171,12 @@ export async function downloadArticleList(params: IDownloadArticleListParams) {
       })
     }
     logger.error('o(╥﹏╥)o 由于网络波动或链接失效以上下载失败，可重新执行命令重试(PS:不会影响已下载成功的数据)')
+  }
+  // 打印更新下载/增量下载
+  if (updateDownloadList.length > 0) {
+    logger.info('以下文档有更新: ')
+    updateDownloadList.forEach(item => {
+      logger.info(`———— √ ${item.articleInfo.saveFilePath}`)
+    })
   }
 }

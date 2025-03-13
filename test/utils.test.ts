@@ -94,7 +94,7 @@ describe('ProgressBar', () => {
     toc: {
       'type': 'TITLE',
       'title': '语雀知识库2',
-      'uuid': '6e3OzZQk2SHqApWA',
+      'uuid': '6e3OzZQk2SHqApWA-2',
       'url': '',
       'prev_uuid': '',
       'sibling_uuid': 'LhaQ85mI3D03Y4Zy',
@@ -114,7 +114,7 @@ describe('ProgressBar', () => {
     toc: {
       'type': 'TITLE',
       'title': '语雀知识库3',
-      'uuid': '6e3OzZQk2SHqApWA',
+      'uuid': '6e3OzZQk2SHqApWA-3',
       'url': '',
       'prev_uuid': '',
       'sibling_uuid': 'LhaQ85mI3D03Y4Zy',
@@ -162,5 +162,27 @@ describe('ProgressBar', () => {
     prInfo = await pr.getProgress()
     expect(prInfo).toMatchObject([updateItem, updateItem2, updateItem3])
     expect(pr.curr).toBe(3)
+  })
+
+  it('incremental progress item', async() => {
+    let pr = new ProgressBar(testTools.cwd, 3)
+    await pr.init()
+
+    await pr.updateProgress(updateItem, true)
+    let prInfo = await pr.getProgress()
+    // pr.updateProgress()
+    expect(prInfo).toMatchObject([updateItem])
+    expect(pr.curr).toBe(1)
+    const newItem = {
+      ...updateItem,
+      createAt: 'xxxx'
+    }
+    pr = new ProgressBar(testTools.cwd, 3, true)
+    await pr.init()
+    await pr.updateProgress(newItem, true)
+    prInfo = await pr.getProgress()
+    expect(prInfo).toMatchObject([newItem])
+    // toc.uuid一致 则是 更新 而非 push
+    expect(pr.curr).toBe(1)
   })
 })
