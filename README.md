@@ -33,11 +33,12 @@ $ yuque-dl --help
   Options:
     -d, --dist-dir <dir>  下载的目录 eg: -d download (default: download)
     -i, --ignore-img      忽略图片不下载 (default: false)
-    -k, --key <key>       语雀的cookie key， 默认是 "_yuque_session"， 在某些企业版本中 key 不一样 
-    -t, --token <token>   语雀的cookie key 对应的值 
+    -k, --key <key>       语雀的cookie key， 默认是 "_yuque_session"， 在某些企业版本中 key 不一样
+    -t, --token <token>   语雀的cookie key 对应的值
     --toc                 是否输出文档toc目录 (default: false)
-    -h, --help            Display this message 
-    -v, --version         Display version number 
+    --incremental         开启增量下载(初次下载加不加该参数没区别) (default: false)
+    -h, --help            Display this message
+    -v, --version         Display version number
 ```
 
 ### Start
@@ -72,6 +73,9 @@ yuque-dl "https://www.yuque.com/yuque/thyzgp" -t "abcd..."
 至于`key`具体是什么只能靠用户自己在 `浏览器Devtools-> Application -> Cookies` 里找了🤔
 
 ### 公开密码访问的知识库
+
+> [!WARNING]
+> 下载"公开密码访问的知识库" 前提是需要知道别人设置的密码，输入密码后拿cookie进行下载，**无法做到破解密码**, 请须知
 
 ![public_pwd](https://github.com/gxr404/yuque-dl/assets/17134256/b546a9a3-68f0-4f76-b450-6b16f464db5d)
 
