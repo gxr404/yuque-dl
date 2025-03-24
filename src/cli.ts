@@ -44,6 +44,9 @@ cli
   .option('--incremental', '开启增量下载(初次下载加不加该参数没区别)', {
     default: false
   })
+  .option('--convertMarkdownVideoLinks', '转化markdown视频链接为video标签', {
+    default: false
+  })
   .action(async (url: string, options: ICliOptions) => {
     try {
       await main(url, options)
@@ -61,6 +64,9 @@ cli
   })
   .option('--host [host]', ' --host 0.0.0.0 或 --host', {
     default: 'localhost',
+  })
+  .option('--force', '强制重新生成.vitepress', {
+    default: false,
   })
   .action(async (serverPath: string, options: IServerCliOptions) => {
     try {

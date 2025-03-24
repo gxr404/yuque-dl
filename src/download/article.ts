@@ -19,7 +19,7 @@ import { downloadVideo } from './video'
 /** 下载单篇文章 */
 export async function downloadArticle(params: DownloadArticleParams): Promise<DownloadArticleRes> {
   const { articleInfo, progressBar, options, progressItem, oldProgressItem } = params
-  const { token, key } = options
+  const { token, key, convertMarkdownVideoLinks } = options
   const {
     bookId,
     itemUrl,
@@ -219,7 +219,7 @@ export async function downloadArticle(params: DownloadArticleParams): Promise<Do
   }
 
   try {
-    await writeFile(saveFilePath, handleMdData(mdData, handleMdDataOptions))
+    await writeFile(saveFilePath, handleMdData(mdData, handleMdDataOptions, convertMarkdownVideoLinks))
     // 保存后检查附件是否下载失败， 优先图片下载错误显示 图片下载失败直接就 throw不会走到这里
     if (attachmentsErrInfo.length > 0) {
       throw new Error(attachmentsErrInfo[0])
@@ -234,7 +234,11 @@ export async function downloadArticle(params: DownloadArticleParams): Promise<Do
   }
 }
 
-function handleMdData (rawMdData: string, options: IHandleMdDataOptions): string {
+function handleMdData (
+  rawMdData: string,
+  options: IHandleMdDataOptions,
+  convertMarkdownVideoLinks: boolean
+): string {
   const {articleTitle, articleUrl, toc} = options
   let mdData = rawMdData
 
@@ -268,7 +272,17 @@ function handleMdData (rawMdData: string, options: IHandleMdDataOptions): string
   }
 
   mdData = `${header}${tocData}${mdData}${footer}`
+  if (convertMarkdownVideoLinks) {
+    mdData = handleVideoMd(mdData)
+  }
   return mdData
+}
+
+/** 将video链接转化成html video */
+function handleVideoMd(mdData: string) {
+  return mdData.replace(/\[(.*?)\]\((.*?)\.(mp4|mp3)\)/gm, (match, alt, url, extType) => {
+    return `<video controls width="800" alt="${alt}" src="${url + '.' + extType}"/>`
+  })
 }
 
 /** 检查当前是否是 是否增量下载 或者是否初次下载 */

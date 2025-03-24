@@ -3,7 +3,8 @@ import { dirname, join, resolve, sep } from 'node:path'
 import { fileURLToPath } from 'node:url'
 import { createServer } from 'vitepress'
 
-import type { IServerCliOptions } from './types'
+import type { IServerCliOptions, ISidebarItem } from './types'
+import { existsSync } from 'node:fs'
 
 let restartPromise: Promise<void> | undefined
 
@@ -12,7 +13,9 @@ export async function runServer(root: string, options: IServerCliOptions) {
   if (!await fileExists(rootPath)) {
     throw new Error('server root not found')
   }
-  await createVitePressConfig(rootPath)
+  const vitepressPath = join(rootPath, '/.vitepress')
+  // 不存在.vitepress 或者 强制重新生成.vitepress时
+  if (!existsSync(vitepressPath) || options.force) await createVitePressConfig(rootPath)
   const createDevServer = async () => {
     const server = await createServer(root, {
       host: options.host,
@@ -51,6 +54,12 @@ async function createVitePressConfig(root: string) {
   await copyFile(serverLibPath, vitePressServerLib)
   const vitePressConfig = join(vitepressPath, 'config.mjs')
   const sidebar = await createSidebarMulti(root)
+  // 根据summry排序 vitepress侧边栏
+  const summaryStr = await readFile(resolve(root, 'index.md'), 'utf8')
+  const summaryList = summaryStr.split('\n')
+  setSidebarIndex(summaryList, sidebar)
+  sortSidebar(sidebar)
+
   const config = `
   import {fixHtmlTags} from './bundle.mjs'
   export default {
@@ -103,7 +112,7 @@ async function fileExists(filename: string) {
   }
 }
 
-async function createSidebarMulti (path: string) {
+async function createSidebarMulti (path: string): Promise<ISidebarItem[]> {
   const data = [] as any
   const ignoreList = ['.vitepress', 'img', 'index.md', 'progress.json', 'attachments']
   let dirList = await readdir(path)
@@ -128,6 +137,31 @@ async function createSidebarMulti (path: string) {
     }
   }
   return data
+}
+
+function setSidebarIndex(summaryList: string[], sidebar: ISidebarItem[]) {
+  sidebar.map(item => {
+    if ('items' in item) {
+      setSidebarIndex(summaryList, item.items)
+    }
+    const itemIndex = summaryList.findIndex(str => {
+      return str.includes(`[${item.text}]`) || str.includes(`# ${item.text}`)
+    })
+    item.index = itemIndex
+  })
+}
+
+function sortSidebar(sidebar: ISidebarItem[]) {
+  if (sidebar.length <=1) return
+  sidebar.forEach((item) => {
+    if ('items' in item) {
+      sortSidebar(item.items)
+    }
+  })
+  sidebar.sort((item, nexItem) => {
+    if (!item.index || !nexItem.index) return 0
+    return item.index > nexItem.index ? 1 : -1
+  })
 }
 
 // 尝试从一个md文件中读取标题，读取到第一个 ‘# 标题内容’ 的时候返回这一行

@@ -15,12 +15,30 @@ export interface ICliOptions {
   toc: boolean
   /** 是否增量下载 */
   incremental: boolean
+  /** 转化markdown视频链接为video标签 */
+  convertMarkdownVideoLinks: boolean
 }
 
 export interface IServerCliOptions {
   host: boolean | string
   port: number
+  force: boolean
 }
+
+export interface ISidebarItemDir {
+  text: string,
+  index?: number,
+  collapsed: string
+  items: ISidebarItem[]
+}
+
+export interface ISidebarItemLink {
+  text: string
+  index?: number,
+  link: string,
+}
+
+export type ISidebarItem = ISidebarItemDir | ISidebarItemLink
 
 // ---------------- index
 
