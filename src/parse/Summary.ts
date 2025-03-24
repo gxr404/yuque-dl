@@ -92,7 +92,7 @@ export default class Summary {
         }
       } else if (item.type === ARTICLE_TOC_TYPE.LINK) {
         const link = item.link ? item.link.replace(/\s/g, '%20') : item.link
-        summaryContent += `- [${item.text}](${link})\n`
+        summaryContent += `${item.level === 1 ? '\n##' : '-'} [${item.text}](${link})\n`
       }
       if (Array.isArray(item.children)) {
         summaryContent += this.genSummaryContent(item.children, '')
