@@ -16,7 +16,8 @@ exports[`summary > should work 1`] = `
 
 ### Title2-1
 
-- [DOC3](006/doc.md)
+
+## [DOC3](006/doc.md)
 "
 `;
 
