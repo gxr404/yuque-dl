@@ -1,3 +1,19 @@
+## [1.0.76](https://github.com/gxr404/yuque-dl/compare/v1.0.75...v1.0.76) (2025-03-24)
+
+
+### Bug Fixes
+
+* handleMdData 缺少参数 ([e28e1f6](https://github.com/gxr404/yuque-dl/commit/e28e1f62d8b3ea59d10d85f74530918505584914))
+* test snap ([4f5faf3](https://github.com/gxr404/yuque-dl/commit/4f5faf37e134350b01ce9c5b612130d5fb94e9d2))
+* 生成目录一级link 转为`## `作为标题 ([c6725f0](https://github.com/gxr404/yuque-dl/commit/c6725f0bd7428ca3bfa3e5a231e81ecb09c103f5))
+
+
+### Features
+
+* add "convertMarkdownVideoLinks" cli 选项 & server sidebar 菜单正确排序 ([f146d5f](https://github.com/gxr404/yuque-dl/commit/f146d5f0dc33e51295cbe3334b21e93605a503e4))
+
+
+
 ## [1.0.75](https://github.com/gxr404/yuque-dl/compare/v1.0.74...v1.0.75) (2025-03-13)
 
 
