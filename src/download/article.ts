@@ -281,7 +281,7 @@ function handleMdData (
 /** 将video链接转化成html video */
 function handleVideoMd(mdData: string) {
   return mdData.replace(/\[(.*?)\]\((.*?)\.(mp4|mp3)\)/gm, (match, alt, url, extType) => {
-    return `<video controls width="800" alt="${alt}" src="${url + '.' + extType}"/>`
+    return `<video controls width="800" alt="${alt}" src="${url + '.' + extType}"></video>`
   })
 }
 
