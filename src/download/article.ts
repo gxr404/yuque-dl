@@ -198,7 +198,7 @@ export async function downloadArticle(params: DownloadArticleParams): Promise<Do
       let errMessage = '图片下载失败(失败的以远程链接保存): '
       errMessage = e.url ? `${errMessage}${e.error?.message} ${e.url.slice(0, 20)}...` : `${errMessage}${e.message}`
       // 图片下载 md文档按远程图片保存
-      await writeFile(saveFilePath, handleMdData(mdData, handleMdDataOptions))
+      await writeFile(saveFilePath, handleMdData(mdData, handleMdDataOptions, convertMarkdownVideoLinks))
       stopProgress()
       // throw new Error(`${errMessage}\n${errMessageList}`)
       throw new Error(`${errMessage}`)
