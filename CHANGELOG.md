@@ -1,3 +1,12 @@
+## [1.0.77](https://github.com/gxr404/yuque-dl/compare/v1.0.76...v1.0.77) (2025-03-24)
+
+
+### Bug Fixes
+
+* video 标签 markdown中不支持自闭合标签 ([7205f10](https://github.com/gxr404/yuque-dl/commit/7205f107d3a5912056f6806f4a2cfdb40ab1e4dd))
+
+
+
 ## [1.0.76](https://github.com/gxr404/yuque-dl/compare/v1.0.75...v1.0.76) (2025-03-24)
 
 
