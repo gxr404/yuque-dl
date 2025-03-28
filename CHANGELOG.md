@@ -1,3 +1,12 @@
+## [1.0.78](https://github.com/gxr404/yuque-dl/compare/v1.0.77...v1.0.78) (2025-03-28)
+
+
+### Features
+
+* add cli option "--hideFooter" ([0d15525](https://github.com/gxr404/yuque-dl/commit/0d155251b50c2726a6280243297bf86adccbef66))
+
+
+
 ## [1.0.77](https://github.com/gxr404/yuque-dl/compare/v1.0.76...v1.0.77) (2025-03-24)
 
 
