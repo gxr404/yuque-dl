@@ -47,6 +47,9 @@ cli
   .option('--convertMarkdownVideoLinks', '转化markdown视频链接为video标签', {
     default: false
   })
+  .option('--hideFooter', '是否禁用页脚显示(更新时间、原文地址...)', {
+    default: false
+  })
   .action(async (url: string, options: ICliOptions) => {
     try {
       await main(url, options)

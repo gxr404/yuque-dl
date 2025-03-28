@@ -17,6 +17,8 @@ export interface ICliOptions {
   incremental: boolean
   /** 转化markdown视频链接为video标签 */
   convertMarkdownVideoLinks: boolean
+  /** 是否禁用页脚 */
+  hideFooter: boolean
 }
 
 export interface IServerCliOptions {
@@ -78,6 +80,8 @@ export interface IHandleMdDataOptions {
   articleTitle: string
   toc: boolean
   articleUpdateTime: string
+  convertMarkdownVideoLinks: boolean
+  hideFooter: boolean
 }
 
 

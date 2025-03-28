@@ -19,7 +19,7 @@ import { downloadVideo } from './video'
 /** 下载单篇文章 */
 export async function downloadArticle(params: DownloadArticleParams): Promise<DownloadArticleRes> {
   const { articleInfo, progressBar, options, progressItem, oldProgressItem } = params
-  const { token, key, convertMarkdownVideoLinks } = options
+  const { token, key, convertMarkdownVideoLinks, hideFooter } = options
   const {
     bookId,
     itemUrl,
@@ -103,7 +103,9 @@ export async function downloadArticle(params: DownloadArticleParams): Promise<Do
     toc: options.toc,
     articleTitle,
     articleUrl,
-    articleUpdateTime: formateDate(response?.data?.content_updated_at ?? '')
+    articleUpdateTime: formateDate(response?.data?.content_updated_at ?? ''),
+    convertMarkdownVideoLinks,
+    hideFooter
   }
 
   const attachmentsErrInfo = []
@@ -198,7 +200,7 @@ export async function downloadArticle(params: DownloadArticleParams): Promise<Do
       let errMessage = '图片下载失败(失败的以远程链接保存): '
       errMessage = e.url ? `${errMessage}${e.error?.message} ${e.url.slice(0, 20)}...` : `${errMessage}${e.message}`
       // 图片下载 md文档按远程图片保存
-      await writeFile(saveFilePath, handleMdData(mdData, handleMdDataOptions, convertMarkdownVideoLinks))
+      await writeFile(saveFilePath, handleMdData(mdData, handleMdDataOptions))
       stopProgress()
       // throw new Error(`${errMessage}\n${errMessageList}`)
       throw new Error(`${errMessage}`)
@@ -219,7 +221,7 @@ export async function downloadArticle(params: DownloadArticleParams): Promise<Do
   }
 
   try {
-    await writeFile(saveFilePath, handleMdData(mdData, handleMdDataOptions, convertMarkdownVideoLinks))
+    await writeFile(saveFilePath, handleMdData(mdData, handleMdDataOptions))
     // 保存后检查附件是否下载失败， 优先图片下载错误显示 图片下载失败直接就 throw不会走到这里
     if (attachmentsErrInfo.length > 0) {
       throw new Error(attachmentsErrInfo[0])
@@ -237,9 +239,8 @@ export async function downloadArticle(params: DownloadArticleParams): Promise<Do
 function handleMdData (
   rawMdData: string,
   options: IHandleMdDataOptions,
-  convertMarkdownVideoLinks: boolean
 ): string {
-  const {articleTitle, articleUrl, toc} = options
+  const {articleTitle, articleUrl, toc, convertMarkdownVideoLinks, hideFooter} = options
   let mdData = rawMdData
 
   /**
@@ -263,12 +264,15 @@ function handleMdData (
   let tocData = toc ? mdToc(mdData).content : ''
   if (tocData) tocData = `${tocData}\n\n---\n\n`
 
-  let footer = '\n\n'
-  if (options.articleUpdateTime) {
-    footer += `> 更新: ${options.articleUpdateTime}  \n`
-  }
-  if (articleUrl) {
-    footer += `> 原文: <${articleUrl}>`
+  let footer = ''
+  if (!hideFooter) {
+    footer = '\n\n'
+    if (options.articleUpdateTime) {
+      footer += `> 更新: ${options.articleUpdateTime}  \n`
+    }
+    if (articleUrl) {
+      footer += `> 原文: <${articleUrl}>`
+    }
   }
 
   mdData = `${header}${tocData}${mdData}${footer}`
