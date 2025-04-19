@@ -1,3 +1,12 @@
+## [1.0.79](https://github.com/gxr404/yuque-dl/compare/v1.0.78...v1.0.79) (2025-04-19)
+
+
+### Bug Fixes
+
+* update "pull-md-img" ([53b2980](https://github.com/gxr404/yuque-dl/commit/53b2980f75fcab11803878f5a5607f8d950d086f))
+
+
+
 ## [1.0.78](https://github.com/gxr404/yuque-dl/compare/v1.0.77...v1.0.78) (2025-03-28)
 
 
