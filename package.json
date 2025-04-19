@@ -72,7 +72,7 @@
     "mdast-util-to-markdown": "^2.1.0",
     "ora": "^7.0.1",
     "pako": "1.0.11",
-    "pull-md-img": "^0.0.65",
+    "pull-md-img": "^0.0.69",
     "rand-user-agent": "1.0.109",
     "semver": "^7.6.0",
     "vitepress": "1.2.2"
