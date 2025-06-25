@@ -1,160 +1,306 @@
 // Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
 
 exports[`yuque-dl CLI > generate toc list should work  1`] = `
-"# 🎁 语雀 · 大学生公益计划
+"# 导入导出功能
 
-- [👉🏻 常见问题 👈🏻](#-%F0%9F%91%89%F0%9F%8F%BB-%E5%B8%B8%E8%A7%81%E9%97%AE%E9%A2%98-%F0%9F%91%88%F0%9F%8F%BB-)
-- [公益计划介绍](#%E5%85%AC%E7%9B%8A%E8%AE%A1%E5%88%92%E4%BB%8B%E7%BB%8D)
-  * [规则](#%E8%A7%84%E5%88%99)
-  * [操作指引](#%E6%93%8D%E4%BD%9C%E6%8C%87%E5%BC%95)
-    + [适合新用户：语雀官网公益计划页认证](#%E9%80%82%E5%90%88%E6%96%B0%E7%94%A8%E6%88%B7%E8%AF%AD%E9%9B%80%E5%AE%98%E7%BD%91%E5%85%AC%E7%9B%8A%E8%AE%A1%E5%88%92%E9%A1%B5%E8%AE%A4%E8%AF%81)
-    + [适合老用户：会员信息页直接认证](#%E9%80%82%E5%90%88%E8%80%81%E7%94%A8%E6%88%B7%E4%BC%9A%E5%91%98%E4%BF%A1%E6%81%AF%E9%A1%B5%E7%9B%B4%E6%8E%A5%E8%AE%A4%E8%AF%81)
+- [导入](#%E5%AF%BC%E5%85%A5)
+  * [支持的格式](#%E6%94%AF%E6%8C%81%E7%9A%84%E6%A0%BC%E5%BC%8F)
+- [导出](#%E5%AF%BC%E5%87%BA)
+  * [导出整个知识库](#%E5%AF%BC%E5%87%BA%E6%95%B4%E4%B8%AA%E7%9F%A5%E8%AF%86%E5%BA%93)
+  * [导出单篇内容](#%E5%AF%BC%E5%87%BA%E5%8D%95%E7%AF%87%E5%86%85%E5%AE%B9)
+    + [语雀文档导出](#%E8%AF%AD%E9%9B%80%E6%96%87%E6%A1%A3%E5%AF%BC%E5%87%BA)
+    + [语雀画板导出](#%E8%AF%AD%E9%9B%80%E7%94%BB%E6%9D%BF%E5%AF%BC%E5%87%BA)
+    + [语雀数据表导出](#%E8%AF%AD%E9%9B%80%E6%95%B0%E6%8D%AE%E8%A1%A8%E5%AF%BC%E5%87%BA)
+    + [语雀表格导出](#%E8%AF%AD%E9%9B%80%E8%A1%A8%E6%A0%BC%E5%AF%BC%E5%87%BA)
+- [其他](#%E5%85%B6%E4%BB%96)
 
 ---
 
-## <font style="background-color:#E8F7CF;"> </font><font style="background-color:#E8F7CF;">👉🏻</font><font style="background-color:#E8F7CF;"> 常见问题 </font><font style="background-color:#E8F7CF;">👈🏻</font><font style="background-color:#E8F7CF;"> </font>
-[认证常见问题解决](https://www.yuque.com/yuque/welfare/faq)
+# 导入
 
 
+在知识库的新建入口，会有导入功能，点击以后会弹出导入选择框，选择对应的文件按照步骤进行导入。
 
-## 公益计划介绍
-助力梦想，相伴成长。
-
-即日起，语雀面向**中国大陆各大学的大学生、教师**发布语雀公益计划-个人版。认证教育邮箱，即可免费享有语雀会员权益。
-
-
-
-[语雀写给大学生的一封信](https://www.yuque.com/yuque/blog/welfare-edu)
-
-### 规则
-认证学校提供的 **edu.cn 结尾的教育邮箱**，即可免费获得 **1 年语雀会员**。
-
-+ 若你之前并非会员/已是专业会员，则获得 1 年专业会员；
-+ 若你已是超级会员，则获得 1 年超级会员。
-+ 1 年后，可在原入口进行**续期**，只要你还在校期间，就可以一直免费使用。
-
-
-
-### 操作指引
-#### 适合新用户：语雀官网公益计划页认证
-+ 打开 [语雀官网公益计划页](https://www.yuque.com/about/welfare) 
-
-![](https://cdn.nlark.com/yuque/0/2023/png/103125/1694522534230-9d9d42f9-bbba-46d3-8e9a-773f2951089d.png)
-
-+ 在「个人版公益计划」下，点击【**立即认证**】
-
-![](https://cdn.nlark.com/yuque/0/2023/png/103125/1694522561681-3a568a52-7ef3-43ae-9067-d852f5556cf7.png)
-
-+ 完成注册或登录后，来到「**账户设置-会员信息**」页面，输入教育邮箱，点击发送认证邮件
-
-![](https://cdn.nlark.com/yuque/0/2023/png/103125/1694513696571-0458a2d9-9dd8-4eab-a04b-671e4fd66e09.png)
-
-+ 在教育邮箱中查收该邮件，点击「**立即验证**」
-
-![](https://cdn.nlark.com/yuque/0/2023/png/103125/1694513756376-8dc9a3bd-ec24-43b6-9a2f-5f7760fc421b.png)
-
-+ 完成认证，直接获得会员 ✅
-
-#### 适合老用户：会员信息页直接认证
-+ 来到「账户设置-会员信息」页面，点击【**立即认证**】
-
-![](https://cdn.nlark.com/yuque/0/2023/png/103125/1694511270833-fc586c50-cc11-45ef-8fae-96961ec92150.png)
-
-![](https://cdn.nlark.com/yuque/0/2023/png/103125/1694513621870-1e0659bf-0bd5-4f55-9519-a9dc663f5111.png)
-
-
-
-+ 输入教育邮箱，点击发送认证邮件
-
-![](https://cdn.nlark.com/yuque/0/2023/png/103125/1694513696571-0458a2d9-9dd8-4eab-a04b-671e4fd66e09.png)
-
-+ 在教育邮箱中查收该邮件，点击「立即验证」
-
-![](https://cdn.nlark.com/yuque/0/2023/png/103125/1694513756376-8dc9a3bd-ec24-43b6-9a2f-5f7760fc421b.png)
-
-+ 完成认证，直接获得会员 ✅
+![](https://cdn.nlark.com/yuque/0/2023/png/34713865/1695203484501-ef060cfb-9437-4288-9845-69f0ccf9c283.png)
 
 
 
 
 
+## 支持的格式
 
 
-> 更新: 2023-10-07 14:12:28  
-> 原文: <https://www.yuque.com/yuque/welfare/edu>"
+语雀的导入功能支持的格式如下：
+
+
+
++ 语雀自有格式
+    - 语雀知识库 .lakebook
+    - 语雀文档 .lake
+    - 语雀画板 .lakeboard .lakemind
+    - 语雀数据表 .laketable
+    - 语雀表格 .lakesheet
+
+
+
++ 三方格式
+    - Word (.docx .doc)
+    - Excel（.xlsx .xls .csv）
+    - Markdown (.md  .markdown .mark .txt)
+    - Evernote (.html + zip)
+
+![](https://cdn.nlark.com/yuque/0/2023/png/34713865/1695868753252-07cdd364-427c-4caf-8482-6fb2686bd742.png)
+
+
+
+# 导出
+## 导出整个知识库
+如想导出整个知识库，可以在「知识库设置」-「更多设置」中操作：
+
+![](https://cdn.nlark.com/yuque/0/2023/png/34713865/1695203537507-10a3c0fc-0095-41d0-807f-b52973af3f0d.png)
+
+![](https://cdn.nlark.com/yuque/0/2023/png/34713865/1695203513367-b52435c3-4c57-4e5d-9ba0-6f33476126a0.png)
+
+
+
+支持导出格式：
+
++ Lakebook（语雀自有格式）
++ PDF
+
+
+
+
+
+## 导出单篇内容
+如想导出单篇内容，可在语雀内容的右上角选择导出：
+
+![](https://cdn.nlark.com/yuque/0/2023/png/34713865/1686194300718-10de57e6-3cbf-4e25-8a7c-c27673cf26a4.png)
+
+
+
+不同的语雀内容，支持导出的格式不同。具体如下：
+
+
+
+### 语雀文档导出
+支持导出以下格式：
+
++ word
++ Markdown
++ PDF
++ JPG
+
+![](https://cdn.nlark.com/yuque/0/2022/png/303152/1667786776453-0ac9bec6-ebdd-4e70-aaa1-3a70741f84f3.png)
+
+
+
+### 语雀画板导出
+
+
+单独导出图片步骤：
+
+![](https://cdn.nlark.com/yuque/0/2023/png/34713865/1686730073489-0ff4646a-08dc-40c2-b58d-c653a974d06f.png)
+
+
+
+支持导出以下格式：
+
++ JPG
++ PNG
+
+
+
+![](https://cdn.nlark.com/yuque/0/2022/png/303152/1667786818586-6fbbd02f-64eb-4389-a11a-94df830e9145.png)
+
+
+
+### 语雀数据表导出
+支持导出以下格式：
+
++ Excel
+
+![](https://cdn.nlark.com/yuque/0/2022/png/303152/1667786831753-bc5d8a32-0669-4ecd-b631-82fac962cd77.png)
+
+
+
+### 语雀表格导出
+支持导出以下格式：
+
++ Excel
+
+![](https://cdn.nlark.com/yuque/0/2022/png/303152/1667786852594-d6506efe-21ef-4386-9f9d-26b371f7fa97.png)
+
+
+
+
+
+# 其他
+
+
+**导入过程会有进度显示，存在有几个状态**：
+
++ 等待中 - 并发上传数为 2，其他文件将会是等待中状态
++ 上传中 - 正在上传文件，同时在百分比的进度
++ 处理中 - 上传到服务器的文件会到处理中的状态
++ 失败 - 处理失败或者上传失败的状态
++ 成功 - 最终处理完成的状态
+
+
+
+如果对语雀有任何的建议或意见，可以提交反馈：[语雀反馈通道](https://www.yuque.com/feedbacks/new)<font style="color:rgb(38, 38, 38);"> ，感谢你的支持！</font><font style="color:rgb(38, 38, 38);">  
+</font>
+
+![](https://cdn.nlark.com/yuque/0/2023/png/104907/1679035455225-ceab2fce-01bf-4632-9608-b60a2884a8e7.png?x-oss-process=image%2Fresize%2Cw_1200%2Climit_0%2Fresize%2Cw_1200%2Climit_0)
+
+
+
+> 更新: 2023-11-06 09:45:18  
+> 原文: <https://www.yuque.com/yuque/eaghk3/ze2dz4>"
 `;
 
 exports[`yuque-dl CLI > ignore img should work  1`] = `
-"# 🎁 语雀 · 大学生公益计划
+"# 导入导出功能
 
-## <font style="background-color:#E8F7CF;"> </font><font style="background-color:#E8F7CF;">👉🏻</font><font style="background-color:#E8F7CF;"> 常见问题 </font><font style="background-color:#E8F7CF;">👈🏻</font><font style="background-color:#E8F7CF;"> </font>
-[认证常见问题解决](https://www.yuque.com/yuque/welfare/faq)
-
+# 导入
 
 
-## 公益计划介绍
-助力梦想，相伴成长。
+在知识库的新建入口，会有导入功能，点击以后会弹出导入选择框，选择对应的文件按照步骤进行导入。
 
-即日起，语雀面向**中国大陆各大学的大学生、教师**发布语雀公益计划-个人版。认证教育邮箱，即可免费享有语雀会员权益。
-
-
-
-[语雀写给大学生的一封信](https://www.yuque.com/yuque/blog/welfare-edu)
-
-### 规则
-认证学校提供的 **edu.cn 结尾的教育邮箱**，即可免费获得 **1 年语雀会员**。
-
-+ 若你之前并非会员/已是专业会员，则获得 1 年专业会员；
-+ 若你已是超级会员，则获得 1 年超级会员。
-+ 1 年后，可在原入口进行**续期**，只要你还在校期间，就可以一直免费使用。
-
-
-
-### 操作指引
-#### 适合新用户：语雀官网公益计划页认证
-+ 打开 [语雀官网公益计划页](https://www.yuque.com/about/welfare) 
-
-![](https://cdn.nlark.com/yuque/0/2023/png/103125/1694522534230-9d9d42f9-bbba-46d3-8e9a-773f2951089d.png)
-
-+ 在「个人版公益计划」下，点击【**立即认证**】
-
-![](https://cdn.nlark.com/yuque/0/2023/png/103125/1694522561681-3a568a52-7ef3-43ae-9067-d852f5556cf7.png)
-
-+ 完成注册或登录后，来到「**账户设置-会员信息**」页面，输入教育邮箱，点击发送认证邮件
-
-![](https://cdn.nlark.com/yuque/0/2023/png/103125/1694513696571-0458a2d9-9dd8-4eab-a04b-671e4fd66e09.png)
-
-+ 在教育邮箱中查收该邮件，点击「**立即验证**」
-
-![](https://cdn.nlark.com/yuque/0/2023/png/103125/1694513756376-8dc9a3bd-ec24-43b6-9a2f-5f7760fc421b.png)
-
-+ 完成认证，直接获得会员 ✅
-
-#### 适合老用户：会员信息页直接认证
-+ 来到「账户设置-会员信息」页面，点击【**立即认证**】
-
-![](https://cdn.nlark.com/yuque/0/2023/png/103125/1694511270833-fc586c50-cc11-45ef-8fae-96961ec92150.png)
-
-![](https://cdn.nlark.com/yuque/0/2023/png/103125/1694513621870-1e0659bf-0bd5-4f55-9519-a9dc663f5111.png)
-
-
-
-+ 输入教育邮箱，点击发送认证邮件
-
-![](https://cdn.nlark.com/yuque/0/2023/png/103125/1694513696571-0458a2d9-9dd8-4eab-a04b-671e4fd66e09.png)
-
-+ 在教育邮箱中查收该邮件，点击「立即验证」
-
-![](https://cdn.nlark.com/yuque/0/2023/png/103125/1694513756376-8dc9a3bd-ec24-43b6-9a2f-5f7760fc421b.png)
-
-+ 完成认证，直接获得会员 ✅
+![](https://cdn.nlark.com/yuque/0/2023/png/34713865/1695203484501-ef060cfb-9437-4288-9845-69f0ccf9c283.png)
 
 
 
 
 
+## 支持的格式
 
 
-> 更新: 2023-10-07 14:12:28  
-> 原文: <https://www.yuque.com/yuque/welfare/edu>"
+语雀的导入功能支持的格式如下：
+
+
+
++ 语雀自有格式
+    - 语雀知识库 .lakebook
+    - 语雀文档 .lake
+    - 语雀画板 .lakeboard .lakemind
+    - 语雀数据表 .laketable
+    - 语雀表格 .lakesheet
+
+
+
++ 三方格式
+    - Word (.docx .doc)
+    - Excel（.xlsx .xls .csv）
+    - Markdown (.md  .markdown .mark .txt)
+    - Evernote (.html + zip)
+
+![](https://cdn.nlark.com/yuque/0/2023/png/34713865/1695868753252-07cdd364-427c-4caf-8482-6fb2686bd742.png)
+
+
+
+# 导出
+## 导出整个知识库
+如想导出整个知识库，可以在「知识库设置」-「更多设置」中操作：
+
+![](https://cdn.nlark.com/yuque/0/2023/png/34713865/1695203537507-10a3c0fc-0095-41d0-807f-b52973af3f0d.png)
+
+![](https://cdn.nlark.com/yuque/0/2023/png/34713865/1695203513367-b52435c3-4c57-4e5d-9ba0-6f33476126a0.png)
+
+
+
+支持导出格式：
+
++ Lakebook（语雀自有格式）
++ PDF
+
+
+
+
+
+## 导出单篇内容
+如想导出单篇内容，可在语雀内容的右上角选择导出：
+
+![](https://cdn.nlark.com/yuque/0/2023/png/34713865/1686194300718-10de57e6-3cbf-4e25-8a7c-c27673cf26a4.png)
+
+
+
+不同的语雀内容，支持导出的格式不同。具体如下：
+
+
+
+### 语雀文档导出
+支持导出以下格式：
+
++ word
++ Markdown
++ PDF
++ JPG
+
+![](https://cdn.nlark.com/yuque/0/2022/png/303152/1667786776453-0ac9bec6-ebdd-4e70-aaa1-3a70741f84f3.png)
+
+
+
+### 语雀画板导出
+
+
+单独导出图片步骤：
+
+![](https://cdn.nlark.com/yuque/0/2023/png/34713865/1686730073489-0ff4646a-08dc-40c2-b58d-c653a974d06f.png)
+
+
+
+支持导出以下格式：
+
++ JPG
++ PNG
+
+
+
+![](https://cdn.nlark.com/yuque/0/2022/png/303152/1667786818586-6fbbd02f-64eb-4389-a11a-94df830e9145.png)
+
+
+
+### 语雀数据表导出
+支持导出以下格式：
+
++ Excel
+
+![](https://cdn.nlark.com/yuque/0/2022/png/303152/1667786831753-bc5d8a32-0669-4ecd-b631-82fac962cd77.png)
+
+
+
+### 语雀表格导出
+支持导出以下格式：
+
++ Excel
+
+![](https://cdn.nlark.com/yuque/0/2022/png/303152/1667786852594-d6506efe-21ef-4386-9f9d-26b371f7fa97.png)
+
+
+
+
+
+# 其他
+
+
+**导入过程会有进度显示，存在有几个状态**：
+
++ 等待中 - 并发上传数为 2，其他文件将会是等待中状态
++ 上传中 - 正在上传文件，同时在百分比的进度
++ 处理中 - 上传到服务器的文件会到处理中的状态
++ 失败 - 处理失败或者上传失败的状态
++ 成功 - 最终处理完成的状态
+
+
+
+如果对语雀有任何的建议或意见，可以提交反馈：[语雀反馈通道](https://www.yuque.com/feedbacks/new)<font style="color:rgb(38, 38, 38);"> ，感谢你的支持！</font><font style="color:rgb(38, 38, 38);">  
+</font>
+
+![](https://cdn.nlark.com/yuque/0/2023/png/104907/1679035455225-ceab2fce-01bf-4632-9608-b60a2884a8e7.png?x-oss-process=image%2Fresize%2Cw_1200%2Climit_0%2Fresize%2Cw_1200%2Climit_0)
+
+
+
+> 更新: 2023-11-06 09:45:18  
+> 原文: <https://www.yuque.com/yuque/eaghk3/ze2dz4>"
 `;

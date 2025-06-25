@@ -23,13 +23,13 @@ describe('yuque-dl CLI', () => {
 
   it('should work', async () => {
     const { stdout, exitCode, stderr } = await testTools.fork(cliPath, [
-      'https://www.yuque.com/yuque/welfare',
+      'https://www.yuque.com/yuque/eaghk3',
       '-d', '.'
     ])
     expect(exitCode).toBe(0)
     expect(stdout).toContain('√ 已完成')
-    const imgDir = path.join(testTools.cwd, '语雀公益计划/语雀·大学生公益计划/img')
-    const indexMdPath = path.join(testTools.cwd, '语雀公益计划/语雀·大学生公益计划/index.md')
+    const imgDir = path.join(testTools.cwd, '如何从其他工具迁入语雀/img')
+    const indexMdPath = path.join(testTools.cwd, '如何从其他工具迁入语雀/index.md')
     expect(fs.existsSync(imgDir)).toBeTruthy()
     const data = fs.readFileSync(indexMdPath).toString()
     expect(data.match(mdImgReg)).toBeFalsy()
@@ -38,31 +38,31 @@ describe('yuque-dl CLI', () => {
 
   it('ignore img should work ', async () => {
     const { stdout, exitCode } = await testTools.fork(cliPath, [
-      'https://www.yuque.com/yuque/welfare',
+      'https://www.yuque.com/yuque/eaghk3',
       '-d', '.',
       '-i'
     ])
     expect(exitCode).toBe(0)
     expect(stdout).toContain('√ 已完成')
-    const imgDir = path.join(testTools.cwd, '语雀公益计划/语雀·大学生公益计划/img')
+    const imgDir = path.join(testTools.cwd, '如何从其他工具迁入语雀/img')
     expect(fs.existsSync(imgDir)).toBeFalsy()
-    const indexMdPath = path.join(testTools.cwd, '语雀公益计划/语雀·大学生公益计划/index.md')
+    const indexMdPath = path.join(testTools.cwd, '如何从其他工具迁入语雀/导入导出功能.md')
     const data = fs.readFileSync(indexMdPath).toString()
     expect(data).toMatchSnapshot()
   })
 
   it('generate toc list should work ', async () => {
     const { stdout, exitCode } = await testTools.fork(cliPath, [
-      'https://www.yuque.com/yuque/welfare',
+      'https://www.yuque.com/yuque/eaghk3',
       '-d', '.',
       '--toc',
       '-i'
     ])
     expect(exitCode).toBe(0)
     expect(stdout).toContain('√ 已完成')
-    const imgDir = path.join(testTools.cwd, '语雀公益计划/语雀·大学生公益计划/img')
+    const imgDir = path.join(testTools.cwd, '如何从其他工具迁入语雀/img')
     expect(fs.existsSync(imgDir)).toBeFalsy()
-    const indexMdPath = path.join(testTools.cwd, '语雀公益计划/语雀·大学生公益计划/index.md')
+    const indexMdPath = path.join(testTools.cwd, '如何从其他工具迁入语雀/导入导出功能.md')
     const data = fs.readFileSync(indexMdPath).toString()
     expect(data).toMatchSnapshot()
   })
