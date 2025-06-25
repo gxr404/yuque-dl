@@ -1,3 +1,17 @@
+## [1.0.80](https://github.com/gxr404/yuque-dl/compare/v1.0.79...v1.0.80) (2025-06-25)
+
+
+### Bug Fixes
+
+* update eslint dependencies ([31aca19](https://github.com/gxr404/yuque-dl/commit/31aca1941eceaf761732d68bdc29cbb4b4a92025))
+
+
+### Features
+
+* add options "--ignoreAttachments" ([ccf4de8](https://github.com/gxr404/yuque-dl/commit/ccf4de8818f6db28a364fd8aadfec8820f956ced))
+
+
+
 ## [1.0.79](https://github.com/gxr404/yuque-dl/compare/v1.0.78...v1.0.79) (2025-04-19)
 
 
