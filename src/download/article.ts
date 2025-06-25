@@ -19,7 +19,7 @@ import { downloadVideo } from './video'
 /** 下载单篇文章 */
 export async function downloadArticle(params: DownloadArticleParams): Promise<DownloadArticleRes> {
   const { articleInfo, progressBar, options, progressItem, oldProgressItem } = params
-  const { token, key, convertMarkdownVideoLinks, hideFooter } = options
+  const { token, key, convertMarkdownVideoLinks, hideFooter, ignoreImg, ignoreAttachments } = options
   const {
     bookId,
     itemUrl,
@@ -28,7 +28,6 @@ export async function downloadArticle(params: DownloadArticleParams): Promise<Do
     uuid,
     articleUrl,
     articleTitle,
-    ignoreImg,
     host,
     imageServiceDomains
   } = articleInfo
@@ -111,45 +110,50 @@ export async function downloadArticle(params: DownloadArticleParams): Promise<Do
   const attachmentsErrInfo = []
 
   // 附件下载
-  try {
-    progressBar.pause()
-    console.log('')
-    const resData = await downloadAttachments({
-      mdData,
-      savePath,
-      attachmentsDir: `./attachments/${fixPath(uuid)}`,
-      articleTitle,
-      token,
-      key
-    })
-    mdData = resData.mdData
-  } catch (e) {
-    attachmentsErrInfo.push(`附件下载失败: ${e.message || 'unknown error'}`)
-  } finally {
-    progressBar.continue()
+  if (!ignoreAttachments || typeof ignoreAttachments === 'string') {
+    try {
+      progressBar.pause()
+      console.log('')
+      const resData = await downloadAttachments({
+        mdData,
+        savePath,
+        attachmentsDir: `./attachments/${fixPath(uuid)}`,
+        articleTitle,
+        token,
+        key,
+        ignoreAttachments
+      })
+      mdData = resData.mdData
+    } catch (e) {
+      attachmentsErrInfo.push(`附件下载失败: ${e.message || 'unknown error'}`)
+    } finally {
+      progressBar.continue()
+    }
   }
 
 
   // 音、视频下载
-  try {
-    progressBar.pause()
-    console.log('')
-    const resData = await downloadVideo({
-      mdData,
-      htmlData,
-      savePath,
-      attachmentsDir: `./attachments/${fixPath(uuid)}`,
-      articleTitle,
-      token,
-      key
-    })
-    mdData = resData.mdData
-  } catch (e) {
-    attachmentsErrInfo.push(`音视频下载失败: ${e.message || 'unknown error'}`)
-  } finally {
-    progressBar.continue()
+  if (!ignoreAttachments || typeof ignoreAttachments === 'string') {
+    try {
+      progressBar.pause()
+      console.log('')
+      const resData = await downloadVideo({
+        mdData,
+        htmlData,
+        savePath,
+        attachmentsDir: `./attachments/${fixPath(uuid)}`,
+        articleTitle,
+        token,
+        key,
+        ignoreAttachments
+      })
+      mdData = resData.mdData
+    } catch (e) {
+      attachmentsErrInfo.push(`音视频下载失败: ${e.message || 'unknown error'}`)
+    } finally {
+      progressBar.continue()
+    }
   }
-
   // 有图片 且 未忽略图片
   if (imgList.length && !ignoreImg) {
     progressBar.pause()
@@ -285,7 +289,8 @@ function handleMdData (
 /** 将video链接转化成html video */
 function handleVideoMd(mdData: string) {
   return mdData.replace(/\[(.*?)\]\((.*?)\.(mp4|mp3)\)/gm, (match, alt, url, extType) => {
-    return `<video controls width="800" alt="${alt}" src="${url + '.' + extType}"></video>`
+    const htmlTag = extType === 'mp3' ? 'audio' : 'video'
+    return `<${htmlTag} controls width="800" alt="${alt}" src="${url + '.' + extType}"></${htmlTag}>`
   })
 }
 

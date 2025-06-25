@@ -7,20 +7,10 @@ import axios from 'axios'
 import { genCommonOptions } from '../api'
 import { getAst, getLinkList, ILinkItem, toMd } from '../parse/ast'
 import { downloadFile } from './common'
+import type { Video } from '../types/Video'
 
-const audioReg = /name="audio" value="data:(.*?audioId.*?)".*?><\/card>/gm
 
-interface IDownloadVideo {
-  mdData: string
-  htmlData: string
-  savePath: string
-  attachmentsDir: string
-  articleTitle: string
-  token?: string
-  key?: string
-}
-
-export async function downloadVideo(params: IDownloadVideo) {
+export async function downloadVideo(params: Video.IDownloadVideo) {
   const {
     mdData,
     htmlData,
@@ -28,18 +18,52 @@ export async function downloadVideo(params: IDownloadVideo) {
     attachmentsDir,
     articleTitle,
     token,
-    key
+    key,
+    ignoreAttachments
   } = params
-
   const astTree = getAst(mdData)
   const linkList = getLinkList(astTree)
-  const videoLinkList = linkList.filter(link => /_lake_card.*?videoId/.test(link.node.url))
-  const audioLinkList = getAudioList(htmlData)
+  let videoLinkList = linkList.filter(link => /_lake_card.*?videoId/.test(link.node.url))
+  let htmlAudioLinkList = getVideoList(htmlData, 'audio')
+  let htmlVideoLinkList = getVideoList(htmlData, 'video')
 
   // 无音视频
-  if (videoLinkList.length === 0 && audioLinkList.length === 0) {
-    return {
-      mdData
+  if (
+    videoLinkList.length === 0 &&
+    htmlAudioLinkList.length === 0 &&
+    htmlVideoLinkList.length === 0
+  ) {
+    return { mdData }
+  }
+
+  // 指定忽略附件后缀名
+  if (typeof ignoreAttachments === 'string') {
+    const ingoreExtList = ignoreAttachments.split(',')
+    videoLinkList = videoLinkList.filter(link => {
+      const nodeUrl = link.node.url
+      const extIndex = nodeUrl.lastIndexOf('.')
+      if (extIndex === -1) return true
+      const currentExt = nodeUrl.slice(extIndex + 1)
+      return !ingoreExtList.find(ext => ext === currentExt)
+    })
+    htmlAudioLinkList = htmlAudioLinkList.filter((item) => {
+      const extIndex = item.audioId.lastIndexOf('.')
+      if (extIndex === -1) return true
+      const currentExt = item.audioId.slice(extIndex + 1)
+      return !ingoreExtList.find(ext => ext === currentExt)
+    })
+    htmlVideoLinkList = htmlVideoLinkList.filter((item) => {
+      const extIndex = item.videoId.lastIndexOf('.')
+      if (extIndex === -1) return true
+      const currentExt = item.videoId.slice(extIndex + 1)
+      return !ingoreExtList.find(ext => ext === currentExt)
+    })
+    if (
+      videoLinkList.length === 0 &&
+      htmlAudioLinkList.length === 0 &&
+      htmlVideoLinkList.length === 0
+    ) {
+      return { mdData }
     }
   }
 
@@ -60,7 +84,7 @@ export async function downloadVideo(params: IDownloadVideo) {
   let resMdData = mdData
 
   try {
-    // 类型 视频
+    // markdown数据中的 视频
     if (videoLinkList.length > 0) {
       const realVideoList = await getRealVideoInfo(videoLinkList, params, attachmentsDirPath)
       const promiseList = realVideoList.map((item) => {
@@ -91,28 +115,46 @@ export async function downloadVideo(params: IDownloadVideo) {
       resMdData = toMd(astTree)
     }
 
-    // 类型 音频
-    if (audioLinkList.length > 0) {
-      const realVideoList = await getRealAudioInfo(audioLinkList, params, attachmentsDirPath)
-      const promiseList = realVideoList.map((item) => {
+    // html中的 音频 视频
+    if (htmlAudioLinkList.length > 0 || htmlVideoLinkList.length > 0) {
+      const realAudioList = await getRealHtmlVudioInfo(htmlAudioLinkList, params, attachmentsDirPath, 'audio')
+      const realVideoList = await getRealHtmlVudioInfo(htmlVideoLinkList, params, attachmentsDirPath, 'video')
+      const allList = [
+        ...realAudioList,
+        ...realVideoList
+      ]
+
+      const promiseList = allList.map(async (item) => {
+        const fileName =  item.type === 'audio' ? item.videoInfo.fileName :  item.videoInfo.name
         const dlFileParams = {
-          fileUrl: item.audioInfo.audio,
+          fileUrl: item.type === 'audio' ? item.videoInfo.audio : item.videoInfo.video,
           savePath: item.currentFilePath,
           token,
           key,
-          fileName: item.audioInfo.fileName
+          fileName
         }
-        return downloadFile(dlFileParams)
+        return {
+          ...(await downloadFile(dlFileParams)),
+          id: item.videoInfo.id,
+          fileName
+        }
       })
       const downloadFileInfo = await Promise.all(promiseList)
-      let audioMd = '\n\n> [yuque-dl warn]: 由于语雀markdown接口限制, 无法准确定位音频文件在文档中所在位置, 所以统一所有音频放到一起\n'
+
       downloadFileInfo.forEach(info => {
-        const replaceInfo = realVideoList.find(item => item.audioInfo.audio === info.fileUrl)
-        if (replaceInfo) {
-          audioMd += `> - [音视频附件: ${replaceInfo.audioInfo.fileName}](${attachmentsDir}${path.sep}${replaceInfo.fileName})\n`
+        const astLinkNode = linkList.find(link => new RegExp(`#${info.id}`,'gm').test(link.node.url))
+        if (astLinkNode) {
+          // TODO: 这里直接更改了ast 还需考虑
+          astLinkNode.node.url = `${attachmentsDir}${path.sep}${info.fileName}`
+          astLinkNode.node.children = [
+            {
+              'type': 'text',
+              'value': `音视频附件: ${info.fileName}`,
+            }
+          ]
         }
       })
-      resMdData += audioMd
+      resMdData = toMd(astTree)
     }
 
   } finally {
@@ -148,37 +190,14 @@ function perParseVideoInfo(url: string) {
   }
 }
 
-interface IGetVideoApiParams {
-  videoId: string,
-  token?: string,
-  key?: string,
-}
-
-interface IGetVideoApiResponse {
-  data: {
-    status: string,
-    info: IGetVideoApiInfo
-  }
-}
-interface IGetVideoApiInfo {
-  type: string,
-  cover?: string,
-  // video 特有
-  video: string,
-  // audio 特有
-  audio: string,
-  origin: string,
-  state: number
-}
-
-function getVideoApi(params: IGetVideoApiParams) {
+function getVideoApi(params: Video.IGetVideoApiParams) {
   let apiUrl = 'https://www.yuque.com/api/video'
   const { videoId, token, key } = params
   const searchParams = new URLSearchParams()
   searchParams.set('video_id', videoId)
   apiUrl = `${apiUrl}?${searchParams.toString()}`
   return axios
-    .get<IGetVideoApiResponse>(apiUrl, genCommonOptions({token, key}))
+    .get<Video.IGetVideoApiResponse>(apiUrl, genCommonOptions({token, key}))
     .then(({data, status}) => {
       const res = data.data
       if (status === 200 && res.status === 'success') {
@@ -193,7 +212,7 @@ function getVideoApi(params: IGetVideoApiParams) {
 
 async function getRealVideoInfo(
   videoLinkList: ILinkItem[],
-  downloadVideoParams: IDownloadVideo,
+  downloadVideoParams: Video.IDownloadVideo,
   attachmentsDirPath: string
 ) {
   const {key, token} = downloadVideoParams
@@ -228,51 +247,49 @@ function truthy<T>(value: T): value is Truthy<T> {
   return !!value
 }
 
-interface IGetAudioItem{
-  status: string,
-  audioId: string,
-  fileName: string,
-  fileSize: number,
-  id: string
-}
+const audioReg = /name="audio" value="data:(.*?audioId.*?)".*?><\/card>/gm
+const videoReg = /name="video" value="data:(.*?videoId.*?)".*?><\/card>/gm
 
-function getAudioList(htmlData: string): IGetAudioItem[] {
-  const list = htmlData.match(audioReg) || []
+function getVideoList(htmlData: string, type: 'video' | 'audio'): Video.IGetVideoItem[] {
+  const reg = type === 'video' ? videoReg : audioReg
+  const list = htmlData.match(reg) || []
   try {
     const audioList = list
-      .map(item => item.replace(audioReg, '$1'))
+      .map(item => item.replace(reg, '$1'))
       .map(item => JSON.parse(decodeURIComponent(item)))
-    return audioList as IGetAudioItem[]
+    return audioList as Video.IGetVideoItem[]
   } catch (e) {
     return []
   }
 }
 
-async function getRealAudioInfo(
-  audioLinkList: IGetAudioItem[],
-  downloadVideoParams: IDownloadVideo,
-  attachmentsDirPath: string
+async function getRealHtmlVudioInfo(
+  videoLinkList: Video.IGetVideoItem[],
+  downloadVideoParams: Video.IDownloadVideo,
+  attachmentsDirPath: string,
+  type: 'video' | 'audio'
 ) {
   const {key, token} = downloadVideoParams
-  const parseVideoInfoPromiseList = audioLinkList.map(async audioItem => {
+  const parseVideoInfoPromiseList = videoLinkList.map(async videoItem => {
 
     const res = await getVideoApi({
-      videoId: audioItem.audioId,
+      videoId: type === 'audio' ? videoItem.audioId : videoItem.videoId,
       key,
       token
     })
     if (!res) return false
-    const fileName = audioItem?.fileName ?? audioItem.id
+    const fileName = (type === 'audio' ? videoItem?.fileName : videoItem.name) ?? videoItem.id
     return {
-      audioInfo: {
-        ...audioItem,
+      videoInfo: {
+        ...videoItem,
         ...res
       },
+      type,
       fileName,
       currentFilePath: path.join(attachmentsDirPath, fileName)
     }
   })
-  const parseAudioInfoList = await Promise.all(parseVideoInfoPromiseList)
-  const realAudioInfoList = parseAudioInfoList.filter(truthy)
-  return realAudioInfoList
+  const parseVideoInfoList = await Promise.all(parseVideoInfoPromiseList)
+  const realVideoInfoList = parseVideoInfoList.filter(truthy)
+  return realVideoInfoList
 }

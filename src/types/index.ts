@@ -2,11 +2,18 @@ import { ArticleResponse } from './ArticleResponse'
 import { KnowledgeBase } from './KnowledgeBaseResponse'
 import { ProgressBar } from '../utils/ProgressBar'
 
+export interface CACHelpSection {
+  title?: string;
+  body: string;
+}
+
 export interface ICliOptions {
   /** 目标目录 */
   distDir: string
   /** 是否忽略图片 */
   ignoreImg: boolean
+  /** 是否忽略附件 */
+  ignoreAttachments: boolean | string
   /** 私有知识库 token */
   token?: string
   /** 自定义token key(企业所有部署) */
@@ -52,7 +59,6 @@ export interface ArticleInfo {
   uuid: string,
   articleTitle: string,
   articleUrl: string,
-  ignoreImg: boolean,
   host?: string,
   imageServiceDomains: string[]
 }

@@ -4,40 +4,48 @@ import path from 'node:path'
 import ora from 'ora'
 
 import { downloadFile } from './common'
+import type { Attachments } from '../types/Attachments'
 
 const mdUrlReg = /\[(.*?)\]\((.*?)\)/g
 const AttachmentsReg = /\[(.*?)\]\((.*?\.yuque\.com\/attachments.*?)\)/
 
-interface IDownloadAttachments {
-  mdData: string
-  savePath: string
-  attachmentsDir: string
-  articleTitle: string
-  token?: string
-  key?: string
-}
-
-interface IAttachmentsItem {
-  fileName: string
-  url: string
-  rawMd: string
-  currentFilePath: string
-}
-
-
-export async function downloadAttachments(params: IDownloadAttachments) {
+export async function downloadAttachments(params: Attachments.IDownloadAttachments) {
   const {
     mdData,
     savePath,
     attachmentsDir,
     articleTitle,
     token,
-    key
+    key,
+    ignoreAttachments
   } = params
 
   const attachmentsList = (mdData.match(mdUrlReg) || []).filter(item => AttachmentsReg.test(item))
   // 无附件
   if (attachmentsList.length === 0) {
+    return {
+      mdData
+    }
+  }
+
+  const attachmentsDirPath = path.resolve(savePath, attachmentsDir)
+  let attachmentsDataList = attachmentsList
+    .map(item => parseAttachments(item, attachmentsDirPath))
+    .filter(item => item !== false) as Attachments.IAttachmentsItem[]
+
+  // 指定忽略附件后缀名
+  if (typeof ignoreAttachments === 'string') {
+    const ingoreExtList = ignoreAttachments.split(',')
+    attachmentsDataList = attachmentsDataList.filter((item) => {
+      const extIndex = item.url.lastIndexOf('.')
+      if (extIndex === -1) return true
+      const currentExt = item.url.slice(extIndex+1)
+      return !ingoreExtList.find(ext => ext === currentExt)
+    })
+  }
+
+  // 过滤掉忽略的附件后缀后 无附件
+  if (attachmentsDataList.length === 0) {
     return {
       mdData
     }
@@ -51,12 +59,6 @@ export async function downloadAttachments(params: IDownloadAttachments) {
   if (env.NODE_ENV !== 'test') {
     spinner.start()
   }
-
-  const attachmentsDirPath = path.resolve(savePath, attachmentsDir)
-
-  const attachmentsDataList = attachmentsList
-    .map(item => parseAttachments(item, attachmentsDirPath))
-    .filter(item => item !== false) as IAttachmentsItem[]
 
   // 创建文件夹
   mkdirSync(attachmentsDirPath, { recursive: true })
@@ -88,7 +90,7 @@ export async function downloadAttachments(params: IDownloadAttachments) {
   }
 }
 
-function parseAttachments(mdData: string, attachmentsDirPath: string): IAttachmentsItem | false {
+function parseAttachments(mdData: string, attachmentsDirPath: string): Attachments.IAttachmentsItem | false {
   const [, rawFileName, url] = AttachmentsReg.exec(mdData) || []
   if (!url) return false
   const fileName = rawFileName || url.split('/').at(-1)

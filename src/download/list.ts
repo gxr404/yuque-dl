@@ -121,7 +121,6 @@ export async function downloadArticleList(params: IDownloadArticleListParams) {
         uuid: item.uuid,
         articleUrl,
         articleTitle: item.title,
-        ignoreImg: options.ignoreImg,
         host,
         imageServiceDomains
       }
