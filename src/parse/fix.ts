@@ -20,7 +20,7 @@ export function fixLatex(mdData: string) {
         fixMaData = fixMaData.replace(latexMd, data.slice(1))
       }
     })
-  } catch (e) {
+  } catch {
     return rawMaData
   }
 
@@ -42,7 +42,7 @@ export function fixMarkdownImage(imgList: string[], mdData: string, htmlData: st
         const strData = decodeURIComponent(regExec[1])
         const cardData = JSON.parse(strData)
         htmlImgDataList.push(cardData?.src || '')
-      } catch(e) {
+      } catch {
         htmlImgDataList.push('')
       }
     }

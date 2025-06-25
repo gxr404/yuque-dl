@@ -74,7 +74,7 @@ export default class Summary {
     mdContent += summaryContent
     try {
       await fs.writeFile(`${bookPath}/index.md`, mdContent)
-    } catch (err) {
+    } catch {
       logger.error('Generate Summary Error')
     }
     return mdContent

@@ -53,6 +53,7 @@ export class TestTools {
         fs.rmdirSync(tmpDir)
       }
     } catch (err) {
+      console.log(err)
       // ignore
     }
   }

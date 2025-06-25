@@ -7,7 +7,7 @@ function isCaptureImageURL(url: string, imageServiceDomains: string[]) {
     const {host, pathname} = new URL(url)
     if (imageServiceDomains.includes(host)) return false
     return Boolean(pathname)
-  } catch(e) {
+  } catch {
     return false
   }
 }
