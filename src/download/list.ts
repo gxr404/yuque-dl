@@ -70,11 +70,11 @@ export async function downloadArticleList(params: IDownloadArticleListParams) {
       } else {
         await mkdir(`${bookPath}/${pathTitleList.map(fixPath).join('/')}`, {recursive: true})
       }
-      uuidMap.set(item.uuid, progressItem)
       // 即是文档也是title则创建文件夹后不更新进度直接进行文档处理
       if (itemType === ARTICLE_CONTENT_TYPE.DOC) {
         await docHandle(item)
       } else {
+        uuidMap.set(item.uuid, progressItem)
         await progressBar.updateProgress(progressItem, itemType !== ARTICLE_TOC_TYPE.LINK)
       }
     } else if (item.url) {
