@@ -1,3 +1,12 @@
+## [1.0.81](https://github.com/gxr404/yuque-dl/compare/v1.0.80...v1.0.81) (2025-07-27)
+
+
+### Bug Fixes
+
+* 在docHandle 更新了uuidMap,调用之前无需更新uuidMap ([5725bbc](https://github.com/gxr404/yuque-dl/commit/5725bbcb08580ef44036c87beaf7688c0672ae66))
+
+
+
 ## [1.0.80](https://github.com/gxr404/yuque-dl/compare/v1.0.79...v1.0.80) (2025-06-25)
 
 
