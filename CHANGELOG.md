@@ -1,3 +1,12 @@
+## [1.0.82](https://github.com/gxr404/yuque-dl/compare/v1.0.81...v1.0.82) (2025-11-30)
+
+
+### Bug Fixes
+
+* inlinecode contains html tag ([c6c89bb](https://github.com/gxr404/yuque-dl/commit/c6c89bbffd84bd45c93df1cbbaa7143053e7491a))
+
+
+
 ## [1.0.81](https://github.com/gxr404/yuque-dl/compare/v1.0.80...v1.0.81) (2025-07-27)
 
 
