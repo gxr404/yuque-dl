@@ -1,11 +1,20 @@
 import { fromMarkdown } from 'mdast-util-from-markdown'
 import { toMarkdown } from 'mdast-util-to-markdown'
 
-import type { Root, Parents, Nodes, Link } from 'mdast'
+import type { Root, Parents, Nodes, Link, InlineCode } from 'mdast'
 
 export function getAst(mdData: string) {
   return fromMarkdown(mdData)
 }
+// TOOD: 多次Ast解析 优化??
+// const cacheAstMap = new Map<string, Root>([])
+// export function getAst(mdData: string, useCache = true) {
+//   if (!useCache) return fromMarkdown(mdData)
+//   if (cacheAstMap.get(mdData)) return cacheAstMap.get(mdData) as Root
+//   const ast = fromMarkdown(mdData)
+//   cacheAstMap.set(mdData, ast)
+//   return ast
+// }
 
 export function toMd(astTree: Root) {
   return toMarkdown(astTree)
@@ -27,6 +36,25 @@ export function getLinkList(curNode: Root) {
     }
   })
   return linkList
+}
+
+
+export interface IInlinkCodeItem {
+  node: InlineCode,
+  keyChain: string[]
+}
+
+export function getInLineCodeList(curNode: Root) {
+  const list: IInlinkCodeItem[] = []
+  eachNode(curNode, function(node, keyChain) {
+    if (node.type === 'inlineCode') {
+      list.push({
+        node,
+        keyChain
+      })
+    }
+  })
+  return list
 }
 
 // const hasChildrenType = ['blockquote', 'code'] as const

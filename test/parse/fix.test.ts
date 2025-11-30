@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import { fixLatex, fixMarkdownImage, fixPath } from '../../src/parse/fix'
+import { fixLatex, fixMarkdownImage, fixPath, fixInlineCode } from '../../src/parse/fix'
 import { getMarkdownImageList } from '../../src/utils'
 
 
@@ -61,4 +61,92 @@ describe('fixPath', () => {
   it('should work', () => {
     expect(fixPath('/xxa.12~*#)$$M/13')).toBe('_xxa.12~_#)$$M_13')
   })
+})
+
+describe('fixInlineCode', () => {
+
+// 正常的行内代码: `123213`
+// 带color的行内代码: `<font style="color:#FBDE28;">123213</font>`
+// 带color的行内代码: `**<font style="color:#DF2A3F;">123213</font>**`
+// 加粗的行内代码: `**123213**`
+// 加粗的行内代码:`_123213_`
+// 删除线的行内代码: `~~123213~~`
+// 普通的删除线: ~~sdfsdaf~~
+// 行内代码和普通文本混合:`~~123213~~`~~asdfsdfsdf~~
+// 实际带有行内代码带有html标签: `<font style="color:#FBDE28;">123</font>`
+// 实际带有行内代码带有html标签2: `**<font style="color:#FBDE28;">123</font>**`
+
+  it('should work', () => {
+    // 行内代码 无markdown无html
+    const mdData = '`123213`'
+    const htmlData = '<code class="ne-code"><span class="ne-text">123213</span></code>'
+    expect(fixInlineCode(mdData, htmlData)).toBe('`123213`\n')
+  })
+
+  it('inlinecode contains markdown', () => {
+    const mdData = '`**123213**`'
+    const htmlData = '<code class="ne-code"><strong><span class="ne-text">123213</span></strong></code>'
+    expect(fixInlineCode(mdData, htmlData)).toBe('<code>**123213**</code>\n')
+  })
+
+  it('inlinecode contains markdown and outputs HTML data as it is', () => {
+    const mdData = '`**123213**`'
+    const htmlData = '<code class="ne-code"><span class="ne-text">**123213**</span></code>'
+    expect(fixInlineCode(mdData, htmlData)).toBe('`**123213**`\n')
+  })
+
+  it('inlinecode contains html', () => {
+    const mdData = '`<font style="color:#FBDE28;">123</font>`'
+    const htmlData = '<code class="ne-code"><span class="ne-text" style="color: #FBDE28">123</span></code>'
+    expect(fixInlineCode(mdData, htmlData)).toBe('<code><font style="color:#FBDE28;">123</font></code>\n')
+  })
+
+  it('inlinecode contains html and HTML data escape', () => {
+    const mdData = '`<font style="color:#FBDE28;">123</font>`'
+    const htmlData = '<code class="ne-code"><span class="ne-text">&lt;font style=&quot;color:#FBDE28;&quot;&gt;123&lt;/font&gt;</span></code>'
+    expect(fixInlineCode(mdData, htmlData)).toBe('`<font style="color:#FBDE28;">123</font>`\n')
+  })
+
+  it('inlinecode contains (html + markdown) ', () => {
+    const mdData = '`**<font style="color:#DF2A3F;">123</font>**`'
+    const htmlData = '<code class="ne-code"><strong><span class="ne-text" style="color: #DF2A3F">123</span></strong></code>'
+    expect(fixInlineCode(mdData, htmlData)).toBe('<code>**<font style="color:#DF2A3F;">123</font>**</code>\n')
+  })
+
+  it('inlinecode contains (html + markdown) and html data escape', () => {
+    const mdData = '`**<font style="color:#FBDE28;">123</font>**`'
+    const htmlData = '<code class="ne-code"><span class="ne-text">**&lt;font style=&quot;color:#FBDE28;&quot;&gt;123&lt;/font&gt;**</span></code>'
+    expect(fixInlineCode(mdData, htmlData)).toBe('`**<font style="color:#FBDE28;">123</font>**`\n')
+  })
+
+
+  it('inlinecode contains (html + markdown) - 2', () => {
+    const mdData = '`**123213**<em>2222</em>`'
+    const htmlData = '<code class="ne-code"><strong><span class="ne-text">123213</span></strong></code>'
+    expect(fixInlineCode(mdData, htmlData)).toBe('<code>**123213**<em>2222</em></code>\n')
+  })
+
+  it('inlinecode contains (html + markdown) and html data escape - 2', () => {
+    const mdData = '`~~_**<u><font style="color:#DF2A3F;">123213</font></u>**_~~`'
+    const htmlData = '<code class="ne-code"><span class="ne-text">~~_**&lt;u&gt;&lt;font style=&quot;color:#DF2A3F;&quot;&gt;123213&lt;/font&gt;&lt;/u&gt;**_~~</span></code>'
+
+    expect(fixInlineCode(mdData, htmlData)).toBe('`~~_**<u><font style="color:#DF2A3F;">123213</font></u>**_~~`\n')
+  })
+
+  it('inlinecode contains (html + markdown) and html data escape - 3', () => {
+    const mdData = '`~~_**<u><font style="color:#DF2A3F;">123213</font></u>**_~~`'
+    const htmlData = '<code class="ne-code"><em><strong><span class="ne-text" style="color: #DF2A3F; text-decoration: underline line-through">123213</span></strong></em></code>'
+    expect(fixInlineCode(mdData, htmlData)).toBe('<code>~~_**<u><font style="color:#DF2A3F;">123213</font></u>**_~~</code>\n')
+  })
+
+  // it('inlinecode contains (html + markdown) and html data escape - 4', () => {
+  //   const mdData = '`~~_**<u><font style="color:#DF2A3F;">123213</font></u>**_~~`\n`~~_**<u><font style="color:#DF2A3F;">123213</font></u>**_~~`\n`~~_**<u><font style="color:#DF2A3F;">123213</font></u>**_~~`'
+  //   const htmlData =
+  //     `<code class="ne-code"><em><strong><span class="ne-text" style="color: #DF2A3F; text-decoration: underline line-through">123213</span></strong></em></code>
+  //     <code class="ne-code"><span class="ne-text">&lt;font style=&quot;color:#FBDE28;&quot;&gt;123&lt;/font&gt;</span><strong><span class="ne-text" style="color: #ED740C">sdaf</span></strong></code>
+  //     <code class="ne-code"><em><strong><span class="ne-text" style="color: #DF2A3F; text-decoration: underline line-through">123213</span></strong></em></code>`
+
+  //   expect(fixInlineCode(mdData, htmlData)).toBe('<code>~~_**<u><font style="color:#DF2A3F;">123213</font></u>**_~~</code>\n')
+  // })
+
 })

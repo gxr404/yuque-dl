@@ -6,7 +6,7 @@ import mdToc from 'markdown-toc'
 
 import { getDocsMdData } from '../api'
 import { ARTICLE_CONTENT_TYPE, ARTICLE_CONTENT_MAP } from '../constant'
-import { fixLatex, fixMarkdownImage, fixPath } from '../parse/fix'
+import { fixInlineCode, fixLatex, fixMarkdownImage, fixPath } from '../parse/fix'
 import { parseSheet } from '../parse/sheet'
 import { captureImageURL } from '../crypto'
 import { formateDate, getMarkdownImageList, isValidDate } from '../utils'
@@ -225,6 +225,7 @@ export async function downloadArticle(params: DownloadArticleParams): Promise<Do
   }
 
   try {
+    mdData = fixInlineCode(mdData, htmlData)
     await writeFile(saveFilePath, handleMdData(mdData, handleMdDataOptions))
     // 保存后检查附件是否下载失败， 优先图片下载错误显示 图片下载失败直接就 throw不会走到这里
     if (attachmentsErrInfo.length > 0) {
