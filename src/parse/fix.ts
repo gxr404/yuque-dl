@@ -96,10 +96,6 @@ function containsMarkdownLabel(str: string) {
   return regex.test(str)
 }
 
-// fix markdown 行内代码
-// case1: mdData `**123**` 且 html data  `<strong><span class="ne-text">123213</span></strong>`
-//   转化为 <code>**123**</code>
-
 /**
  * fix markdown 行内代码
  */

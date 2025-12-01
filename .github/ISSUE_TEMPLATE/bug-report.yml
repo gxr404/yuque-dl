@@ -29,7 +29,8 @@ body:
       required: false
   - type: input
     attributes:
-      label: 方便的话提供语雀知识库的URL, 也可以发到邮箱(gxr40404@gmail.com)：
+      label: 语雀知识库的URL(选填)：
+      description: 较为隐私也可以发送至邮箱(gxr40404@gmail.com)
       placeholder: |
         例如: https://www.yuque.com/yuque/thyzgp
     validations:
