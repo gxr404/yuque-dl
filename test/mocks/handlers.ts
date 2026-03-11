@@ -14,6 +14,8 @@ import sheetData from './data/sheetData.json' assert { type: 'json' }
 import attachmentsDocMdData from './data/attachments.json' assert { type: 'json' }
 import yuqueWelfareAppData from './data/welfare/appData.json' assert { type: 'json' }
 import yuqueWelfareDocMdData from './data/welfare/docMd.json' assert { type: 'json' }
+import singleDocData from './data/singleDoc.json' assert { type: 'json' }
+import singleDocMdData from './data/singleDocMd.json' assert { type: 'json' }
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url))
 const img1buffer = readFileSync(path.join(__dirname, './assets/1.jpeg'))
@@ -115,5 +117,75 @@ export const handlers = [
     // https://www.yuque.com/api/docs/edu?book_id=41966892&mode=markdown&merge_dynamic_data=false
     const res = mode ? jsonData.md : {}
     return HttpResponse.json(res)
+  }),
+
+  // ====================== singleDocHandlers ======================
+  http.get('https://www.yuque.com/yuque/testbook/testdoc', () => {
+    const jsonData = singleDocData
+    const resData = encodeURIComponent(JSON.stringify(jsonData))
+    return new HttpResponse(`decodeURIComponent("${resData}"));`, {
+      status: 200,
+      headers: header.text
+    })
+  }),
+  http.get('https://www.yuque.com/api/docs/testdoc', ({ request }) => {
+    const url = new URL(request.url)
+    const mode = url.searchParams.get('mode')
+    const bookId = url.searchParams.get('book_id')
+    if (bookId === '41966892') {
+      const res = mode ? singleDocMdData : {
+        data: {
+          ...singleDocMdData.data,
+          content: '<p>测试文档的HTML内容</p>'
+        }
+      }
+      return HttpResponse.json(res)
+    }
+    return HttpResponse.json({})
+  }),
+  http.get('https://www.yuque.com/yuque/testbook/testdoc2', () => {
+    const jsonData = {
+      ...singleDocData,
+      doc: {
+        id: 123457,
+        slug: 'testdoc2',
+        title: '测试文档2',
+        book_id: 41966892
+      }
+    }
+    const resData = encodeURIComponent(JSON.stringify(jsonData))
+    return new HttpResponse(`decodeURIComponent("${resData}"));`, {
+      status: 200,
+      headers: header.text
+    })
+  }),
+  http.get('https://www.yuque.com/api/docs/testdoc2', ({ request }) => {
+    const url = new URL(request.url)
+    const mode = url.searchParams.get('mode')
+    const bookId = url.searchParams.get('book_id')
+    if (bookId === '41966892') {
+      const res = mode ? {
+        data: {
+          ...singleDocMdData.data,
+          id: 123457,
+          slug: 'testdoc2',
+          title: '测试文档2',
+          sourcecode: '# 测试文档2\n\n这是第二个测试文档的内容。'
+        }
+      } : {
+        data: {
+          ...singleDocMdData.data,
+          id: 123457,
+          slug: 'testdoc2',
+          title: '测试文档2',
+          content: '<p>测试文档2的HTML内容</p>'
+        }
+      }
+      return HttpResponse.json(res)
+    }
+    return HttpResponse.json({})
+  }),
+  http.get('https://www.yuque.com/yuque/testbook/notfound', () => {
+    return new HttpResponse('Not found', NotFoundRes)
   }),
 ]

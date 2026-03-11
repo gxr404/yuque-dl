@@ -66,4 +66,14 @@ describe('yuque-dl CLI', () => {
     const data = fs.readFileSync(indexMdPath).toString()
     expect(data).toMatchSnapshot()
   })
+
+  it('download docs with invalid url should fail', async () => {
+    const { exitCode, stdout } = await testTools.fork(cliPath, [
+      'https://www.yuque.com/yuque/testbook',
+      '-d', '.',
+      '--docs', 'invalid-url'
+    ])
+    expect(exitCode).toBe(1)
+    expect(stdout).toContain('Invalid URL')
+  })
 })
