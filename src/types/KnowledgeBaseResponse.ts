@@ -26,6 +26,7 @@ export declare namespace KnowledgeBase {
     empInfo: Notification;
     group: Group;
     book: Book;
+    doc?: Doc;
     groupMemberInfo: GroupMemberInfo;
     userSettings: Notification;
     interest: Interest;
@@ -54,6 +55,14 @@ export declare namespace KnowledgeBase {
   interface TracertConfig {
     spmAPos: string;
     spmBPos?: any;
+  }
+
+  interface Doc {
+    id: number;
+    slug: string;
+    title: string;
+    book_id: number;
+    book?: Book;
   }
 
   interface Login {
