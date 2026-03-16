@@ -1,11 +1,3 @@
-## [Unreleased] (2026-03-12)
-
-### Features
-
-* add `--docs` option to download single or multiple specific documents ([#79](https://github.com/gxr404/yuque-dl/issues/79))
-  - Support downloading specific documents instead of entire knowledge base
-  - Allow multiple `--docs` parameters for batch document download
-
 ## [1.0.82](https://github.com/gxr404/yuque-dl/compare/v1.0.81...v1.0.82) (2025-11-30)
 
 

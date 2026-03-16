@@ -24,6 +24,7 @@ $ yuque-dl --help
 
   Commands:
     <url>                语雀知识库url
+    doc <...urls>        下载单个或多个文档
     server <serverPath>  启动web服务
 
   For more info, run any command with the `--help` flag:
@@ -43,23 +44,27 @@ $ yuque-dl --help
     --incremental                        开启增量下载[初次下载加不加该参数没区别] (默认值: false)
     --convertMarkdownVideoLinks          转化markdown视频链接为video标签 (默认值: false)
     --hideFooter                         是否禁用页脚显示[更新时间、原文地址...] (默认值: false)
-    --docs <urls...>                     下载单个或多个文档
-                                          └─ eg: --docs "url1" --docs "url2"
     -h, --help                           显示帮助信息
     -v, --version                        显示当前版本
 ```
 
 ### Start
 
+下载整个知识库
+
 ```bash
 # url 为对应需要的知识库地址
 yuque-dl "https://www.yuque.com/yuque/thyzgp"
+```
 
+下载知识库中指定文档
+
+```bash
 # 下载单个文档
-yuque-dl "https://www.yuque.com/yuque/thyzgp" --docs "https://www.yuque.com/yuque/thyzgp/doc1"
+yuque-dl doc "https://www.yuque.com/yuque/thyzgp/repository"
 
 # 下载多个文档
-yuque-dl "https://www.yuque.com/yuque/thyzgp" --docs "https://www.yuque.com/yuque/thyzgp/doc1" --docs "https://www.yuque.com/yuque/thyzgp/doc2"
+yuque-dl doc "https://www.yuque.com/yuque/thyzgp/repository" "https://www.yuque.com/yuque/thyzgp/gbdfpb"
 ```
 
 ## Example
@@ -67,31 +72,6 @@ yuque-dl "https://www.yuque.com/yuque/thyzgp" --docs "https://www.yuque.com/yuqu
 ![demo](https://github.com/gxr404/yuque-dl/assets/17134256/98fbbc81-91d4-47f8-9316-eb0ef060d6be)
 
 ## 其他场景
-
-### 下载指定文档
-
-支持下载单个或多个指定的文档，而不是整个知识库
-
-```bash
-# 下载单个文档
-yuque-dl "https://www.yuque.com/yuque/thyzgp" --docs "https://www.yuque.com/yuque/thyzgp/doc1"
-
-# 下载多个文档（多次使用 --docs 参数）
-yuque-dl "https://www.yuque.com/yuque/thyzgp" --docs "https://www.yuque.com/yuque/thyzgp/doc1" --docs "https://www.yuque.com/yuque/thyzgp/doc2"
-
-# 下载多个文档并指定下载目录
-yuque-dl "https://www.yuque.com/yuque/thyzgp" -d "./my-docs" --docs "https://www.yuque.com/yuque/thyzgp/doc1" --docs "https://www.yuque.com/yuque/thyzgp/doc2" --docs "https://www.yuque.com/yuque/thyzgp/doc3"
-
-# 下载私有文档（需要token）
-yuque-dl "https://www.yuque.com/yuque/thyzgp" -t "your_token" --docs "https://www.yuque.com/yuque/thyzgp/doc1" --docs "https://www.yuque.com/yuque/thyzgp/doc2"
-
-# 忽略图片下载
-yuque-dl "https://www.yuque.com/yuque/thyzgp" -i --docs "https://www.yuque.com/yuque/thyzgp/doc1"
-```
-
-> 注意：
-> 1. 使用 `--docs` 参数时，第一个 `<url>` 参数可以是任意有效URL（会被忽略），主要通过 `--docs` 指定的文档URL进行下载
-> 2. 下载多个文档时，需要多次使用 `--docs` 参数，每个 `--docs` 后跟一个文档URL
 
 ### 私有知识库
 

@@ -1,18 +1,13 @@
 
 import { readFileSync } from 'node:fs'
-import { mkdir } from 'node:fs/promises'
-import path from 'node:path'
-import { cac } from 'cac'
+import { cac, Command } from 'cac'
 import semver from 'semver'
 
-import { main } from './index'
-import { logger, isValidUrl, ProgressBar } from './utils'
+import { downloadDocsFromUrls, main } from './index'
+import { logger } from './utils'
 import { runServer } from './server'
-import { getDocInfoFromUrl } from './api'
-import { downloadArticle } from './download/article'
-import { fixPath } from './parse/fix'
 
-import type { CACHelpSection, ICliOptions, IServerCliOptions, IProgressItem } from './types'
+import type { CACHelpSection, ICliOptions, IServerCliOptions } from './types'
 
 const cli = cac('yuque-dl')
 
@@ -33,9 +28,9 @@ function checkVersion() {
 // 检查node版本
 checkVersion()
 
-cli
-  .command('<url>', '语雀知识库url')
-  .option('-d, --distDir <dir>', '下载的目录{CUSTOM_NEW_LINE(eg: -d download)}', {
+
+function addCommonOption(cliCommand: Command): Command {
+  return cliCommand.option('-d, --distDir <dir>', '下载的目录{CUSTOM_NEW_LINE(eg: -d download)}', {
     default: 'download',
   })
   .option('-i, --ignoreImg', '忽略图片不下载', {
@@ -58,16 +53,13 @@ cli
   .option('--hideFooter', '是否禁用页脚显示[更新时间、原文地址...]', {
     default: false
   })
-  .option('--docs <urls...>', '下载单个或多个文档{CUSTOM_NEW_LINE(eg: --docs "url1" "url2")}')
+}
+
+const mainCommand = cli.command('<url>', '语雀知识库url')
+addCommonOption(mainCommand)
   .action(async (url: string, options: ICliOptions & { docs?: string[] }) => {
     try {
-      // 如果提供了 --docs 参数，则下载指定文档
-      if (options.docs && options.docs.length > 0) {
-        await downloadDocsFromUrls(options.docs, options)
-      } else {
-        // 否则按原有逻辑下载整个知识库
-        await main(url, options)
-      }
+      await main(url, options)
       process.exit(0)
     } catch (err) {
       logger.error(err.message || 'unknown exception')
@@ -75,126 +67,19 @@ cli
     }
   })
 
-async function downloadDocsFromUrls(urls: string[], options: ICliOptions) {
-  // 处理 cac 库单个URL时返回字符串的情况
-  const urlArray = Array.isArray(urls) ? urls : [urls]
-  
-  if (!urlArray || urlArray.length === 0) {
-    throw new Error('Please provide at least one document URL')
-  }
-
-  // 验证所有URL
-  for (const url of urlArray) {
-    if (!isValidUrl(url)) {
-      throw new Error(`Invalid URL: ${url}`)
-    }
-  }
-
-  const total = urlArray.length
-  const distPath = path.resolve(options.distDir)
-  await mkdir(distPath, { recursive: true })
-
-  const progressBar = new ProgressBar(distPath, total, false)
-  await progressBar.init()
-
-  let successCount = 0
-  let failCount = 0
-  const failedDocs: Array<{ url: string; error: string }> = []
-
-  for (let i = 0; i < urlArray.length; i++) {
-    const url = urlArray[i]
-    let progressItem: IProgressItem | undefined
+// 子命令 doc 下载指定文档
+const docCommand = cli.command('doc <...urls>', '下载单个或多个文档')
+addCommonOption(docCommand)
+  .action(async (urls: string[], options: ICliOptions) => {
     try {
-      const docInfo = await getDocInfoFromUrl(url, {
-        token: options.token,
-        key: options.key
-      })
-
-      const {
-        docId,
-        docSlug,
-        docTitle,
-        bookId,
-        bookSlug,
-        host,
-        imageServiceDomains = []
-      } = docInfo
-
-      if (!docId || !bookId || !docSlug) {
-        throw new Error('Failed to get document info from URL')
-      }
-
-      const fileName = fixPath(docTitle || docSlug)
-      const savePath = distPath
-      const saveFilePath = path.resolve(distPath, `${fileName}.md`)
-
-      progressItem = {
-        path: `${fileName}.md`,
-        pathTitleList: [fileName],
-        pathIdList: [String(docId)],
-        toc: {
-          type: 'DOC',
-          title: docTitle || docSlug,
-          uuid: String(docId),
-          url: docSlug,
-          prev_uuid: '',
-          sibling_uuid: '',
-          child_uuid: '',
-          parent_uuid: '',
-          doc_id: docId,
-          level: 0,
-          id: docId,
-          open_window: 0,
-          visible: 1
-        }
-      }
-
-      const articleUrl = bookSlug ? `${host}/${bookSlug}/${docSlug}` : url
-      const articleInfo = {
-        bookId,
-        itemUrl: docSlug,
-        savePath,
-        saveFilePath,
-        uuid: String(docId),
-        articleUrl,
-        articleTitle: docTitle || docSlug,
-        host,
-        imageServiceDomains
-      }
-
-      await downloadArticle({
-        articleInfo,
-        progressBar,
-        options,
-        progressItem
-      })
-
-      await progressBar.updateProgress(progressItem, true)
-      successCount += 1
-      logger.info(`√ 已完成: ${saveFilePath}`)
-    } catch (e) {
-      if (progressItem) {
-        await progressBar.updateProgress(progressItem, false)
-      }
-      failCount += 1
-      const errorMsg = e.message || 'unknown error'
-      failedDocs.push({ url, error: errorMsg })
-      logger.error(`✕ 下载失败: ${url}`)
-      logger.error(`———— ${errorMsg}`)
+      await downloadDocsFromUrls(urls, options)
+      process.exit(0)
+    } catch (err) {
+      logger.error(err.message || 'unknown exception')
+      process.exit(1)
     }
-  }
+  })
 
-  if (progressBar.bar) progressBar.bar.stop()
-
-  // 输出总结
-  logger.info(`\n下载完成: 成功 ${successCount}/${total}`)
-  if (failCount > 0) {
-    logger.error(`失败 ${failCount}/${total}:`)
-    failedDocs.forEach(({ url, error }) => {
-      logger.error(`———— ${url}: ${error}`)
-    })
-  }
-}
 
 cli
   .command('server <serverPath>', '启动web服务')
