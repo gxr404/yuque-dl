@@ -9,7 +9,8 @@ import type {
   GetHeaderParams,
   IReqHeader,
   TGetKnowledgeBaseInfo,
-  TGetMdData
+  TGetMdData,
+  TGetDocInfoFromUrl
 } from './types'
 import type { AxiosRequestConfig } from 'axios'
 
@@ -106,5 +107,46 @@ export const getDocsMdData: TGetMdData = (params, isMd = true) => {
         response: data
       }
       return res
+    })
+}
+
+/** 从文档URL获取文档信息 */
+export const getDocInfoFromUrl: TGetDocInfoFromUrl = (url, headerParams) => {
+  const docInfoReg = /decodeURIComponent\("(.+)"\)\);/m
+  return axios.get<string>(url, genCommonOptions(headerParams))
+    .then(({data = '', status}) => {
+      if (status === 200) return data
+      return ''
+    })
+    .then(html => {
+      const data = docInfoReg.exec(html) ?? ''
+      if (!data[1]) return {}
+      const jsonData: KnowledgeBase.Response = JSON.parse(decodeURIComponent(data[1]))
+      if (!jsonData.doc) return {}
+      
+      const info = {
+        docId: jsonData.doc.id,
+        docSlug: jsonData.doc.slug,
+        docTitle: jsonData.doc.title || '',
+        bookId: jsonData.doc.book_id,
+        bookSlug: jsonData.book?.slug || '',
+        bookName: jsonData.book?.name || '',
+        host: jsonData.space?.host || DEFAULT_DOMAIN,
+        imageServiceDomains: jsonData.imageServiceDomains || []
+      }
+      return info
+    }).catch((e) => {
+      const errMsg = e?.message ?? ''
+      if (!errMsg) throw new Error('unknown error')
+      const netErrInfoList = [
+        'getaddrinfo ENOTFOUND',
+        'read ECONNRESET',
+        'Client network socket disconnected before secure TLS connection was established'
+      ]
+      const isNetError = netErrInfoList.some(netErrMsg => errMsg.startsWith(netErrMsg))
+      if (isNetError) {
+        throw new Error('请检查网络(是否正常联网/是否开启了代理软件)')
+      }
+      throw new Error(errMsg)
     })
 }
