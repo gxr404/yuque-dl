@@ -1,3 +1,15 @@
+## [1.0.83](https://github.com/gxr404/yuque-dl/compare/v1.0.82...v1.0.83) (2026-03-17)
+
+
+### Features
+
+* **api:** add getDocInfoFromUrl to fetch document info from URL ([ab6ae44](https://github.com/gxr404/yuque-dl/commit/ab6ae44233069b340d51dd9fd2d28555f38a3892))
+* change --docs option to doc command ([e3fa89a](https://github.com/gxr404/yuque-dl/commit/e3fa89a975cab4aadc659fc97280941d83779a33))
+* **cli:** add --docs option to download specific documents ([127d48e](https://github.com/gxr404/yuque-dl/commit/127d48edbe3d5e3fa7218b6ba91d552bd99b0242))
+* **types:** add Doc interface and IDocInfo type for single document support ([0387317](https://github.com/gxr404/yuque-dl/commit/0387317efcc5416766395bc37ee086fd0c924df7))
+
+
+
 ## [1.0.82](https://github.com/gxr404/yuque-dl/compare/v1.0.81...v1.0.82) (2025-11-30)
 
 
