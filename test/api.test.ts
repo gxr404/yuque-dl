@@ -1,7 +1,7 @@
 import { afterAll, afterEach, beforeAll, beforeEach, describe, expect, it } from 'vitest'
 import { TestTools } from './helpers/TestTools'
 import { server } from './mocks/server'
-import { getDocsMdData, getKnowledgeBaseInfo, genCommonOptions } from '../src/api'
+import { getDocsMdData, getKnowledgeBaseInfo, genCommonOptions, getDocInfoFromUrl } from '../src/api'
 
 let testTools: TestTools
 
@@ -64,5 +64,37 @@ describe('api', () => {
       data.beforeRedirect(redirectObj, null as any)
     }
     expect(redirectObj?.headers?.cookie).toMatchObject('test_key=test_token;')
+  })
+
+  describe('getDocInfoFromUrl', () => {
+    it('should work', async () => {
+      const data = await getDocInfoFromUrl('https://www.yuque.com/yuque/testbook/testdoc', {
+        token: 'token',
+        key: 'key'
+      })
+      expect(data.docId).toBe(123456)
+      expect(data.docSlug).toBe('testdoc')
+      expect(data.docTitle).toBe('测试文档')
+      expect(data.bookId).toBe(41966892)
+      expect(data.bookSlug).toBe('testbook')
+      expect(data.bookName).toBe('测试知识库')
+      expect(data.host).toBe('https://www.yuque.com')
+      expect(data.imageServiceDomains?.length).toBe(2)
+    })
+
+    it('should return empty object when response has no doc field', async () => {
+      const data = await getDocInfoFromUrl('https://www.yuque.com/yuque/base1', {})
+      expect(data).toEqual({})
+    })
+
+    it('should throw error on 404', async () => {
+      const requestPromise = getDocInfoFromUrl('https://www.yuque.com/yuque/testbook/notfound', {})
+      await expect(requestPromise).rejects.toThrow('Request failed with status code 404')
+    })
+
+    it('should throw error on network error', async () => {
+      const requestPromise = getDocInfoFromUrl('http://localhost/404', {})
+      await expect(requestPromise).rejects.toThrow()
+    })
   })
 })

@@ -24,6 +24,7 @@ $ yuque-dl --help
 
   Commands:
     <url>                语雀知识库url
+    doc <...urls>        下载单个或多个文档
     server <serverPath>  启动web服务
 
   For more info, run any command with the `--help` flag:
@@ -49,9 +50,21 @@ $ yuque-dl --help
 
 ### Start
 
+下载整个知识库
+
 ```bash
 # url 为对应需要的知识库地址
 yuque-dl "https://www.yuque.com/yuque/thyzgp"
+```
+
+下载知识库中指定文档
+
+```bash
+# 下载单个文档
+yuque-dl doc "https://www.yuque.com/yuque/thyzgp/repository"
+
+# 下载多个文档
+yuque-dl doc "https://www.yuque.com/yuque/thyzgp/repository" "https://www.yuque.com/yuque/thyzgp/gbdfpb"
 ```
 
 ## Example
@@ -121,6 +134,7 @@ yuque-dl server ./download/知识库/
 - [x] 添加toc目录功能
 - [x] 添加测试
 - [x] 添加附件下载
+- [x] 支持下载单个或多个指定文档
 - [ ] 支持其他文档类型？🤔
 - [ ] 直接打包成可执行文件 🤔
 

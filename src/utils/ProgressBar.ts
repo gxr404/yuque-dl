@@ -14,16 +14,19 @@ export class ProgressBar {
   bar: cliProgress.SingleBar | null = null
   completePromise: Promise<void> | null = null
   incremental: boolean
+  // 是否禁用 process.json 单文档下载时禁用
+  disableProgressJSON: boolean
 
-  constructor (bookPath: string, total: number, incremental = false) {
+  constructor (bookPath: string, total: number, incremental = false, disableProgressJSON = false) {
     this.bookPath = bookPath
     this.progressFilePath = `${bookPath}/progress.json`
     this.total = total
     this.incremental = incremental
+    this.disableProgressJSON = disableProgressJSON
   }
 
   async init() {
-    this.progressInfo = await this.getProgress()
+    this.progressInfo = this.disableProgressJSON ? [] : await this.getProgress()
     // 增量下载需把进度重置为0 然后每一篇文档重新检查一遍 update时间
     this.curr = this.incremental ? 0 : this.progressInfo.length
     // 可能出现增量下载
@@ -71,12 +74,13 @@ export class ProgressBar {
       } else {
         this.progressInfo.push(progressItem)
       }
-
-      await fs.writeFile(
-        this.progressFilePath,
-        JSON.stringify(this.progressInfo),
-        {encoding: 'utf8'}
-      )
+      if (!this.disableProgressJSON) {
+        await fs.writeFile(
+          this.progressFilePath,
+          JSON.stringify(this.progressInfo),
+          {encoding: 'utf8'}
+        )
+      }
     }
     if (this.bar) {
       this.bar.update(this.curr)

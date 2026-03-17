@@ -67,3 +67,49 @@ describe('yuque-dl CLI', () => {
     expect(data).toMatchSnapshot()
   })
 })
+
+describe('yuque-dl doc', () => {
+  beforeEach(() => {
+    testTools = new TestTools()
+  })
+
+  afterEach(() => {
+    testTools.cleanup()
+  })
+
+  it('should work', async () => {
+    const { exitCode, stdout } = await testTools.fork(cliPath, [
+      'doc',
+      'https://www.yuque.com/yuque/thyzgp/repository',
+      'https://www.yuque.com/yuque/thyzgp/chubmd',
+      '-d', '.',
+    ])
+    expect(exitCode).toBe(0)
+    expect(stdout).toMatch(/√ 已完成.*\/知识库是什么\.md/g)
+    expect(stdout).toMatch(/√ 已完成.*\/如何删除知识库\.md/g)
+  })
+
+
+  it('contain 404 url', async () => {
+    const { exitCode, stdout } = await testTools.fork(cliPath, [
+      'doc',
+      'https://www.yuque.com/yuque/thyzgp/repository',
+      'https://www.yuque.com/yuque/thyzgp/404',
+      '-d', '.',
+    ])
+    console.log('stdout', stdout)
+    expect(exitCode).toBe(0)
+    expect(stdout).toMatch(/√ 已完成.*\/知识库是什么\.md/g)
+    expect(stdout).toMatch('✕ 下载失败: https://www.yuque.com/yuque/thyzgp/404')
+  })
+
+  it('download docs with invalid url should fail', async () => {
+    const { exitCode, stdout } = await testTools.fork(cliPath, [
+      'doc',
+      'invalid-url',
+      '-d', '.',
+    ])
+    expect(exitCode).toBe(1)
+    expect(stdout).toContain('Invalid URL')
+  })
+})

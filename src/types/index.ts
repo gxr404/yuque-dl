@@ -189,6 +189,16 @@ export interface IKnowledgeBaseInfo {
   host?: string,
   imageServiceDomains?: string[]
 }
+export interface IDocInfo {
+  docId?: number
+  docSlug?: string
+  docTitle?: string
+  bookId?: number
+  bookSlug?: string
+  bookName?: string
+  host?: string
+  imageServiceDomains?: string[]
+}
 export interface IReqHeader {
   [key: string]: string
 }
@@ -199,6 +209,7 @@ export interface GetHeaderParams {
   token?: string
 }
 export type TGetKnowledgeBaseInfo = (url: string, headerParams: GetHeaderParams) => Promise<IKnowledgeBaseInfo>
+export type TGetDocInfoFromUrl = (url: string, headerParams: GetHeaderParams) => Promise<IDocInfo>
 
 export interface GetMdDataParams {
   articleUrl: string,

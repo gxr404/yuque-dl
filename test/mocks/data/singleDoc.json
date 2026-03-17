@@ -1,0 +1,20 @@
+{
+  "space": {
+    "host": "https://www.yuque.com"
+  },
+  "imageServiceDomains": [
+    "cdn.nlark.com",
+    "gxr404.com"
+  ],
+  "book": {
+    "id": 41966892,
+    "slug": "testbook",
+    "name": "测试知识库"
+  },
+  "doc": {
+    "id": 123456,
+    "slug": "testdoc",
+    "title": "测试文档",
+    "book_id": 41966892
+  }
+}
