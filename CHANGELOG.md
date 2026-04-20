@@ -1,3 +1,12 @@
+## [1.0.84](https://github.com/gxr404/yuque-dl/compare/v1.0.83...v1.0.84) (2026-04-20)
+
+
+### Bug Fixes
+
+* avoid deleting nested a tags ([47c6961](https://github.com/gxr404/yuque-dl/commit/47c6961bee398d074e95ef9594f5bf23e12c935a))
+
+
+
 ## [1.0.83](https://github.com/gxr404/yuque-dl/compare/v1.0.82...v1.0.83) (2026-03-17)
 
 
