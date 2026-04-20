@@ -1,6 +1,6 @@
 {
   "name": "yuque-dl",
-  "version": "1.0.83",
+  "version": "1.0.84",
   "description": "yuque 知识库下载",
   "type": "module",
   "bin": {
