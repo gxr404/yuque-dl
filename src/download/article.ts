@@ -263,7 +263,7 @@ function handleMdData (
     mdData = mdData.replace(/<br(\s?)\/>/gm, '\n')
    */
 
-  mdData = mdData.replace(/<a.*?>(\s*?)<\/a>/gm, '')
+  mdData = mdData.replace(/<a\b[^>]*?>(\s*?)<\/a>/gm, '')
   const  header = articleTitle ? `# ${articleTitle}\n\n` : ''
   // toc 目录添加
   let tocData = toc ? mdToc(mdData).content : ''
