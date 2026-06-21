@@ -10,7 +10,6 @@ interface IDownloadFileParams {
   savePath: string,
   token?: string
   key?: string,
-  cookie?: string,
   fileName: string
 }
 
