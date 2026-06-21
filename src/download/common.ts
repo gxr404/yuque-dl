@@ -16,9 +16,9 @@ interface IDownloadFileParams {
 
 const finished = promisify(stream.finished)
 export async function downloadFile(params: IDownloadFileParams) {
-  const {fileUrl, savePath, token, key, cookie, fileName} = params
+  const {fileUrl, savePath, token, key, fileName} = params
   return axios.get(fileUrl, {
-    ...genCommonOptions({token, key, cookie}),
+    ...genCommonOptions({token, key}),
     responseType: 'stream'
   }).then(async response => {
     if (response.request?.path?.startsWith('/login')) {

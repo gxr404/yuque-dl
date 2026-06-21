@@ -41,7 +41,7 @@ function addCommonOption(cliCommand: Command): Command {
   })
   .option('-k, --key <key>', '语雀的cookie key， 默认是 "_yuque_session"， 在某些企业版本中 key 不一样')
   .option('-t, --token <token>', '语雀的cookie key 对应的值')
-  .option('--password <password>', '公开密码访问的知识库/文档密码')
+  .option('-p, --password <password>', '公开密码访问的知识库/文档密码')
   .option('--toc', '是否输出文档toc目录', {
     default: false
   })

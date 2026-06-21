@@ -1,7 +1,7 @@
 import { mkdir } from 'node:fs/promises'
 import path from 'node:path'
 import Summary from './parse/Summary'
-import { getDocInfoFromUrl, getKnowledgeBaseInfo } from './api'
+import { getDocInfoFromUrl, getKnowledgeBaseInfo, verifyPublicPassword } from './api'
 import { fixPath } from './parse/fix'
 import { ProgressBar, isValidUrl, logger } from './utils'
 import { downloadArticleList } from './download/list'
@@ -13,6 +13,19 @@ export async function main(url: string, options: ICliOptions) {
   if (!isValidUrl(url)) {
     throw new Error('Please enter a valid URL')
   }
+
+  // 明确传入公开密码知识库的密码
+  // 验证码更新options的key和token
+  if (options.password) {
+    const verifyRes = await verifyPublicPassword(url, options.password, {
+      token: options.token,
+      key: options.key
+    })
+    if (!verifyRes) throw new Error('Password validation failed')
+    options.key = verifyRes.key
+    options.token = verifyRes.token
+  }
+
   const {
     bookId,
     tocList,
@@ -21,7 +34,10 @@ export async function main(url: string, options: ICliOptions) {
     bookSlug,
     host,
     imageServiceDomains
-  } = await getKnowledgeBaseInfo(url, options)
+  } = await getKnowledgeBaseInfo(url, {
+    token: options.token,
+    key: options.key
+  })
   if (!bookId) throw new Error('No found book id')
   if (!tocList || tocList.length === 0) throw new Error('No found toc list')
   const bookPath = path.resolve(options.distDir, bookName ? fixPath(bookName) : String(bookId))
@@ -111,7 +127,10 @@ export async function downloadDocsFromUrls(urls: string[], options: ICliOptions)
     const url = urlArray[i]
     let progressItem: IProgressItem | undefined
     try {
-      const docInfo = await getDocInfoFromUrl(url, options)
+      const docInfo = await getDocInfoFromUrl(url, {
+        token: options.token,
+        key: options.key
+      })
 
       const {
         docId,

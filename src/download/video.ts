@@ -19,7 +19,6 @@ export async function downloadVideo(params: Video.IDownloadVideo) {
     articleTitle,
     token,
     key,
-    cookie,
     ignoreAttachments
   } = params
   const astTree = getAst(mdData)
@@ -94,7 +93,6 @@ export async function downloadVideo(params: Video.IDownloadVideo) {
           savePath: item.currentFilePath,
           token,
           key,
-          cookie,
           fileName: item.videoInfo.name
         }
         return downloadFile(dlFileParams)
@@ -119,8 +117,8 @@ export async function downloadVideo(params: Video.IDownloadVideo) {
 
     // html中的 音频 视频
     if (htmlAudioLinkList.length > 0 || htmlVideoLinkList.length > 0) {
-      const realAudioList = await getRealHtmlVudioInfo(htmlAudioLinkList, params, attachmentsDirPath, 'audio')
-      const realVideoList = await getRealHtmlVudioInfo(htmlVideoLinkList, params, attachmentsDirPath, 'video')
+      const realAudioList = await getRealHtmlVideoInfo(htmlAudioLinkList, params, attachmentsDirPath, 'audio')
+      const realVideoList = await getRealHtmlVideoInfo(htmlVideoLinkList, params, attachmentsDirPath, 'video')
       const allList = [
         ...realAudioList,
         ...realVideoList
@@ -133,7 +131,6 @@ export async function downloadVideo(params: Video.IDownloadVideo) {
           savePath: item.currentFilePath,
           token,
           key,
-          cookie,
           fileName
         }
         return {
@@ -195,12 +192,12 @@ function perParseVideoInfo(url: string) {
 
 function getVideoApi(params: Video.IGetVideoApiParams) {
   let apiUrl = 'https://www.yuque.com/api/video'
-  const { videoId, token, key, cookie } = params
+  const { videoId, token, key } = params
   const searchParams = new URLSearchParams()
   searchParams.set('video_id', videoId)
   apiUrl = `${apiUrl}?${searchParams.toString()}`
   return axios
-    .get<Video.IGetVideoApiResponse>(apiUrl, genCommonOptions({token, key, cookie}))
+    .get<Video.IGetVideoApiResponse>(apiUrl, genCommonOptions({token, key}))
     .then(({data, status}) => {
       const res = data.data
       if (status === 200 && res.status === 'success') {
@@ -218,15 +215,14 @@ async function getRealVideoInfo(
   downloadVideoParams: Video.IDownloadVideo,
   attachmentsDirPath: string
 ) {
-  const {key, token, cookie} = downloadVideoParams
+  const {key, token} = downloadVideoParams
   const parseVideoInfoPromiseList = videoLinkList.map(async link => {
     const videoInfo = perParseVideoInfo(link.node.url)
     if (!videoInfo) return false
     const res = await getVideoApi({
       videoId: videoInfo.videoId,
       key,
-      token,
-      cookie
+      token
     })
     if (!res) return false
     const fileName =  videoInfo.name ?? videoInfo.videoId.split('/').at(-1) ?? videoInfo.videoId
@@ -267,20 +263,19 @@ function getVideoList(htmlData: string, type: 'video' | 'audio'): Video.IGetVide
   }
 }
 
-async function getRealHtmlVudioInfo(
+async function getRealHtmlVideoInfo(
   videoLinkList: Video.IGetVideoItem[],
   downloadVideoParams: Video.IDownloadVideo,
   attachmentsDirPath: string,
   type: 'video' | 'audio'
 ) {
-  const {key, token, cookie} = downloadVideoParams
+  const {key, token} = downloadVideoParams
   const parseVideoInfoPromiseList = videoLinkList.map(async videoItem => {
 
     const res = await getVideoApi({
       videoId: type === 'audio' ? videoItem.audioId : videoItem.videoId,
       key,
-      token,
-      cookie
+      token
     })
     if (!res) return false
     const fileName = (type === 'audio' ? videoItem?.fileName : videoItem.name) ?? videoItem.id

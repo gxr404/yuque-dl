@@ -7,7 +7,6 @@ export declare namespace Video {
     articleTitle: string
     token?: string
     key?: string
-    cookie?: string
     ignoreAttachments:  boolean | string
   }
 
@@ -15,7 +14,6 @@ export declare namespace Video {
     videoId: string,
     token?: string,
     key?: string,
-    cookie?: string,
   }
 
   interface IGetVideoApiResponse {

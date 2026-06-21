@@ -19,7 +19,7 @@ import { downloadVideo } from './video'
 /** 下载单篇文章 */
 export async function downloadArticle(params: DownloadArticleParams): Promise<DownloadArticleRes> {
   const { articleInfo, progressBar, options, progressItem, oldProgressItem } = params
-  const { token, key, cookie, convertMarkdownVideoLinks, hideFooter, ignoreImg, ignoreAttachments } = options
+  const { token, key, convertMarkdownVideoLinks, hideFooter, ignoreImg, ignoreAttachments } = options
   const {
     bookId,
     itemUrl,
@@ -37,7 +37,6 @@ export async function downloadArticle(params: DownloadArticleParams): Promise<Do
     token,
     host,
     key,
-    cookie,
   }
   const { httpStatus, apiUrl, response } = await getDocsMdData(reqParams)
 
@@ -122,7 +121,6 @@ export async function downloadArticle(params: DownloadArticleParams): Promise<Do
         articleTitle,
         token,
         key,
-        cookie,
         ignoreAttachments
       })
       mdData = resData.mdData
@@ -147,7 +145,6 @@ export async function downloadArticle(params: DownloadArticleParams): Promise<Do
         articleTitle,
         token,
         key,
-        cookie,
         ignoreAttachments
       })
       mdData = resData.mdData

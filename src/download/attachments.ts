@@ -17,7 +17,6 @@ export async function downloadAttachments(params: Attachments.IDownloadAttachmen
     articleTitle,
     token,
     key,
-    cookie,
     ignoreAttachments
   } = params
 
@@ -69,7 +68,6 @@ export async function downloadAttachments(params: Attachments.IDownloadAttachmen
       savePath: item.currentFilePath,
       token,
       key,
-      cookie,
       fileName: item.fileName
     })
   })

@@ -20,8 +20,6 @@ export interface ICliOptions {
   key?: string
   /** 公开密码访问的知识库/文档密码 */
   password?: string
-  /** 内部使用的完整 cookie */
-  cookie?: string
   /** 是否忽略markdown中toc的生成 */
   toc: boolean
   /** 是否增量下载 */
@@ -213,8 +211,6 @@ export interface GetHeaderParams {
   token?: string
   /** public password */
   password?: string
-  /** full cookie header */
-  cookie?: string
 }
 export type TGetKnowledgeBaseInfo = (url: string, headerParams: GetHeaderParams) => Promise<IKnowledgeBaseInfo>
 export type TGetDocInfoFromUrl = (url: string, headerParams: GetHeaderParams) => Promise<IDocInfo>
@@ -225,7 +221,6 @@ export interface GetMdDataParams {
   host?: string
   token?: string,
   key?: string
-  cookie?: string
 }
 export interface IGetDocsMdDataRes {
   apiUrl: string,

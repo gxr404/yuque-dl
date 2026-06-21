@@ -6,7 +6,6 @@ export declare namespace Attachments {
     articleTitle: string
     token?: string
     key?: string
-    cookie?: string
     ignoreAttachments?: boolean | string
   }
 

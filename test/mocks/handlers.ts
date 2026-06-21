@@ -188,4 +188,57 @@ export const handlers = [
   http.get('https://www.yuque.com/yuque/testbook/notfound', () => {
     return new HttpResponse('Not found', NotFoundRes)
   }),
+
+  http.get('https://www.yuque.com/yuque/locked', ({ request }) => {
+    const encodeAppData = (jsonData: unknown) => `decodeURIComponent("${encodeURIComponent(JSON.stringify(jsonData))}"));`
+    const bookPageData = {
+      book: {
+        id: 79462806,
+        slug: 'locked',
+        toc: [],
+        name: 'locked book',
+        description: ''
+      },
+      space: {
+        host: 'https://www.yuque.com'
+      },
+      imageServiceDomains: []
+    }
+    const verifyPageData = {
+      timestamp: Date.now(),
+      matchCondition: {
+        targetType: 'Book',
+        needVerifyTargetId: 79462806
+      },
+      space: {
+        host: 'https://www.yuque.com'
+      },
+      imageServiceDomains: []
+    }
+    if (request.headers.get('cookie')?.includes('verified_books=book-cookie')) {
+      return new HttpResponse(encodeAppData(bookPageData), {
+        status: 200,
+        headers: {
+          'Content-Type': 'text/html'
+        }
+      })
+    }
+    return new HttpResponse(encodeAppData(verifyPageData), {
+      status: 200,
+      headers: {
+        'Content-Type': 'text/html',
+      }
+    })
+  }),
+
+  http.put('https://www.yuque.com/api/books/79462806/verify', async ({ request }) => {
+    const body = await request.json() as { password?: string }
+    const resHeaders = {} as any
+    if(body.password) {
+      resHeaders['Set-Cookie'] = 'verified_books=book-cookie; Path=/;'
+    }
+    return HttpResponse.json({ data: true }, {
+      headers: resHeaders
+    })
+  })
 ]
