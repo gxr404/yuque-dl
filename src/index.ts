@@ -21,10 +21,7 @@ export async function main(url: string, options: ICliOptions) {
     bookSlug,
     host,
     imageServiceDomains
-  } = await getKnowledgeBaseInfo(url, {
-    token: options.token,
-    key: options.key
-  })
+  } = await getKnowledgeBaseInfo(url, options)
   if (!bookId) throw new Error('No found book id')
   if (!tocList || tocList.length === 0) throw new Error('No found toc list')
   const bookPath = path.resolve(options.distDir, bookName ? fixPath(bookName) : String(bookId))
@@ -114,10 +111,7 @@ export async function downloadDocsFromUrls(urls: string[], options: ICliOptions)
     const url = urlArray[i]
     let progressItem: IProgressItem | undefined
     try {
-      const docInfo = await getDocInfoFromUrl(url, {
-        token: options.token,
-        key: options.key
-      })
+      const docInfo = await getDocInfoFromUrl(url, options)
 
       const {
         docId,
