@@ -29,6 +29,7 @@ $ yuque-dl --help
 
   For more info, run any command with the `--help` flag:
     $ yuque-dl --help
+    $ yuque-dl doc --help
     $ yuque-dl server --help
 
   Options:
@@ -39,7 +40,8 @@ $ yuque-dl --help
                                           └─ eg: --ignoreAttachments mp4,pdf // 忽略后缀名mp4,pdf的附件
                                           └─ eg: --ignoreAttachments // 忽略所有附件 (默认值: false)
     -k, --key <key>                      语雀的cookie key， 默认是 "_yuque_session"， 在某些企业版本中 key 不一样
-    -t, --token <token>                  语雀的cookie key 对应的值 
+    -t, --token <token>                  语雀的cookie key 对应的值
+    -p, --password <password>            公开密码访问的知识库/文档密码
     --toc                                是否输出文档toc目录 (默认值: false)
     --incremental                        开启增量下载[初次下载加不加该参数没区别] (默认值: false)
     --convertMarkdownVideoLinks          转化markdown视频链接为video标签 (默认值: false)
@@ -98,7 +100,17 @@ yuque-dl "https://www.yuque.com/yuque/thyzgp" -t "abcd..."
 
 ![public_pwd](https://github.com/gxr404/yuque-dl/assets/17134256/b546a9a3-68f0-4f76-b450-6b16f464db5d)
 
-⚠️ 公开密码访问的知识库两种情况:
+现有两种方式下载公开密码访问的知识库
+
+#### 通过密码
+
+```bash
+yuque-dl "url" -p "知识库密码"
+```
+
+#### 通过cookie
+
+⚠️ 通过`cookie`公开密码访问的知识库两种情况:
 
 - 已经登录语雀，访问需要密码的知识库 输入密码后使用`_yuque_session`这个cookie
 
