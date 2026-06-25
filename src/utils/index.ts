@@ -77,5 +77,16 @@ export function isValidDate(date: Date) {
   return date instanceof Date && !isNaN(date.getTime())
 }
 
+export function parseSetCookie(setCookie?: string[] | string) {
+  const cookieMap: Record<string, string> = {}
+  const cookieList = Array.isArray(setCookie) ? setCookie : setCookie ? [setCookie] : []
+  cookieList.forEach((item) => {
+    const cookieItem = item.split(';')[0]
+    const [key, ...valueList] = cookieItem.split('=')
+    if (key && valueList.length > 0) cookieMap[key] = valueList.join('=')
+  })
+  return cookieMap
+}
+
 export * from './log'
 export * from './ProgressBar'

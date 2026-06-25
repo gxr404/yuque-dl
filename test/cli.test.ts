@@ -85,8 +85,8 @@ describe('yuque-dl doc', () => {
       '-d', '.',
     ])
     expect(exitCode).toBe(0)
-    expect(stdout).toMatch(/√ 已完成.*\/知识库是什么\.md/g)
-    expect(stdout).toMatch(/√ 已完成.*\/如何删除知识库\.md/g)
+    expect(stdout).toMatch(/√ 已完成.*[\\/]知识库是什么\.md/g)
+    expect(stdout).toMatch(/√ 已完成.*[\\/]如何删除知识库\.md/g)
   })
 
 
@@ -99,7 +99,7 @@ describe('yuque-dl doc', () => {
     ])
     console.log('stdout', stdout)
     expect(exitCode).toBe(0)
-    expect(stdout).toMatch(/√ 已完成.*\/知识库是什么\.md/g)
+    expect(stdout).toMatch(/√ 已完成.*[\\/]知识库是什么\.md/g)
     expect(stdout).toMatch('✕ 下载失败: https://www.yuque.com/yuque/thyzgp/404')
   })
 

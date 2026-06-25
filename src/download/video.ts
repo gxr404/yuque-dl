@@ -117,8 +117,8 @@ export async function downloadVideo(params: Video.IDownloadVideo) {
 
     // html中的 音频 视频
     if (htmlAudioLinkList.length > 0 || htmlVideoLinkList.length > 0) {
-      const realAudioList = await getRealHtmlVudioInfo(htmlAudioLinkList, params, attachmentsDirPath, 'audio')
-      const realVideoList = await getRealHtmlVudioInfo(htmlVideoLinkList, params, attachmentsDirPath, 'video')
+      const realAudioList = await getRealHtmlVideoInfo(htmlAudioLinkList, params, attachmentsDirPath, 'audio')
+      const realVideoList = await getRealHtmlVideoInfo(htmlVideoLinkList, params, attachmentsDirPath, 'video')
       const allList = [
         ...realAudioList,
         ...realVideoList
@@ -263,7 +263,7 @@ function getVideoList(htmlData: string, type: 'video' | 'audio'): Video.IGetVide
   }
 }
 
-async function getRealHtmlVudioInfo(
+async function getRealHtmlVideoInfo(
   videoLinkList: Video.IGetVideoItem[],
   downloadVideoParams: Video.IDownloadVideo,
   attachmentsDirPath: string,

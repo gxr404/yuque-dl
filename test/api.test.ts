@@ -1,7 +1,13 @@
 import { afterAll, afterEach, beforeAll, beforeEach, describe, expect, it } from 'vitest'
 import { TestTools } from './helpers/TestTools'
 import { server } from './mocks/server'
-import { getDocsMdData, getKnowledgeBaseInfo, genCommonOptions, getDocInfoFromUrl } from '../src/api'
+import {
+  getDocsMdData,
+  getKnowledgeBaseInfo,
+  genCommonOptions,
+  getDocInfoFromUrl,
+  verifyPublicPassword
+} from '../src/api'
 
 let testTools: TestTools
 
@@ -39,6 +45,17 @@ describe('api', () => {
       await expect(requestPromise).rejects.toThrow('Request failed with status code 404')
     })
   })
+
+  describe('verifyPublicPassword', () => {
+    it('should verify public password protected book', async () => {
+      type Data = {key: string, token: string}
+      const data = await verifyPublicPassword('https://www.yuque.com/yuque/locked', 'pqz7', {}) as Data
+      expect(data.key).toBe('verified_books')
+      expect(data.token).toBe('book-cookie')
+    })
+  })
+
+
 
   describe('getDocsMdData', () => {
     it('should work', async () => {

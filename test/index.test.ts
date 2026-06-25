@@ -26,7 +26,11 @@ describe('main', () => {
     await main('https://www.yuque.com/yuque/base1', {
       distDir: testTools.cwd,
       ignoreImg: false,
-      toc: false
+      toc: false,
+      ignoreAttachments: false,
+      incremental: false,
+      convertMarkdownVideoLinks: false,
+      hideFooter: false
     })
     const summaryPath = path.join(testTools.cwd, '知识库TEST1/index.md')
     expect(readFileSync(summaryPath).toString()).toMatchSnapshot()
