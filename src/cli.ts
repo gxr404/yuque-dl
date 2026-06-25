@@ -3,7 +3,7 @@ import { readFileSync } from 'node:fs'
 import { cac, Command } from 'cac'
 import semver from 'semver'
 
-import { downloadDocsFromUrls, main } from './index'
+import { downloadDocsFromUrls, downloadNodeFromUrl, main } from './index'
 import { logger } from './utils'
 import { runServer } from './server'
 
@@ -73,6 +73,19 @@ addCommonOption(docCommand)
   .action(async (urls: string[], options: ICliOptions) => {
     try {
       await downloadDocsFromUrls(urls, options)
+      process.exit(0)
+    } catch (err) {
+      logger.error(err.message || 'unknown exception')
+      process.exit(1)
+    }
+  })
+
+// 子命令 node 下载指定目录树节点下的文档
+const nodeCommand = cli.command('node <bookUrl> <nodeUrl>', '下载目录树节点下的文档')
+addCommonOption(nodeCommand)
+  .action(async (bookUrl: string, nodeUrl: string, options: ICliOptions) => {
+    try {
+      await downloadNodeFromUrl(bookUrl, nodeUrl, options)
       process.exit(0)
     } catch (err) {
       logger.error(err.message || 'unknown exception')

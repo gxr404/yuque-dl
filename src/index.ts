@@ -8,6 +8,7 @@ import { downloadArticleList } from './download/list'
 
 import type { ICliOptions, IProgressItem } from './types'
 import { downloadArticle } from './download/article'
+import type { KnowledgeBase } from './types'
 
 export async function main(url: string, options: ICliOptions) {
   if (!isValidUrl(url)) {
@@ -81,6 +82,128 @@ export async function main(url: string, options: ICliOptions) {
   if (progressBar.curr === total) {
     logger.info(`√ 已完成: ${bookPath}`)
   }
+}
+
+export async function downloadNodeFromUrl(bookUrl: string, nodeUrl: string, options: ICliOptions) {
+  if (!isValidUrl(bookUrl)) {
+    throw new Error('Please enter a valid URL')
+  }
+  if (!isValidUrl(nodeUrl)) {
+    throw new Error(`Invalid URL: ${nodeUrl}`)
+  }
+
+  const {
+    bookId,
+    tocList,
+    bookName,
+    bookDesc,
+    bookSlug,
+    host,
+    imageServiceDomains
+  } = await getKnowledgeBaseInfo(bookUrl, {
+    token: options.token,
+    key: options.key
+  })
+  if (!bookId) throw new Error('No found book id')
+  if (!bookSlug) throw new Error('No found book slug')
+  if (!tocList || tocList.length === 0) throw new Error('No found toc list')
+
+  const nodeSlug = getUrlSlug(nodeUrl)
+  if (!nodeSlug) {
+    throw new Error(`No found node in toc list: ${nodeUrl}`)
+  }
+
+  const targetToc = tocList.find(item => item.url === nodeSlug)
+  if (!targetToc) {
+    throw new Error(`No found node in toc list: ${nodeSlug}`)
+  }
+
+  const nodeTocList = filterNodeTocList(tocList, targetToc)
+  const nodeUuidSet = new Set(nodeTocList.map(item => item.uuid))
+  const bookPath = path.resolve(options.distDir, bookName ? fixPath(bookName) : String(bookId))
+
+  await mkdir(bookPath, {recursive: true})
+
+  const total = nodeTocList.length
+  const progressBar = new ProgressBar(bookPath, total, options.incremental, false, nodeUuidSet)
+  await progressBar.init()
+
+  if (!options.incremental && progressBar.curr == total) {
+    if (progressBar.bar) progressBar.bar.stop()
+    logger.info(`√ 已完成: ${bookPath}`)
+    return
+  }
+
+  const uuidMap = new Map<string, IProgressItem>()
+  if (progressBar.isDownloadInterrupted || options.incremental) {
+    progressBar.progressInfo.forEach(item => {
+      uuidMap.set(
+        item.toc.uuid,
+        item
+      )
+    })
+  }
+  const articleUrlPrefix = bookUrl.replace(new RegExp(`(.*?/${bookSlug}).*`), '$1')
+
+  await downloadArticleList({
+    articleUrlPrefix,
+    total,
+    uuidMap,
+    tocList: nodeTocList,
+    bookPath,
+    bookId,
+    progressBar,
+    host,
+    options,
+    imageServiceDomains
+  })
+
+  const summary = new Summary({
+    bookPath,
+    bookName,
+    bookDesc,
+    uuidMap
+  })
+  await summary.genFile()
+  logger.info(`√ 生成目录 ${path.resolve(bookPath, 'index.md')}`)
+
+  if (progressBar.curr === total) {
+    logger.info(`√ 已完成: ${bookPath}`)
+  }
+}
+
+function getUrlSlug(url: string) {
+  const { pathname } = new URL(url)
+  const pathList = pathname.split('/').filter(Boolean)
+  const slug = pathList[pathList.length - 1]
+  return slug ? decodeURIComponent(slug) : ''
+}
+
+function filterNodeTocList(tocList: KnowledgeBase.Toc[], targetToc: KnowledgeBase.Toc) {
+  const tocMap = new Map(tocList.map(toc => [toc.uuid, toc]))
+  return tocList
+    .filter(item => {
+      return item.uuid === targetToc.uuid || isAncestorOrDescendantToc(tocMap, item, targetToc)
+    })
+}
+
+function isAncestorOrDescendantToc(
+  tocMap: Map<string, KnowledgeBase.Toc>,
+  item: KnowledgeBase.Toc,
+  targetToc: KnowledgeBase.Toc
+) {
+  let parentUuid = item.parent_uuid
+  while (parentUuid) {
+    if (parentUuid === targetToc.uuid) return true
+    parentUuid = tocMap.get(parentUuid)?.parent_uuid || ''
+  }
+
+  parentUuid = targetToc.parent_uuid
+  while (parentUuid) {
+    if (parentUuid === item.uuid) return true
+    parentUuid = tocMap.get(parentUuid)?.parent_uuid || ''
+  }
+  return false
 }
 
 

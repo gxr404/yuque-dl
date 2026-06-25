@@ -185,4 +185,28 @@ describe('ProgressBar', () => {
     // toc.uuid一致 则是 更新 而非 push
     expect(pr.curr).toBe(1)
   })
+
+  it('scoped progress should preserve other progress items', async() => {
+    let pr = new ProgressBar(testTools.cwd, 3)
+    await pr.init()
+    await pr.updateProgress(updateItem, true)
+    await pr.updateProgress(updateItem2, true)
+    await pr.updateProgress(updateItem3, true)
+
+    const scopedItem = {
+      ...updateItem2,
+      path: '语雀知识库2/index.md',
+    }
+    pr = new ProgressBar(testTools.cwd, 1, false, false, new Set([updateItem2.toc.uuid]))
+    await pr.init()
+    expect(pr.curr).toBe(1)
+    expect(pr.progressInfo).toMatchObject([updateItem2])
+
+    pr = new ProgressBar(testTools.cwd, 1, true, false, new Set([updateItem2.toc.uuid]))
+    await pr.init()
+    await pr.updateProgress(scopedItem, true)
+
+    const prInfo = await pr.getProgress()
+    expect(prInfo).toMatchObject([updateItem, scopedItem, updateItem3])
+  })
 })
