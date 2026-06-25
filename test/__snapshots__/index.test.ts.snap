@@ -1,5 +1,45 @@
 // Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
 
+exports[`main > download node subtree should work 1`] = `
+"# Target
+
+# DOC1
+![](https://gxr404.com/1.jpeg)
+## SubTitle
+![](https://gxr404.com/2.jpeg)
+
+> 更新: 2025-03-12 20:59:27  
+> 原文: <https://www.yuque.com/yuque/node-test/one>"
+`;
+
+exports[`main > download node subtree should work 2`] = `
+"# Child
+
+# DOC2
+## Title
+text...
+### Title2
+text...
+
+
+> 原文: <https://www.yuque.com/yuque/node-test/two>"
+`;
+
+exports[`main > download node subtree should work 3`] = `
+"# 节点下载测试
+
+> node test desc
+
+
+## Root
+
+
+### [Target](Root/Target/index.md)
+
+- [Child](Root/Target/Child.md)
+"
+`;
+
 exports[`main > should work 1`] = `
 "# 知识库TEST1
 

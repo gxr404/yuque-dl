@@ -16,17 +16,23 @@ export class ProgressBar {
   incremental: boolean
   // 是否禁用 process.json 单文档下载时禁用
   disableProgressJSON: boolean
+  scopeUuidSet?: Set<string>
+  private persistedProgressInfo: IProgress = []
 
-  constructor (bookPath: string, total: number, incremental = false, disableProgressJSON = false) {
+  constructor (bookPath: string, total: number, incremental = false, disableProgressJSON = false, scopeUuidSet?: Set<string>) {
     this.bookPath = bookPath
     this.progressFilePath = `${bookPath}/progress.json`
     this.total = total
     this.incremental = incremental
     this.disableProgressJSON = disableProgressJSON
+    this.scopeUuidSet = scopeUuidSet
   }
 
   async init() {
-    this.progressInfo = this.disableProgressJSON ? [] : await this.getProgress()
+    this.persistedProgressInfo = this.disableProgressJSON ? [] : await this.getProgress()
+    this.progressInfo = this.scopeUuidSet
+      ? this.persistedProgressInfo.filter(item => this.scopeUuidSet!.has(item.toc.uuid))
+      : this.persistedProgressInfo
     // 增量下载需把进度重置为0 然后每一篇文档重新检查一遍 update时间
     this.curr = this.incremental ? 0 : this.progressInfo.length
     // 可能出现增量下载
@@ -75,11 +81,15 @@ export class ProgressBar {
         this.progressInfo.push(progressItem)
       }
       if (!this.disableProgressJSON) {
+        const writeProgressInfo = this.scopeUuidSet
+          ? this.mergeScopedProgressInfo()
+          : this.progressInfo
         await fs.writeFile(
           this.progressFilePath,
-          JSON.stringify(this.progressInfo),
+          JSON.stringify(writeProgressInfo),
           {encoding: 'utf8'}
         )
+        this.persistedProgressInfo = writeProgressInfo
       }
     }
     if (this.bar) {
@@ -89,6 +99,28 @@ export class ProgressBar {
         console.log('')
       }
     }
+  }
+
+  private mergeScopedProgressInfo(): IProgress {
+    if (!this.scopeUuidSet) return this.progressInfo
+    const scopedProgressMap = new Map(
+      this.progressInfo.map(item => [item.toc.uuid, item])
+    )
+    const mergedProgressInfo: IProgress = []
+
+    this.persistedProgressInfo.forEach(item => {
+      const progressItem = scopedProgressMap.get(item.toc.uuid)
+      if (progressItem) {
+        mergedProgressInfo.push(progressItem)
+        scopedProgressMap.delete(item.toc.uuid)
+      } else if (!this.scopeUuidSet!.has(item.toc.uuid)) {
+        mergedProgressInfo.push(item)
+      }
+    })
+    scopedProgressMap.forEach(item => {
+      mergedProgressInfo.push(item)
+    })
+    return mergedProgressInfo
   }
   // 暂停进度条的打印
   pause () {

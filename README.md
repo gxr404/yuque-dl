@@ -23,12 +23,15 @@ $ yuque-dl --help
     $ yuque-dl <url>
 
   Commands:
-    <url>                语雀知识库url
-    doc <...urls>        下载单个或多个文档
-    server <serverPath>  启动web服务
+    <url>                     语雀知识库url
+    doc <...urls>             下载单个或多个文档
+    node <bookUrl> <nodeUrl>  下载目录树节点下的文档
+    server <serverPath>       启动web服务
 
   For more info, run any command with the `--help` flag:
     $ yuque-dl --help
+    $ yuque-dl doc --help
+    $ yuque-dl node --help
     $ yuque-dl server --help
 
   Options:
@@ -66,6 +69,16 @@ yuque-dl doc "https://www.yuque.com/yuque/thyzgp/repository"
 # 下载多个文档
 yuque-dl doc "https://www.yuque.com/yuque/thyzgp/repository" "https://www.yuque.com/yuque/thyzgp/gbdfpb"
 ```
+
+下载知识库目录树中某个节点下的文档
+
+```bash
+# bookUrl 为知识库地址，nodeUrl 为目录树中某个文档节点地址
+yuque-dl node "https://www.yuque.com/yuque/thyzgp" "https://www.yuque.com/yuque/thyzgp/repository"
+```
+
+> [!NOTE]
+> `nodeUrl` 当前通过 URL 最后一段 slug 匹配目录树节点，支持有 URL 的文档节点；纯目录标题节点如果没有文档 URL，暂不支持直接定位。
 
 ## Example
 
@@ -135,6 +148,7 @@ yuque-dl server ./download/知识库/
 - [x] 添加测试
 - [x] 添加附件下载
 - [x] 支持下载单个或多个指定文档
+- [x] 支持下载目录树节点下的多个文档
 - [ ] 支持其他文档类型？🤔
 - [ ] 直接打包成可执行文件 🤔
 
