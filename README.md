@@ -24,6 +24,8 @@ $ yuque-dl --help
 
   Commands:
     <url>                语雀知识库url
+    batch <...urls>      批量下载多个知识库
+    user                 下载当前账号的所有知识库
     doc <...urls>        下载单个或多个文档
     server <serverPath>  启动web服务
 
@@ -67,6 +69,26 @@ yuque-dl doc "https://www.yuque.com/yuque/thyzgp/repository"
 
 # 下载多个文档
 yuque-dl doc "https://www.yuque.com/yuque/thyzgp/repository" "https://www.yuque.com/yuque/thyzgp/gbdfpb"
+```
+
+下载当前账号的所有知识库
+
+```bash
+# 需要提供登录token，自动枚举并下载所有知识库
+yuque-dl user -t "your_yuque_session_token"
+
+# 指定输出目录
+yuque-dl user -t "token" -d ./my-yuque-backup
+```
+
+批量下载多个知识库
+
+```bash
+# 指定多个知识库URL批量下载
+yuque-dl batch "https://www.yuque.com/user/book1" "https://www.yuque.com/user/book2"
+
+# 搭配其他选项
+yuque-dl batch "url1" "url2" -t "token" -d ./backup --hideFooter
 ```
 
 ## Example
@@ -147,6 +169,8 @@ yuque-dl server ./download/知识库/
 - [x] 添加测试
 - [x] 添加附件下载
 - [x] 支持下载单个或多个指定文档
+- [x] 支持一键下载当前账号的所有知识库
+- [x] 支持批量下载多个指定知识库
 - [ ] 支持其他文档类型？🤔
 - [ ] 直接打包成可执行文件 🤔
 

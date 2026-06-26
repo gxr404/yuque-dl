@@ -3,7 +3,7 @@ import { readFileSync } from 'node:fs'
 import { cac, Command } from 'cac'
 import semver from 'semver'
 
-import { downloadDocsFromUrls, main } from './index'
+import { downloadDocsFromUrls, downloadBooksFromUrls, downloadAllBooks, main } from './index'
 import { logger } from './utils'
 import { runServer } from './server'
 
@@ -74,6 +74,32 @@ addCommonOption(docCommand)
   .action(async (urls: string[], options: ICliOptions) => {
     try {
       await downloadDocsFromUrls(urls, options)
+      process.exit(0)
+    } catch (err) {
+      logger.error(err.message || 'unknown exception')
+      process.exit(1)
+    }
+  })
+
+// 子命令 batch 批量下载多个知识库
+const batchCommand = cli.command('batch <...urls>', '批量下载多个知识库')
+addCommonOption(batchCommand)
+  .action(async (urls: string[], options: ICliOptions) => {
+    try {
+      await downloadBooksFromUrls(urls, options)
+      process.exit(0)
+    } catch (err) {
+      logger.error(err.message || 'unknown exception')
+      process.exit(1)
+    }
+  })
+
+// 子命令 user 下载当前账号的所有知识库
+const userCommand = cli.command('user', '下载当前账号的所有知识库')
+addCommonOption(userCommand)
+  .action(async (options: ICliOptions) => {
+    try {
+      await downloadAllBooks(options)
       process.exit(0)
     } catch (err) {
       logger.error(err.message || 'unknown exception')
