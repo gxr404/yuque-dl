@@ -1,3 +1,19 @@
+## [1.0.85](https://github.com/gxr404/yuque-dl/compare/v1.0.84...v1.0.85) (2026-06-27)
+
+
+### Bug Fixes
+
+* remove redundant changes ([ca281a4](https://github.com/gxr404/yuque-dl/commit/ca281a48ba809555e9ac0a6a851cc6cfed3b32e2))
+* update logic for password-protected download process ([831a72b](https://github.com/gxr404/yuque-dl/commit/831a72b38f6eba3aa1b9fe693d53053c46d2da04))
+
+
+### Features
+
+* add user and batch subcommands for multi-book download ([f3eac2d](https://github.com/gxr404/yuque-dl/commit/f3eac2d9b2b7b56d03b3c6c5149562a0a0111933))
+* 调整多知识库下载部分逻辑 ([efc0f10](https://github.com/gxr404/yuque-dl/commit/efc0f10cecfe243c977e5c34e03d70d3dc7a644e))
+
+
+
 ## [1.0.84](https://github.com/gxr404/yuque-dl/compare/v1.0.83...v1.0.84) (2026-04-20)
 
 
