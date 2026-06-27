@@ -3,7 +3,7 @@ import path from 'node:path'
 import Summary from './parse/Summary'
 import { getDocInfoFromUrl, getKnowledgeBaseInfo, getUserBooks, verifyPublicPassword } from './api'
 import { fixPath } from './parse/fix'
-import { ProgressBar, isValidUrl, logger } from './utils'
+import { ProgressBar, colorize, isValidUrl, logger } from './utils'
 import { downloadArticleList } from './download/list'
 
 import type { ICliOptions, IProgressItem } from './types'
@@ -99,51 +99,26 @@ export async function main(url: string, options: ICliOptions) {
 
 /** 批量下载多个知识库 */
 export async function downloadBooksFromUrls(urls: string[], options: ICliOptions) {
-  const urlArray = Array.isArray(urls) ? urls : [urls]
+  const bookList = Array.isArray(urls) ? urls : [urls]
 
-  if (!urlArray || urlArray.length === 0) {
+  if (!bookList || bookList.length === 0) {
     throw new Error('Please provide at least one book URL')
   }
 
-  for (const url of urlArray) {
+  for (const url of bookList) {
     if (!isValidUrl(url)) {
       throw new Error(`Invalid URL: ${url}`)
     }
   }
 
-  const totalBooks = urlArray.length
+  const totalBooks = bookList.length
   logger.info(`批量下载 ${totalBooks} 个知识库\n`)
 
-  const successBooks: string[] = []
-  const failedBooks: Array<{ url: string; error: string }> = []
-
-  for (let i = 0; i < urlArray.length; i++) {
-    const url = urlArray[i]
-    logger.info(`[${i + 1}/${totalBooks}] 下载: ${url}`)
-
-    try {
-      await main(url, options)
-      successBooks.push(url)
-    } catch (e) {
-      const errorMsg = e.message || 'unknown error'
-      logger.error(`✕ 下载失败: ${url} — ${errorMsg}`)
-      failedBooks.push({ url, error: errorMsg })
-    }
-  }
-
-  // 打印汇总
-  logger.info(`\n${'='.repeat(50)}`)
-  logger.info(`下载完成: ${successBooks.length}/${totalBooks} 个知识库成功`)
-  if (failedBooks.length > 0) {
-    logger.warn(`失败 ${failedBooks.length} 个:`)
-    failedBooks.forEach(({ url, error }) => {
-      logger.error(`  ✕ ${url}: ${error}`)
-    })
-  }
+  await downloadBatch(bookList, options)
 }
 
-/** 下载当前用户的所有知识库 */
-export async function downloadAllBooks(options: ICliOptions) {
+/** 下载用户的所有知识库 */
+export async function downloadUserBooks(options: ICliOptions) {
   if (!options.token) {
     throw new Error('Token is required for downloading all books. Use -t <token>')
   }
@@ -158,41 +133,53 @@ export async function downloadAllBooks(options: ICliOptions) {
     return
   }
 
-  const totalBooks = books.length
-  const totalDocs = books.reduce((sum, b) => sum + (b.items_count || 0), 0)
-  logger.info(`找到 ${totalBooks} 个知识库，共 ${totalDocs} 篇文档\n`)
-
-  const successBooks: string[] = []
-  const failedBooks: Array<{ name: string; error: string }> = []
-
+  const failedBooks: TFailedBooks = []
+  const bookList = []
+  const _books = []
   for (let i = 0; i < books.length; i++) {
     const book = books[i]
     const userLogin = book.user?.login
+    const bookUrl = `${DEFAULT_DOMAIN}/${userLogin}/${book.slug}`
     if (!userLogin) {
-      failedBooks.push({ name: book.name, error: '无法获取用户登录名' })
+      failedBooks.push({ url: bookUrl, error: '无法获取用户登录名' })
       continue
     }
+    // 仅下载知识库类型
+    if (book.type !== 'Book') continue
+    bookList.push(bookUrl)
+    _books.push(book)
+  }
+  const totalBooks = bookList.length
+  const totalDocs = _books.reduce((sum, b) => sum + (b.items_count || 0), 0)
+  logger.info(`找到 ${totalBooks} 个知识库，共 ${totalDocs} 篇文档\n`)
+  await downloadBatch(bookList, options, failedBooks)
+}
 
-    const bookUrl = `${DEFAULT_DOMAIN}/${userLogin}/${book.slug}`
-    logger.info(`[${i + 1}/${totalBooks}] 下载: ${book.name} (${book.items_count} 篇) → ${bookUrl}`)
-
+type TFailedBooks = Array<{ url: string; error: string }>
+async function downloadBatch(bookList: string[], options: ICliOptions, failedBooks: TFailedBooks = []) {
+  const successBooks: string[] = []
+  const total = bookList.length + failedBooks.length
+  for (let i = 0; i < bookList.length; i++) {
+    const url = bookList[i]
+    console.log(colorize(colorize(`[${i + 1}/${total}] 下载: `, 'bold') + `${url}`, 'magenta'))
+    console.log('')
     try {
-      await main(bookUrl, options)
-      successBooks.push(book.name)
+      await main(url, options)
+      successBooks.push(url)
     } catch (e) {
       const errorMsg = e.message || 'unknown error'
-      logger.error(`✕ 下载失败: ${book.name} — ${errorMsg}`)
-      failedBooks.push({ name: book.name, error: errorMsg })
+      logger.error(`✕ 下载失败: ${url} — ${errorMsg}`)
+      failedBooks.push({ url, error: errorMsg })
     }
   }
 
   // 打印汇总
-  logger.info(`\n${'='.repeat(50)}`)
-  logger.info(`下载完成: ${successBooks.length}/${totalBooks} 个知识库成功`)
+  console.log(`\n${'='.repeat(100)}\n`)
+  logger.info(`下载完成: ${successBooks.length}/${total} 个知识库成功`)
   if (failedBooks.length > 0) {
-    logger.warn(`失败 ${failedBooks.length} 个:`)
-    failedBooks.forEach(({ name, error }) => {
-      logger.error(`  ✕ ${name}: ${error}`)
+    logger.error(`失败 ${failedBooks.length} 个:`)
+    failedBooks.forEach(({ url, error }) => {
+      logger.error(`———— ✕ ${url}: ${error}`)
     })
   }
 }

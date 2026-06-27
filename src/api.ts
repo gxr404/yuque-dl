@@ -60,7 +60,7 @@ export function genCommonOptions(params: GetHeaderParams): AxiosRequestConfig {
 }
 
 function parseAppData(html: string): IYuqueAppData | undefined {
-  const appDataReg = /decodeURIComponent\(\"(.+)\"\)\);/m
+  const appDataReg = /decodeURIComponent\("(.+)"\)\);/m
   const data = appDataReg.exec(html) ?? ''
   if (!data[1]) return undefined
   return JSON.parse(decodeURIComponent(data[1]))
@@ -201,6 +201,7 @@ export const getDocInfoFromUrl: TGetDocInfoFromUrl = async (url, headerParams) =
 
 /** 用户知识库列表项 */
 export interface UserBookItem {
+  type: 'Book' | 'Resource'
   id: number
   slug: string
   name: string

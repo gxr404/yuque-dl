@@ -71,6 +71,8 @@ yuque-dl doc "https://www.yuque.com/yuque/thyzgp/repository"
 yuque-dl doc "https://www.yuque.com/yuque/thyzgp/repository" "https://www.yuque.com/yuque/thyzgp/gbdfpb"
 ```
 
+### 多知识库下载
+
 下载当前账号的所有知识库
 
 ```bash
@@ -81,11 +83,14 @@ yuque-dl user -t "your_yuque_session_token"
 yuque-dl user -t "token" -d ./my-yuque-backup
 ```
 
+> 必须带 -t 指定token
+
+
 批量下载多个知识库
 
 ```bash
 # 指定多个知识库URL批量下载
-yuque-dl batch "https://www.yuque.com/user/book1" "https://www.yuque.com/user/book2"
+yuque-dl batch "https://www.yuque.com/yuque/eaghk3" "https://www.yuque.com/yuque/rdglqp"
 
 # 搭配其他选项
 yuque-dl batch "url1" "url2" -t "token" -d ./backup --hideFooter

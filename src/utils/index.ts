@@ -90,3 +90,4 @@ export function parseSetCookie(setCookie?: string[] | string) {
 
 export * from './log'
 export * from './ProgressBar'
+export * from './colorize'

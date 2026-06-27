@@ -3,7 +3,7 @@ import { readFileSync } from 'node:fs'
 import { cac, Command } from 'cac'
 import semver from 'semver'
 
-import { downloadDocsFromUrls, downloadBooksFromUrls, downloadAllBooks, main } from './index'
+import { downloadDocsFromUrls, downloadBooksFromUrls, downloadUserBooks, main } from './index'
 import { logger } from './utils'
 import { runServer } from './server'
 
@@ -69,7 +69,7 @@ addCommonOption(mainCommand)
   })
 
 // 子命令 doc 下载指定文档
-const docCommand = cli.command('doc <...urls>', '下载单个或多个文档')
+const docCommand = cli.command('doc <...urls>', '下载单个或多个文档(必须指定-t参数)')
 addCommonOption(docCommand)
   .action(async (urls: string[], options: ICliOptions) => {
     try {
@@ -99,7 +99,7 @@ const userCommand = cli.command('user', '下载当前账号的所有知识库')
 addCommonOption(userCommand)
   .action(async (options: ICliOptions) => {
     try {
-      await downloadAllBooks(options)
+      await downloadUserBooks(options)
       process.exit(0)
     } catch (err) {
       logger.error(err.message || 'unknown exception')
