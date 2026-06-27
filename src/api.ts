@@ -60,7 +60,7 @@ export function genCommonOptions(params: GetHeaderParams): AxiosRequestConfig {
 }
 
 function parseAppData(html: string): IYuqueAppData | undefined {
-  const appDataReg = /decodeURIComponent\("(.+)"\)\);/m
+  const appDataReg = /decodeURIComponent\(\"(.+)\"\)\);/m
   const data = appDataReg.exec(html) ?? ''
   if (!data[1]) return undefined
   return JSON.parse(decodeURIComponent(data[1]))
@@ -194,6 +194,42 @@ export const getDocInfoFromUrl: TGetDocInfoFromUrl = async (url, headerParams) =
         host: jsonData.space?.host || DEFAULT_DOMAIN,
         imageServiceDomains: jsonData.imageServiceDomains || []
       }
+  } catch (e) {
+    throw normalizeRequestError(e)
+  }
+}
+
+/** 用户知识库列表项 */
+export interface UserBookItem {
+  id: number
+  slug: string
+  name: string
+  items_count: number
+  public: number
+  user: {
+    login: string
+  }
+}
+
+/** 获取当前用户的所有知识库列表 */
+export async function getUserBooks(headerParams: GetHeaderParams): Promise<UserBookItem[]> {
+  const books: UserBookItem[] = []
+  let offset = 0
+  const limit = 50
+
+  try {
+    while (true) {
+      const url = `${DEFAULT_DOMAIN}/api/mine/books?limit=${limit}&offset=${offset}`
+      const { data } = await axios.get<{ data: UserBookItem[] }>(
+        url,
+        genCommonOptions(headerParams)
+      )
+      const items = data?.data || []
+      books.push(...items)
+      if (items.length < limit) break
+      offset += limit
+    }
+    return books
   } catch (e) {
     throw normalizeRequestError(e)
   }
