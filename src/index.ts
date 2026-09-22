@@ -214,9 +214,20 @@ export async function downloadDocsFromUrls(urls: string[], options: ICliOptions)
     const url = urlArray[i]
     let progressItem: IProgressItem | undefined
     try {
+      const docOptions = { ...options }
+      if (docOptions.password) {
+        const verifyRes = await verifyPublicPassword(url, docOptions.password, {
+          token: docOptions.token,
+          key: docOptions.key
+        })
+        if (!verifyRes) throw new Error('Password validation failed')
+        docOptions.key = verifyRes.key
+        docOptions.token = verifyRes.token
+      }
+
       const docInfo = await getDocInfoFromUrl(url, {
-        token: options.token,
-        key: options.key
+        token: docOptions.token,
+        key: docOptions.key
       })
 
       const {
@@ -274,7 +285,7 @@ export async function downloadDocsFromUrls(urls: string[], options: ICliOptions)
       await downloadArticle({
         articleInfo,
         progressBar,
-        options,
+        options: docOptions,
         progressItem
       })
 

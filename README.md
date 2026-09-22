@@ -133,6 +133,9 @@ yuque-dl "https://www.yuque.com/yuque/thyzgp" -t "abcd..."
 
 ```bash
 yuque-dl "url" -p "知识库密码"
+
+# 下载需要密码的单篇分享文档
+yuque-dl doc "文档url" -p "文档密码"
 ```
 
 #### 通过cookie

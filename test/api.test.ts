@@ -1,3 +1,4 @@
+import { http, HttpResponse } from 'msw'
 import { afterAll, afterEach, beforeAll, beforeEach, describe, expect, it } from 'vitest'
 import { TestTools } from './helpers/TestTools'
 import { server } from './mocks/server'
@@ -47,6 +48,47 @@ describe('api', () => {
   })
 
   describe('verifyPublicPassword', () => {
+    const docUrl = 'https://password-tests.yuque.com/yuque/testbook/locked-doc'
+    const verifyUrl = 'https://password-tests.yuque.com/api/docs/123456/verify'
+
+    function mockVerification(cookies: string[]) {
+      server.use(
+        http.get(docUrl, () => {
+          const data = {
+            timestamp: Date.now(),
+            matchCondition: { targetType: 'Doc', needVerifyTargetId: 123456 }
+          }
+          return new HttpResponse(`decodeURIComponent("${encodeURIComponent(JSON.stringify(data))}"));`)
+        }),
+        http.put(verifyUrl, () => {
+          const headers = new Headers()
+          cookies.forEach(cookie => headers.append('Set-Cookie', cookie))
+          return HttpResponse.json({ data: true }, { headers })
+        })
+      )
+    }
+
+    it.each(['verified_docs', 'verified_books'])('accepts %s for a protected document', async (key) => {
+      mockVerification(['lang=zh-cn; Path=/;', `${key}=doc-cookie; Path=/;`])
+      await expect(verifyPublicPassword(docUrl, 'test-password', {}))
+        .resolves.toEqual({ key, token: 'doc-cookie' })
+    })
+
+    it('prefers the document verification cookie when both are returned', async () => {
+      mockVerification(['verified_books=book-cookie; Path=/;', 'verified_docs=doc-cookie; Path=/;'])
+      await expect(verifyPublicPassword(docUrl, 'test-password', {}))
+        .resolves.toEqual({ key: 'verified_docs', token: 'doc-cookie' })
+    })
+
+    it.each([
+      { name: 'missing', cookies: [] },
+      { name: 'unrelated', cookies: ['lang=zh-cn; Path=/;'] },
+      { name: 'empty', cookies: ['verified_docs=; Path=/; Max-Age=0'] }
+    ])('rejects $name verification cookies', async ({ cookies }) => {
+      mockVerification(cookies)
+      await expect(verifyPublicPassword(docUrl, 'test-password', {})).resolves.toBe(false)
+    })
+
     it('should verify public password protected book', async () => {
       type Data = {key: string, token: string}
       const data = await verifyPublicPassword('https://www.yuque.com/yuque/locked', 'pqz7', {}) as Data

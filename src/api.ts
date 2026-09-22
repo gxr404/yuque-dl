@@ -105,10 +105,17 @@ export async function verifyPublicPassword(
   if (!cookieList) return false
   if (Array.isArray(cookieList) && cookieList.length === 0) return false
 
-  const verifiedCookie = Reflect.get(parseSetCookie(cookieList), verifiedCookieKey)
+  const cookies = parseSetCookie(cookieList)
+  // Some document shares return verified_books instead of verified_docs.
+  const cookieKeys = targetType === 'Doc'
+    ? [verifiedCookieKey, VERIFIED_COOKIE_KEY_MAP.Book]
+    : [verifiedCookieKey]
+  const key = cookieKeys.find(cookieKey => Boolean(cookies[cookieKey]))
+  if (!key) return false
+
   return {
-    key: verifiedCookieKey,
-    token: verifiedCookie
+    key,
+    token: cookies[key]
   }
 }
 
