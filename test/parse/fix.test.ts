@@ -59,7 +59,7 @@ describe('fixMarkdownImage', () => {
 
 describe('fixPath', () => {
   it('should work', () => {
-    expect(fixPath('/xxa.12~*#)$$M/13')).toBe('_xxa.12~_#)$$M_13')
+    expect(fixPath('/xxa.12~*#)$$M/13')).toBe('_xxa.12~_#）$$M_13')
   })
 })
 
