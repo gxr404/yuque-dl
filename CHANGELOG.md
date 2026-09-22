@@ -1,3 +1,14 @@
+## [1.0.87](https://github.com/gxr404/yuque-dl/compare/v1.0.86...v1.0.87) (2026-09-22)
+
+
+### Bug Fixes
+
+* authenticate password-protected document downloads ([09ba0cf](https://github.com/gxr404/yuque-dl/commit/09ba0cfc718c9fd9ff988ab04e35adcafad57582))
+* resolve fixPath test ([529a240](https://github.com/gxr404/yuque-dl/commit/529a2409cf87d9eb5db2abc21e600197f42a431f))
+* 修复md链接内半角括号导致跳转失效问题 ([dc45c2d](https://github.com/gxr404/yuque-dl/commit/dc45c2d8e2a8265edf050036f421c21358b6ccfa))
+
+
+
 ## [1.0.86](https://github.com/gxr404/yuque-dl/compare/v1.0.85...v1.0.86) (2026-07-26)
 
 
